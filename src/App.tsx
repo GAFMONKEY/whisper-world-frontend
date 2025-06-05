@@ -4,8 +4,8 @@ import { Route, Routes } from "react-router-dom";
 function App() {
   return (
     <Routes>
-      <Route path="/" element={/* Components here*/}/>
-      <Route path="/about" element={}/>
+      <Route path="/" />
+      <Route path="/about" />
     </Routes>
   )
 }
