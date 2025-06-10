@@ -6,16 +6,18 @@ import {
     Stack,
 } from '@mui/material';
 import MicIcon from '@mui/icons-material/Mic';
+import { useNavigate } from 'react-router-dom';
 
 const LandingPage: React.FC = () => {
+    const navigate = useNavigate();
+
     const handleLogin = () => {
         // TODO: Implement login logic
         console.log('Login clicked');
     };
 
     const handleRegister = () => {
-        // TODO: Implement register logic
-        console.log('Register clicked');
+        navigate('/register');
     };
 
     return (
