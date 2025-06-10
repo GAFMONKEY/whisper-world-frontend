@@ -12,8 +12,7 @@ const LandingPage: React.FC = () => {
     const navigate = useNavigate();
 
     const handleLogin = () => {
-        // TODO: Implement login logic
-        console.log('Login clicked');
+        navigate('/login');
     };
 
     const handleRegister = () => {

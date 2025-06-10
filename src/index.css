@@ -4,17 +4,21 @@
   box-sizing: border-box;
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+html,
+body,
+#root,
+body>div,
+[data-reactroot] {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
   background-color: #F2EEE9 !important;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif !important;
 }
 
-#root {
-  width: 100%;
-  height: 100%;
+/* Überschreibe alle möglichen MUI Overrides */
+.MuiCssBaseline-root,
+.MuiBox-root {
   background-color: #F2EEE9 !important;
 }
