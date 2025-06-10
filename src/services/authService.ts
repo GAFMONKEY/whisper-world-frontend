@@ -16,8 +16,6 @@ export interface LoginResponse {
         email: string;
         name?: string;
     };
-    token?: string; // Optional, weg machen
-    message?: string;
 }
 
 export const authService = {
