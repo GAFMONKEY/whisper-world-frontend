@@ -87,7 +87,7 @@ const DashboardPage: React.FC = () => {
                 >
                     Hallo {user.firstName}!
                 </Typography>
-                
+
                 <Typography
                     variant="body1"
                     sx={{
@@ -283,7 +283,7 @@ const DashboardPage: React.FC = () => {
                                 ))}
                             </Stack>
                         </Box>
-                        
+
                         <Button
                             variant="outlined"
                             onClick={handleLogout}

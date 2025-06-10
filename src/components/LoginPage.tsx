@@ -36,16 +36,16 @@ const LoginPage: React.FC = () => {
         try {
             const userData = await authService.login(formData.email, formData.password);
             console.log('Login successful:', userData);
-            
+
             // Speichere Benutzerdaten im localStorage
             localStorage.setItem('user', JSON.stringify(userData));
-            
+
             // Navigiere zum Dashboard
             navigate('/dashboard');
-            
+
         } catch (error: any) {
             console.error('Login error:', error);
-            
+
             if (error.response?.status === 401) {
                 setError('Ungültige E-Mail oder Passwort');
             } else if (error.response?.status === 500) {
