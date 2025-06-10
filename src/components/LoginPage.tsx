@@ -6,16 +6,21 @@ import {
     Button,
     Stack,
     Link,
+    Alert,
+    CircularProgress,
 } from '@mui/material';
 import MicIcon from '@mui/icons-material/Mic';
 import { useNavigate } from 'react-router-dom';
+import { authService } from '../services/authService';
 
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        email: '',
-        password: '',
+        email: 'alice.anderson@example.com',
+        password: 'password123',
     });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
     const handleInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
         setFormData(prev => ({
@@ -24,19 +29,40 @@ const LoginPage: React.FC = () => {
         }));
     };
 
-    const handleSubmit = () => {
-        // TODO: Implement login logic
-        console.log('Login:', formData);
-        // Hier würde die Login API aufgerufen
+    const handleSubmit = async () => {
+        setLoading(true);
+        setError('');
+
+        try {
+            const userData = await authService.login(formData.email, formData.password);
+            console.log('Login successful:', userData);
+            
+            // Speichere Benutzerdaten im localStorage
+            localStorage.setItem('user', JSON.stringify(userData));
+            
+            // Navigiere zum Dashboard
+            navigate('/dashboard');
+            
+        } catch (error: any) {
+            console.error('Login error:', error);
+            
+            if (error.response?.status === 401) {
+                setError('Ungültige E-Mail oder Passwort');
+            } else if (error.response?.status === 500) {
+                setError('Server-Fehler. Bitte versuchen Sie es später erneut.');
+            } else if (error.code === 'ECONNREFUSED') {
+                setError('Verbindung zum Server fehlgeschlagen. Ist das Backend gestartet?');
+            } else {
+                setError('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.');
+            }
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleForgotPassword = () => {
         // TODO: Navigate to forgot password page
         console.log('Forgot password clicked');
-    };
-
-    const handleBackToWelcome = () => {
-        navigate('/');
     };
 
     return (
@@ -135,6 +161,13 @@ const LoginPage: React.FC = () => {
 
                 {/* Login Form */}
                 <Stack spacing={3} sx={{ width: '100%', maxWidth: 300 }}>
+                    {/* Error Message */}
+                    {error && (
+                        <Alert severity="error" sx={{ borderRadius: 2 }}>
+                            {error}
+                        </Alert>
+                    )}
+
                     <TextField
                         label="E-Mail"
                         type="email"
@@ -142,6 +175,7 @@ const LoginPage: React.FC = () => {
                         onChange={handleInputChange('email')}
                         fullWidth
                         variant="outlined"
+                        disabled={loading}
                         sx={{
                             '& .MuiOutlinedInput-root': {
                                 borderRadius: 3,
@@ -173,6 +207,7 @@ const LoginPage: React.FC = () => {
                         onChange={handleInputChange('password')}
                         fullWidth
                         variant="outlined"
+                        disabled={loading}
                         sx={{
                             '& .MuiOutlinedInput-root': {
                                 borderRadius: 3,
@@ -225,6 +260,7 @@ const LoginPage: React.FC = () => {
                         size="large"
                         fullWidth
                         onClick={handleSubmit}
+                        disabled={loading || !formData.email || !formData.password}
                         sx={{
                             py: 1.5,
                             fontSize: '1.1rem',
@@ -236,9 +272,20 @@ const LoginPage: React.FC = () => {
                             '&:hover': {
                                 backgroundColor: 'secondary.dark',
                             },
+                            '&.Mui-disabled': {
+                                backgroundColor: 'grey.300',
+                                color: 'grey.500',
+                            },
                         }}
                     >
-                        Weiter
+                        {loading ? (
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <CircularProgress size={20} color="inherit" />
+                                Wird geladen...
+                            </Box>
+                        ) : (
+                            'Weiter'
+                        )}
                     </Button>
                 </Stack>
             </Box>
