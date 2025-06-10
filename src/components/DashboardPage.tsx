@@ -7,7 +7,6 @@ import {
     CardContent,
     BottomNavigation,
     BottomNavigationAction,
-    Chip,
     Stack,
 } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
@@ -51,12 +50,21 @@ const DashboardPage: React.FC = () => {
 
     const handleNavChange = (event: React.SyntheticEvent, newValue: number) => {
         setNavValue(newValue);
-        // TODO: Navigation zu anderen Seiten implementieren
-    };
-
-    const handleLogout = () => {
-        localStorage.removeItem('user');
-        navigate('/');
+        switch (newValue) {
+            case 0:
+                // Already on dashboard
+                break;
+            case 1:
+                navigate('/profile');
+                break;
+            case 2:
+                // For now, navigate to chat with demo user
+                navigate('/chat/max-26');
+                break;
+            case 3:
+                navigate('/settings');
+                break;
+        }
     };
 
     if (!user) {
@@ -242,59 +250,7 @@ const DashboardPage: React.FC = () => {
                                 },
                             }}
                         >
-                            Mehr zu Premium erfahren
-                        </Button>
-                    </CardContent>
-                </Card>
-
-                {/* User Info für Debugging */}
-                <Card
-                    sx={{
-                        backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                        borderRadius: 3,
-                        mb: 3,
-                    }}
-                >
-                    <CardContent>
-                        <Typography variant="h6" sx={{ mb: 2, color: 'text.primary' }}>
-                            Dein Profil:
-                        </Typography>
-                        <Typography variant="body2" sx={{ mb: 1 }}>
-                            <strong>Name:</strong> {user.firstName} {user.lastName}
-                        </Typography>
-                        <Typography variant="body2" sx={{ mb: 1 }}>
-                            <strong>E-Mail:</strong> {user.email}
-                        </Typography>
-                        <Box sx={{ mt: 2 }}>
-                            <Typography variant="body2" sx={{ mb: 1 }}>
-                                <strong>Interessen:</strong>
-                            </Typography>
-                            <Stack direction="row" spacing={1} flexWrap="wrap">
-                                {user.interests.map((interest, index) => (
-                                    <Chip
-                                        key={index}
-                                        label={interest}
-                                        size="small"
-                                        sx={{
-                                            backgroundColor: 'secondary.main',
-                                            color: 'white',
-                                        }}
-                                    />
-                                ))}
-                            </Stack>
-                        </Box>
-
-                        <Button
-                            variant="outlined"
-                            onClick={handleLogout}
-                            sx={{
-                                mt: 3,
-                                borderColor: 'secondary.main',
-                                color: 'secondary.dark',
-                            }}
-                        >
-                            Logout
-                        </Button>
+                            Mehr zu Premium erfahren                        </Button>
                     </CardContent>
                 </Card>
             </Box>
