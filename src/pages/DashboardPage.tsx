@@ -58,7 +58,7 @@ const DashboardPage: React.FC = () => {
                 navigate('/profile');
                 break;
             case 2:
-                navigate('/matches');
+                navigate('/chats');
                 break;
             case 3:
                 navigate('/settings');
@@ -84,8 +84,8 @@ const DashboardPage: React.FC = () => {
             }}
         >
             {/* Header */}
-            <Box sx={{ 
-                p: 3, 
+            <Box sx={{
+                p: 3,
                 pt: 4,
                 backgroundColor: 'transparent',
             }}>

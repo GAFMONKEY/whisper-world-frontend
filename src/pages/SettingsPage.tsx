@@ -18,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 
 const SettingsPage: React.FC = () => {
     const navigate = useNavigate();
-    const [navValue, setNavValue] = useState(3); // Settings tab aktiv
+    const [navValue, setNavValue] = useState(3);
 
     const handleNavChange = (_event: React.SyntheticEvent, newValue: number) => {
         setNavValue(newValue);
@@ -27,107 +27,77 @@ const SettingsPage: React.FC = () => {
                 navigate('/dashboard');
                 break;
             case 1:
-                navigate('/matches');
+                navigate('/profile');
                 break;
             case 2:
                 navigate('/chats');
                 break;
             case 3:
-                // Already on settings page
                 break;
         }
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem('user');
-        navigate('/');
-    };
-
-    const handleMenuClick = (item: string) => {
-        if (item === 'logout') {
-            handleLogout();
-        } else {
-            console.log(`${item} clicked - TODO: Implement`);
-        }
-    };
-
     const menuItems = [
-        { key: 'profile', label: 'Profil bearbeiten', action: () => handleMenuClick('profile') },
-        { key: 'notifications', label: 'Benachrichtigungen', action: () => handleMenuClick('notifications') },
-        { key: 'privacy', label: 'Datenschutz', action: () => handleMenuClick('privacy') },
-        { key: 'help', label: 'Hilfe', action: () => handleMenuClick('help') },
-        { key: 'logout', label: 'Logout', action: () => handleMenuClick('logout') },
+        { title: 'Profil bearbeiten', description: 'Ändere deine Profilinformationen' },
+        { title: 'Benachrichtigungen', description: 'Verwalte deine Benachrichtigungseinstellungen' },
+        { title: 'Datenschutz', description: 'Datenschutz- und Sicherheitseinstellungen' },
+        { title: 'Premium', description: 'Upgrade für mehr Features' },
+        { title: 'Hilfe & Support', description: 'FAQ und Kontakt' },
+        { title: 'Abmelden', description: 'Von deinem Konto abmelden' },
     ];
 
     return (
-        <Box
-            sx={{
-                minHeight: '100vh',
-                backgroundColor: 'background.default',
-                pb: 8, // Platz für Bottom Navigation
-            }}
-        >
-            {/* Header */}
-            <Box sx={{ p: 3, pt: 4 }}>
-                <Typography
-                    variant="h4"
-                    sx={{
-                        fontWeight: 'bold',
-                        color: 'text.primary',
-                        textAlign: 'center',
-                        mb: 3,
-                    }}
-                >
+        <Box sx={{ minHeight: '100vh', backgroundColor: '#F2EEE9', pb: 8 }}>
+            <Box sx={{
+                backgroundColor: 'white',
+                borderBottom: '1px solid #DAA373',
+                px: 3,
+                py: 2,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+            }}>
+                <Typography variant="h5" sx={{ fontWeight: 600, color: '#2c2c2c' }}>
                     Einstellungen
                 </Typography>
             </Box>
 
-            {/* Menu Items */}
-            <Box sx={{ px: 2 }}>
-                <List sx={{ backgroundColor: 'transparent' }}>
+            <Box sx={{ backgroundColor: 'white' }}>
+                <List sx={{ p: 0 }}>
                     {menuItems.map((item, index) => (
-                        <React.Fragment key={item.key}>
-                            <ListItem
-                                onClick={item.action}
-                                sx={{
-                                    cursor: 'pointer',
-                                    py: 2.5,
-                                    px: 3,
-                                    backgroundColor: 'transparent',
-                                    '&:hover': {
-                                        backgroundColor: 'rgba(218, 163, 115, 0.1)',
-                                    },
-                                }}
-                            >
+                        <React.Fragment key={index}>
+                            <ListItem sx={{
+                                cursor: 'pointer',
+                                transition: 'background-color 0.2s',
+                                '&:hover': { backgroundColor: '#f5f5f5' },
+                                py: 2.5,
+                                px: 3,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                            }}>
                                 <ListItemText
-                                    primary={item.label}
+                                    primary={item.title}
+                                    secondary={item.description}
                                     primaryTypographyProps={{
-                                        fontSize: '1.1rem',
-                                        fontWeight: 500,
-                                        color: 'text.primary',
+                                        variant: "body1",
+                                        sx: { fontWeight: 500, color: 'text.primary', mb: 0.5 }
+                                    }}
+                                    secondaryTypographyProps={{
+                                        variant: "body2",
+                                        sx: { color: 'text.secondary', fontSize: '0.85rem' }
                                     }}
                                 />
-                                <ChevronRightIcon
-                                    sx={{
-                                        color: 'text.secondary',
-                                        fontSize: '1.5rem',
-                                    }}
-                                />
+                                <ChevronRightIcon sx={{ color: 'text.secondary', fontSize: '1.5rem' }} />
                             </ListItem>
                             {index < menuItems.length - 1 && (
-                                <Divider
-                                    sx={{
-                                        mx: 3,
-                                        borderColor: 'rgba(0,0,0,0.1)'
-                                    }}
-                                />
+                                <Divider sx={{ mx: 3, borderColor: 'rgba(0,0,0,0.1)' }} />
                             )}
                         </React.Fragment>
                     ))}
                 </List>
             </Box>
 
-            {/* Bottom Navigation */}
             <BottomNavigation
                 value={navValue}
                 onChange={handleNavChange}
@@ -141,28 +111,14 @@ const SettingsPage: React.FC = () => {
                     borderColor: 'secondary.main',
                     '& .MuiBottomNavigationAction-root': {
                         color: 'text.secondary',
-                        '&.Mui-selected': {
-                            color: 'secondary.main',
-                        },
+                        '&.Mui-selected': { color: 'secondary.main' },
                     },
                 }}
             >
-                <BottomNavigationAction
-                    icon={<HomeIcon />}
-                    sx={{ minWidth: 'auto' }}
-                />
-                <BottomNavigationAction
-                    icon={<FavoriteIcon />}
-                    sx={{ minWidth: 'auto' }}
-                />
-                <BottomNavigationAction
-                    icon={<ChatIcon />}
-                    sx={{ minWidth: 'auto' }}
-                />
-                <BottomNavigationAction
-                    icon={<SettingsIcon />}
-                    sx={{ minWidth: 'auto' }}
-                />
+                <BottomNavigationAction icon={<HomeIcon />} sx={{ minWidth: 'auto' }} />
+                <BottomNavigationAction icon={<FavoriteIcon />} sx={{ minWidth: 'auto' }} />
+                <BottomNavigationAction icon={<ChatIcon />} sx={{ minWidth: 'auto' }} />
+                <BottomNavigationAction icon={<SettingsIcon />} sx={{ minWidth: 'auto' }} />
             </BottomNavigation>
         </Box>
     );

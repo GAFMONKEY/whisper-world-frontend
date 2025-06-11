@@ -141,7 +141,7 @@ const ChatPage: React.FC = () => {
                 navigate('/dashboard');
                 break;
             case 1:
-                navigate('/matches');
+                navigate('/profile');
                 break;
             case 2:
                 navigate('/chats');
@@ -511,6 +511,7 @@ const ChatPage: React.FC = () => {
                                 </Typography>
                                 <Box sx={{ display: 'flex', gap: 0.5 }}>
                                     <Box
+                                        key="typing-dot-1"
                                         sx={{
                                             width: 6,
                                             height: 6,
@@ -521,6 +522,7 @@ const ChatPage: React.FC = () => {
                                         }}
                                     />
                                     <Box
+                                        key="typing-dot-2"
                                         sx={{
                                             width: 6,
                                             height: 6,
@@ -531,6 +533,7 @@ const ChatPage: React.FC = () => {
                                         }}
                                     />
                                     <Box
+                                        key="typing-dot-3"
                                         sx={{
                                             width: 6,
                                             height: 6,
@@ -565,9 +568,9 @@ const ChatPage: React.FC = () => {
                         Schnelle Antworten:
                     </Typography>
                     <Box sx={{ display: 'flex', gap: 1, pb: 1 }}>
-                        {suggestions.slice(0, 3).map((suggestion, index) => (
+                        {suggestions.slice(0, 3).map((suggestion, suggestionIndex) => (
                             <Button
-                                key={index}
+                                key={`suggestion-${suggestionIndex}-${suggestion.slice(0, 10)}`}
                                 variant="outlined"
                                 size="small"
                                 onClick={async () => {

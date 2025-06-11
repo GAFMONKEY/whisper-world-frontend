@@ -7,10 +7,8 @@ import {
     Stack,
 } from '@mui/material';
 import MicIcon from '@mui/icons-material/Mic';
-import { useNavigate } from 'react-router-dom';
 
 const RegisterPage: React.FC = () => {
-    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -30,9 +28,9 @@ const RegisterPage: React.FC = () => {
         // Hier würde die Registration API aufgerufen
     };
 
-    const handleBackToLogin = () => {
-        navigate('/');
-    };
+    // const handleBackToLogin = () => {
+    //     navigate('/');
+    // };
 
     return (
         <Box

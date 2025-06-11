@@ -2,20 +2,24 @@ import React, { useState, useEffect } from 'react';
 import {
     Box,
     Typography,
-    Card,
-    CardContent,
+    List,
+    ListItem,
+    ListItemAvatar,
+    ListItemText,
     Avatar,
     BottomNavigation,
     BottomNavigationAction,
     Badge,
-    Divider,
     CircularProgress,
     Alert,
+    Divider,
+    IconButton,
 } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ChatIcon from '@mui/icons-material/Chat';
 import SettingsIcon from '@mui/icons-material/Settings';
+import SearchIcon from '@mui/icons-material/Search';
 import { useNavigate } from 'react-router-dom';
 import { chatService, matchService } from '../services';
 import type { ChatConversation } from '../services';
@@ -32,12 +36,13 @@ interface Match {
         lastName: string;
         age: number;
         interests: string[];
+        accentColor?: string; // Akzentfarbe hinzufügen
     };
 }
 
 const ChatListPage: React.FC = () => {
     const navigate = useNavigate();
-    const [navValue, setNavValue] = useState(2); // Chat tab aktiv
+    const [navValue, setNavValue] = useState(2);
     const [conversations, setConversations] = useState<ChatConversation[]>([]);
     const [matches, setMatches] = useState<Match[]>([]);
     const [loading, setLoading] = useState(true);
@@ -56,11 +61,9 @@ const ChatListPage: React.FC = () => {
 
             console.log('📋 Loading chats and matches for user:', user.id);
 
-            // Versuche zuerst Matches vom Backend zu laden
             let userMatches: Match[] = [];
             try {
                 const backendMatches = await matchService.getMatches(user.id);
-                // Konvertiere DisplayMatch zu Match format
                 userMatches = backendMatches.map(match => ({
                     id: match.id,
                     user1Id: user.id,
@@ -71,19 +74,18 @@ const ChatListPage: React.FC = () => {
                         firstName: match.user.name.split(' ')[0] || 'User',
                         lastName: match.user.name.split(' ')[1] || '',
                         age: match.user.age,
-                        interests: [] // DisplayMatch hat keine interests, daher leer lassen
+                        interests: [],
+                        accentColor: match.user.accentColor || '#BFA9BE' // Akzentfarbe aus Backend
                     }
                 }));
                 console.log('✅ Loaded matches from backend:', userMatches.length);
             } catch (matchError) {
                 console.warn('❌ Backend not available for matches:', matchError);
-                // Keine Mock-Matches erstellen, nur leere Liste
                 userMatches = [];
             }
 
             setMatches(userMatches);
 
-            // Lade Conversations (Mock-System funktioniert bereits)
             const userConversations = await chatService.getAllConversations(user.id);
             setConversations(userConversations);
 
@@ -103,10 +105,10 @@ const ChatListPage: React.FC = () => {
                 navigate('/dashboard');
                 break;
             case 1:
-                navigate('/matches');
+                navigate('/profile');
                 break;
             case 2:
-                // Already on chat list
+                // Already on chats
                 break;
             case 3:
                 navigate('/settings');
@@ -118,34 +120,19 @@ const ChatListPage: React.FC = () => {
         navigate(`/chat/${matchId}`);
     };
 
-    const formatLastMessage = (conversation: ChatConversation) => {
-        if (!conversation.lastMessage) return 'Noch keine Nachrichten';
-
-        const { content, type, senderId } = conversation.lastMessage;
-        const isFromMe = senderId === user.id;
-        const prefix = isFromMe ? 'Du: ' : '';
-
-        if (type === 'VOICE') {
-            return `${prefix}🎤 Sprachnachricht`;
-        } else if (type === 'IMAGE') {
-            return `${prefix}📷 Bild`;
-        } else {
-            return `${prefix}${content.length > 30 ? content.substring(0, 30) + '...' : content}`;
-        }
-    };
-
-    const formatTime = (date: Date) => {
+    const formatTimestamp = (date: Date) => {
         const now = new Date();
-        const diff = now.getTime() - date.getTime();
-        const minutes = Math.floor(diff / 60000);
-        const hours = Math.floor(diff / 3600000);
-        const days = Math.floor(diff / 86400000);
+        const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
 
-        if (minutes < 1) return 'jetzt';
-        if (minutes < 60) return `${minutes}m`;
-        if (hours < 24) return `${hours}h`;
-        if (days < 7) return `${days}d`;
-        return date.toLocaleDateString('de-DE');
+        if (diffInHours < 1) {
+            const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+            return diffInMinutes <= 1 ? 'Jetzt' : `${diffInMinutes}m`;
+        } else if (diffInHours < 24) {
+            return `${diffInHours}h`;
+        } else {
+            const diffInDays = Math.floor(diffInHours / 24);
+            return diffInDays === 1 ? 'Gestern' : `${diffInDays}d`;
+        }
     };
 
     if (loading) {
@@ -153,7 +140,7 @@ const ChatListPage: React.FC = () => {
             <Box
                 sx={{
                     minHeight: '100vh',
-                    backgroundColor: 'background.default',
+                    backgroundColor: '#F2EEE9',
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -161,7 +148,7 @@ const ChatListPage: React.FC = () => {
                     gap: 2,
                 }}
             >
-                <CircularProgress size={60} sx={{ color: 'secondary.main' }} />
+                <CircularProgress size={60} sx={{ color: '#BFA9BE' }} />
                 <Typography variant="body1" sx={{ color: 'text.secondary' }}>
                     Lade deine Chats...
                 </Typography>
@@ -174,7 +161,7 @@ const ChatListPage: React.FC = () => {
             <Box
                 sx={{
                     minHeight: '100vh',
-                    backgroundColor: 'background.default',
+                    backgroundColor: '#F2EEE9',
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
@@ -188,7 +175,6 @@ const ChatListPage: React.FC = () => {
         );
     }
 
-    // Kombiniere Matches und Conversations
     const chatItems = matches.map(match => {
         const existingConversation = conversations.find(conv => conv.matchId === match.id);
         return {
@@ -204,67 +190,79 @@ const ChatListPage: React.FC = () => {
         <Box
             sx={{
                 minHeight: '100vh',
-                backgroundColor: 'background.default',
-                pb: 8, // Space for bottom navigation
+                backgroundColor: '#F2EEE9',
+                pb: 8,
             }}
         >
-            {/* Header */}
             <Box
                 sx={{
-                    p: 3,
-                    pt: 4,
-                    backgroundColor: 'secondary.main',
-                    color: 'white',
+                    backgroundColor: 'white',
+                    borderBottom: '1px solid #DAA373',
+                    px: 3,
+                    py: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
                 }}
             >
-                <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
-                    Deine Chats
+                <Typography
+                    variant="h5"
+                    sx={{
+                        fontWeight: 600,
+                        color: '#2c2c2c',
+                    }}
+                >
+                    Chats
                 </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.8 }}>
-                    {chatItems.length} {chatItems.length === 1 ? 'Match' : 'Matches'}
-                </Typography>
+                <IconButton sx={{ color: '#BFA9BE' }}>
+                    <SearchIcon />
+                </IconButton>
             </Box>
 
-            {/* Chat List */}
-            <Box sx={{ p: 2 }}>
+            <Box sx={{ backgroundColor: 'white' }}>
                 {chatItems.length === 0 ? (
-                    <Box sx={{ textAlign: 'center', py: 8 }}>
+                    <Box
+                        sx={{
+                            textAlign: 'center',
+                            py: 8,
+                            px: 3,
+                        }}
+                    >
                         <ChatIcon sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
-                        <Typography variant="h6" sx={{ color: 'text.secondary', mb: 1 }}>
+                        <Typography variant="h6" sx={{ color: 'text.primary', mb: 1, fontWeight: 600 }}>
                             Noch keine Chats
                         </Typography>
                         <Typography variant="body2" sx={{ color: 'text.secondary', mb: 3 }}>
-                            Matches findest du unter dem Herz-Symbol
+                            Matches findest du unter dem ❤️ Herz-Symbol
                         </Typography>
                     </Box>
                 ) : (
-                    chatItems.map((item, index) => (
-                        <Box key={item.match.id}>
-                            <Card
-                                sx={{
-                                    mb: 1,
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s ease',
-                                    backgroundColor: item.unreadCount > 0 ? 'rgba(76, 218, 196, 0.1)' : 'white',
-                                    border: item.unreadCount > 0 ? '1px solid rgba(76, 218, 196, 0.3)' : '1px solid rgba(0,0,0,0.1)',
-                                    '&:hover': {
-                                        transform: 'translateX(5px)',
-                                        boxShadow: 2,
-                                    },
-                                }}
-                                onClick={() => handleChatClick(item.match.id)}
-                            >
-                                <CardContent sx={{ p: 2 }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                        {/* Avatar */}
+                    <List sx={{ p: 0 }}>
+                        {chatItems.map((item, index) => (
+                            <React.Fragment key={item.match.id}>
+                                <ListItem
+                                    sx={{
+                                        cursor: 'pointer',
+                                        transition: 'background-color 0.2s',
+                                        '&:hover': {
+                                            backgroundColor: '#f5f5f5',
+                                        },
+                                        py: 2,
+                                        px: 3,
+                                    }}
+                                    onClick={() => handleChatClick(item.match.id)}
+                                >
+                                    <ListItemAvatar>
                                         <Badge
                                             badgeContent={item.unreadCount > 0 ? item.unreadCount : 0}
-                                            color="error"
+                                            color="primary"
                                             sx={{
                                                 '& .MuiBadge-badge': {
                                                     fontSize: '0.75rem',
                                                     minWidth: 18,
                                                     height: 18,
+                                                    fontWeight: 600,
+                                                    backgroundColor: '#BFA9BE',
                                                 },
                                             }}
                                         >
@@ -272,83 +270,68 @@ const ChatListPage: React.FC = () => {
                                                 sx={{
                                                     width: 56,
                                                     height: 56,
-                                                    backgroundColor: 'secondary.main',
-                                                    fontSize: '1.5rem',
+                                                    backgroundColor: item.match.otherUser.accentColor || '#DAA373',
+                                                    color: 'white',
+                                                    fontSize: '1.3rem',
                                                     fontWeight: 600,
                                                 }}
                                             >
-                                                {item.match.otherUser.firstName[0]}
+                                                {item.match.otherUser.firstName.charAt(0).toUpperCase()}
                                             </Avatar>
                                         </Badge>
+                                    </ListItemAvatar>
 
-                                        {/* Chat Info */}
-                                        <Box sx={{ flex: 1, minWidth: 0 }}>
-                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
-                                                <Typography
-                                                    variant="subtitle1"
-                                                    sx={{
-                                                        fontWeight: item.unreadCount > 0 ? 600 : 500,
-                                                        color: 'text.primary',
-                                                    }}
-                                                >
-                                                    {item.match.otherUser.firstName} {item.match.otherUser.lastName}
-                                                </Typography>
-                                                <Typography
-                                                    variant="caption"
-                                                    sx={{
-                                                        color: 'text.secondary',
-                                                        fontWeight: item.unreadCount > 0 ? 600 : 400,
-                                                    }}
-                                                >
-                                                    {formatTime(item.lastActivity)}
-                                                </Typography>
-                                            </Box>
+                                    <ListItemText
+                                        primary={item.match.otherUser.firstName}
+                                        secondary={
+                                            item.conversation?.lastMessage?.type === 'VOICE'
+                                                ? '🎤 Sprachnachricht'
+                                                : item.conversation?.lastMessage?.content || 'Sagt Hallo!'
+                                        }
+                                        primaryTypographyProps={{
+                                            variant: "body1",
+                                            sx: {
+                                                fontWeight: item.unreadCount > 0 ? 600 : 400,
+                                                color: 'text.primary',
+                                                mb: 0.5,
+                                            }
+                                        }}
+                                        secondaryTypographyProps={{
+                                            variant: "body2",
+                                            sx: {
+                                                color: 'text.secondary',
+                                                fontWeight: item.unreadCount > 0 ? 500 : 400,
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis',
+                                                whiteSpace: 'nowrap',
+                                                maxWidth: '180px',
+                                            }
+                                        }}
+                                        sx={{ pr: 2 }}
+                                    />
 
-                                            <Typography
-                                                variant="body2"
-                                                sx={{
-                                                    color: item.unreadCount > 0 ? 'text.primary' : 'text.secondary',
-                                                    fontWeight: item.unreadCount > 0 ? 500 : 400,
-                                                    overflow: 'hidden',
-                                                    textOverflow: 'ellipsis',
-                                                    whiteSpace: 'nowrap',
-                                                }}
-                                            >
-                                                {item.conversation
-                                                    ? formatLastMessage(item.conversation)
-                                                    : '👋 Sagt Hallo!'}
-                                            </Typography>
-
-                                            {/* Interests Preview */}
-                                            <Box sx={{ display: 'flex', gap: 0.5, mt: 0.5, flexWrap: 'wrap' }}>
-                                                {item.match.otherUser.interests.slice(0, 2).map((interest, i) => (
-                                                    <Box
-                                                        key={i}
-                                                        sx={{
-                                                            backgroundColor: 'rgba(76, 218, 196, 0.1)',
-                                                            color: 'secondary.main',
-                                                            px: 1,
-                                                            py: 0.2,
-                                                            borderRadius: 1,
-                                                            fontSize: '0.7rem',
-                                                            fontWeight: 500,
-                                                        }}
-                                                    >
-                                                        {interest}
-                                                    </Box>
-                                                ))}
-                                            </Box>
-                                        </Box>
+                                    <Box sx={{ textAlign: 'right' }}>
+                                        <Typography
+                                            variant="caption"
+                                            sx={{
+                                                color: item.unreadCount > 0 ? '#BB7D67' : 'text.secondary',
+                                                fontWeight: item.unreadCount > 0 ? 600 : 400,
+                                                fontSize: '0.75rem',
+                                            }}
+                                        >
+                                            {formatTimestamp(item.lastActivity)}
+                                        </Typography>
                                     </Box>
-                                </CardContent>
-                            </Card>
-                            {index < chatItems.length - 1 && <Divider sx={{ my: 1, opacity: 0.3 }} />}
-                        </Box>
-                    ))
+                                </ListItem>
+                                {index < chatItems.length - 1 && (
+                                    <Divider sx={{ ml: 10, borderColor: '#f0f0f0' }} />
+                                )}
+                            </React.Fragment>
+                        ))}
+                    </List>
                 )}
             </Box>
 
-            {/* Bottom Navigation */}
             <BottomNavigation
                 value={navValue}
                 onChange={handleNavChange}
@@ -357,36 +340,24 @@ const ChatListPage: React.FC = () => {
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    backgroundColor: 'background.default',
-                    borderTop: '1px solid',
-                    borderColor: 'secondary.main',
+                    backgroundColor: 'white',
+                    borderTop: '2px solid #DAA373',
                     '& .MuiBottomNavigationAction-root': {
-                        color: 'text.secondary',
+                        color: '#5a5a5a',
                         '&.Mui-selected': {
-                            color: 'secondary.main',
+                            color: '#BFA9BE',
                         },
                     },
                 }}
             >
-                <BottomNavigationAction
-                    icon={<HomeIcon />}
-                    sx={{ minWidth: 'auto' }}
-                />
-                <BottomNavigationAction
-                    icon={<FavoriteIcon />}
-                    sx={{ minWidth: 'auto' }}
-                />
-                <BottomNavigationAction
-                    icon={<ChatIcon />}
-                    sx={{ minWidth: 'auto' }}
-                />
-                <BottomNavigationAction
-                    icon={<SettingsIcon />}
-                    sx={{ minWidth: 'auto' }}
-                />
+                <BottomNavigationAction icon={<HomeIcon />} />
+                <BottomNavigationAction icon={<FavoriteIcon />} />
+                <BottomNavigationAction icon={<ChatIcon />} />
+                <BottomNavigationAction icon={<SettingsIcon />} />
             </BottomNavigation>
         </Box>
     );
 };
 
+export { ChatListPage };
 export default ChatListPage;

@@ -43,14 +43,19 @@ const LoginPage: React.FC = () => {
             // Navigiere zum Dashboard
             navigate('/dashboard');
 
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Login error:', error);
 
-            if (error.response?.status === 401) {
-                setError('Ungültige E-Mail oder Passwort');
-            } else if (error.response?.status === 500) {
-                setError('Server-Fehler. Bitte versuchen Sie es später erneut.');
-            } else if (error.code === 'ECONNREFUSED') {
+            if (error && typeof error === 'object' && 'response' in error) {
+                const axiosError = error as { response?: { status?: number } };
+                if (axiosError.response?.status === 401) {
+                    setError('Ungültige E-Mail oder Passwort');
+                } else if (axiosError.response?.status === 500) {
+                    setError('Server-Fehler. Bitte versuchen Sie es später erneut.');
+                } else {
+                    setError('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.');
+                }
+            } else if (error && typeof error === 'object' && 'code' in error && error.code === 'ECONNREFUSED') {
                 setError('Verbindung zum Server fehlgeschlagen. Ist das Backend gestartet?');
             } else {
                 setError('Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.');

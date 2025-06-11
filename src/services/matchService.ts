@@ -52,6 +52,7 @@ export interface DisplayMatch {
         id: string;
         name: string;
         age: number;
+        accentColor?: string; // Akzentfarbe hinzufügen
     };
     matchedAt: Date; // Änderung zu Date-Objekt
     lastMessage?: {
@@ -239,7 +240,8 @@ const matchService = {
                         user: {
                             id: otherUserId,
                             name: `${userData.firstName} ${userData.lastName}`,
-                            age: age
+                            age: age,
+                            accentColor: userData.accentColor || '#BFA9BE' // Akzentfarbe hinzufügen
                         },
                         matchedAt: new Date(match.matchedAt),
                         lastMessage: match.chatMessages && match.chatMessages.length > 0

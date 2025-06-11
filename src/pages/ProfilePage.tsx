@@ -81,7 +81,7 @@ const ProfilePage: React.FC = () => {
                 // Already on profile page
                 break;
             case 2:
-                navigate('/matches');
+                navigate('/chats');
                 break;
             case 3:
                 navigate('/settings');
@@ -326,39 +326,39 @@ const ProfilePage: React.FC = () => {
                 {showMatchMessage && (
                     <Box
                         sx={{
-                            background: isActualMatch 
+                            background: isActualMatch
                                 ? 'linear-gradient(135deg, #4CAF50 0%, #45A049 100%)'
                                 : 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)',
                             color: 'white',
                             borderRadius: 4,
                             p: 3,
                             mb: 3,
-                            boxShadow: isActualMatch 
-                                ? '0 8px 25px rgba(76, 175, 80, 0.3)' 
+                            boxShadow: isActualMatch
+                                ? '0 8px 25px rgba(76, 175, 80, 0.3)'
                                 : '0 8px 25px rgba(33, 150, 243, 0.3)',
                             border: '2px solid rgba(255, 255, 255, 0.2)',
                             animation: 'matchAppear 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
                             '@keyframes matchAppear': {
-                                '0%': { 
-                                    opacity: 0, 
+                                '0%': {
+                                    opacity: 0,
                                     transform: 'translateY(-20px) scale(0.9)',
                                     filter: 'blur(4px)'
                                 },
-                                '50%': { 
+                                '50%': {
                                     transform: 'translateY(-5px) scale(1.02)',
                                     filter: 'blur(0px)'
                                 },
-                                '100%': { 
-                                    opacity: 1, 
+                                '100%': {
+                                    opacity: 1,
                                     transform: 'translateY(0) scale(1)',
                                     filter: 'blur(0px)'
                                 },
                             },
                         }}
                     >
-                        <Typography 
-                            variant="h6" 
-                            sx={{ 
+                        <Typography
+                            variant="h6"
+                            sx={{
                                 fontWeight: 700,
                                 textAlign: 'center',
                                 fontSize: '1.1rem',
@@ -372,10 +372,10 @@ const ProfilePage: React.FC = () => {
                                 `💌 Like gesendet!`
                             )}
                         </Typography>
-                        <Typography 
-                            variant="body1" 
-                            sx={{ 
-                                mt: 1, 
+                        <Typography
+                            variant="body1"
+                            sx={{
+                                mt: 1,
                                 textAlign: 'center',
                                 fontWeight: 500,
                                 opacity: 0.95,
@@ -388,10 +388,10 @@ const ProfilePage: React.FC = () => {
                             )}
                         </Typography>
                         {isActualMatch && (
-                            <Typography 
-                                variant="body2" 
-                                sx={{ 
-                                    mt: 2, 
+                            <Typography
+                                variant="body2"
+                                sx={{
+                                    mt: 2,
                                     textAlign: 'center',
                                     opacity: 0.85,
                                     fontStyle: 'italic',

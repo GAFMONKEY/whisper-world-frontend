@@ -30,14 +30,10 @@ export interface LoginResponse {
 
 export const authService = {
     login: async (email: string, password: string): Promise<LoginResponse> => {
-        try {
-            const response = await api.post('/auth/login', {
-                email,
-                password
-            });
-            return response.data;
-        } catch (error) {
-            throw error;
-        }
+        const response = await api.post('/auth/login', {
+            email,
+            password
+        });
+        return response.data;
     }
 };
