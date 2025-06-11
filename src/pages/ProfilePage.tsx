@@ -289,8 +289,10 @@ const ProfilePage: React.FC = () => {
         <Box
             sx={{
                 minHeight: '100vh',
-                backgroundColor: 'background.default',
-                pb: 8, // Platz für Bottom Navigation
+                background: currentProfile?.accentColor 
+                    ? `linear-gradient(135deg, ${currentProfile.accentColor}15 0%, ${currentProfile.accentColor}08 100%)`
+                    : 'linear-gradient(135deg, #BFA9BE15 0%, #BFA9BE08 100%)',
+                pb: 20, // More space for sticky buttons + bottom navigation
                 animation: 'fadeIn 0.6s ease-out',
                 '@keyframes fadeIn': {
                     '0%': {
@@ -305,18 +307,17 @@ const ProfilePage: React.FC = () => {
             }}
         >
             {/* Header */}
-            <Box sx={{ p: 3, pt: 4, textAlign: 'center' }}>
+            <Box sx={{ p: 3, pt: 4, pb: 5, textAlign: 'center' }}>
                 <Typography
                     variant="h4"
                     sx={{
                         fontWeight: 'bold',
-                        mb: 2,
-                        background: 'linear-gradient(135deg, #2C3E50 0%, #4A6741 100%)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
+                        mb: 4,
+                        color: currentProfile?.accentColor || '#2C3E50',
                         textAlign: 'center',
                         letterSpacing: '0.5px',
                         fontFamily: 'Inter, sans-serif',
+                        textShadow: '0 2px 4px rgba(0,0,0,0.1)',
                     }}
                 >
                     {currentProfile?.name || 'Unbekannt'}, {currentProfile?.age || 0}
@@ -409,9 +410,11 @@ const ProfilePage: React.FC = () => {
             <Box sx={{
                 px: 3,
                 pb: 3,
+                pt: 2, // Additional top padding for better separation
                 transition: 'all 0.3s ease-in-out',
                 opacity: playingAudio ? 0.9 : 1,
                 transform: showMatchMessage ? 'scale(0.98)' : 'scale(1)',
+                mb: 10, // Extra Platz für Sticky Buttons
             }}>
                 {/* Categories mit Fragen */}
                 {currentProfile && currentProfile.categories && Array.isArray(currentProfile.categories) && currentProfile.categories.length > 0 ? (
@@ -948,8 +951,28 @@ const ProfilePage: React.FC = () => {
                     </Box>
                 </Box>
 
-                {/* Action Buttons */}
-                <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
+                {/* Spacer for sticky buttons */}
+                <Box sx={{ height: 120 }} />
+            </Box>
+
+            {/* Sticky Action Buttons */}
+            <Box
+                sx={{
+                    position: 'fixed',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    background: 'rgba(255, 255, 255, 0.95)',
+                    backdropFilter: 'blur(8px)',
+                    borderTop: '1px solid rgba(0,0,0,0.05)',
+                    zIndex: 1000,
+                    pb: 7, // Space for bottom navigation
+                    pt: 2,
+                    px: 3,
+                    boxShadow: '0 -2px 20px rgba(0,0,0,0.05)',
+                }}
+            >
+                <Box sx={{ display: 'flex', gap: 2, mb: 1 }}>
                     <Button
                         variant="contained"
                         onClick={handleSkip}
@@ -982,20 +1005,28 @@ const ProfilePage: React.FC = () => {
                         disabled={isMatching}
                         sx={{
                             flex: 1,
-                            background: 'linear-gradient(135deg, #BFA9BE 0%, #A693A1 100%)',
+                            background: currentProfile?.accentColor 
+                                ? `linear-gradient(135deg, ${currentProfile.accentColor} 0%, ${currentProfile.accentColor}CC 100%)`
+                                : 'linear-gradient(135deg, #BFA9BE 0%, #A693A1 100%)',
                             color: 'white',
                             borderRadius: 25,
                             py: 2,
                             fontSize: '1rem',
                             fontWeight: 700,
                             textTransform: 'none',
-                            boxShadow: '0 4px 12px rgba(191, 169, 190, 0.3)',
+                            boxShadow: currentProfile?.accentColor 
+                                ? `0 4px 12px ${currentProfile.accentColor}40`
+                                : '0 4px 12px rgba(191, 169, 190, 0.3)',
                             border: '2px solid transparent',
                             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                             '&:hover': {
-                                background: 'linear-gradient(135deg, #A693A1 0%, #96818A 100%)',
+                                background: currentProfile?.accentColor 
+                                    ? `linear-gradient(135deg, ${currentProfile.accentColor}DD 0%, ${currentProfile.accentColor}AA 100%)`
+                                    : 'linear-gradient(135deg, #A693A1 0%, #96818A 100%)',
                                 transform: 'translateY(-2px) scale(1.02)',
-                                boxShadow: '0 8px 25px rgba(191, 169, 190, 0.4)',
+                                boxShadow: currentProfile?.accentColor 
+                                    ? `0 8px 25px ${currentProfile.accentColor}60`
+                                    : '0 8px 25px rgba(191, 169, 190, 0.4)',
                                 border: '2px solid rgba(255,255,255,0.2)',
                             },
                             '&:disabled': {
@@ -1011,7 +1042,7 @@ const ProfilePage: React.FC = () => {
                                 Sende Like...
                             </Box>
                         ) : (
-                            'Gespräch anfangen'
+                            'Gespräch beginnen'
                         )}
                     </Button>
                 </Box>
@@ -1026,13 +1057,15 @@ const ProfilePage: React.FC = () => {
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    backgroundColor: 'background.default',
-                    borderTop: '1px solid',
-                    borderColor: 'secondary.main',
+                    backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                    backdropFilter: 'blur(8px)',
+                    borderTop: '1px solid rgba(0,0,0,0.05)',
+                    zIndex: 1001, // Higher than sticky buttons
+                    boxShadow: '0 -2px 15px rgba(0,0,0,0.04)',
                     '& .MuiBottomNavigationAction-root': {
                         color: 'text.secondary',
                         '&.Mui-selected': {
-                            color: 'secondary.main',
+                            color: currentProfile?.accentColor || 'secondary.main',
                         },
                     },
                 }}

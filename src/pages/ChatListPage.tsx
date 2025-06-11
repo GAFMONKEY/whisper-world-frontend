@@ -2,17 +2,11 @@ import React, { useState, useEffect } from 'react';
 import {
     Box,
     Typography,
-    List,
-    ListItem,
-    ListItemAvatar,
-    ListItemText,
     Avatar,
     BottomNavigation,
     BottomNavigationAction,
-    Badge,
     CircularProgress,
     Alert,
-    Divider,
     IconButton,
 } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
@@ -190,36 +184,48 @@ const ChatListPage: React.FC = () => {
         <Box
             sx={{
                 minHeight: '100vh',
-                backgroundColor: '#F2EEE9',
+                backgroundColor: '#F8F9FA',
                 pb: 8,
             }}
         >
+            {/* Header */}
             <Box
                 sx={{
-                    backgroundColor: 'white',
-                    borderBottom: '1px solid #DAA373',
+                    background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+                    borderBottom: '1px solid rgba(0,0,0,0.08)',
                     px: 3,
-                    py: 2,
+                    py: 3,
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'space-between'
+                    justifyContent: 'space-between',
+                    boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
                 }}
             >
                 <Typography
                     variant="h5"
                     sx={{
-                        fontWeight: 600,
-                        color: '#2c2c2c',
+                        fontWeight: 700,
+                        color: '#2C3E50',
+                        letterSpacing: '0.5px',
                     }}
                 >
                     Chats
                 </Typography>
-                <IconButton sx={{ color: '#BFA9BE' }}>
+                <IconButton 
+                    sx={{ 
+                        color: '#BFA9BE',
+                        backgroundColor: 'rgba(191, 169, 190, 0.1)',
+                        '&:hover': {
+                            backgroundColor: 'rgba(191, 169, 190, 0.2)',
+                        }
+                    }}
+                >
                     <SearchIcon />
                 </IconButton>
             </Box>
 
-            <Box sx={{ backgroundColor: 'white' }}>
+            {/* Chat List */}
+            <Box sx={{ backgroundColor: 'transparent', px: 2, pt: 2 }}>
                 {chatItems.length === 0 ? (
                     <Box
                         sx={{
@@ -237,98 +243,117 @@ const ChatListPage: React.FC = () => {
                         </Typography>
                     </Box>
                 ) : (
-                    <List sx={{ p: 0 }}>
-                        {chatItems.map((item, index) => (
-                            <React.Fragment key={item.match.id}>
-                                <ListItem
-                                    sx={{
-                                        cursor: 'pointer',
-                                        transition: 'background-color 0.2s',
-                                        '&:hover': {
-                                            backgroundColor: '#f5f5f5',
-                                        },
-                                        py: 2,
-                                        px: 3,
-                                    }}
-                                    onClick={() => handleChatClick(item.match.id)}
-                                >
-                                    <ListItemAvatar>
-                                        <Badge
-                                            badgeContent={item.unreadCount > 0 ? item.unreadCount : 0}
-                                            color="primary"
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                        {chatItems.map((item) => (
+                            <Box
+                                key={item.match.id}
+                                sx={{
+                                    backgroundColor: 'white',
+                                    borderRadius: 3,
+                                    border: '1px solid rgba(0,0,0,0.06)',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                                    '&:hover': {
+                                        backgroundColor: '#fafafa',
+                                        transform: 'translateY(-1px)',
+                                        boxShadow: '0 4px 15px rgba(0,0,0,0.08)',
+                                        borderColor: item.match.otherUser.accentColor || '#BFA9BE',
+                                    },
+                                    '&:active': {
+                                        transform: 'translateY(0px)',
+                                        boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+                                    },
+                                    p: 3,
+                                }}
+                                onClick={() => handleChatClick(item.match.id)}
+                            >
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2.5 }}>
+                                    {/* Avatar with Badge */}
+                                    <Box sx={{ position: 'relative' }}>
+                                        <Avatar
                                             sx={{
-                                                '& .MuiBadge-badge': {
-                                                    fontSize: '0.75rem',
-                                                    minWidth: 18,
-                                                    height: 18,
-                                                    fontWeight: 600,
-                                                    backgroundColor: '#BFA9BE',
-                                                },
+                                                width: 52,
+                                                height: 52,
+                                                background: `linear-gradient(135deg, ${item.match.otherUser.accentColor || '#BFA9BE'} 0%, ${item.match.otherUser.accentColor || '#BFA9BE'}CC 100%)`,
+                                                color: 'white',
+                                                fontSize: '1.25rem',
+                                                fontWeight: 700,
+                                                boxShadow: `0 4px 12px ${item.match.otherUser.accentColor || '#BFA9BE'}30`,
+                                                border: '3px solid white',
                                             }}
                                         >
-                                            <Avatar
+                                            {item.match.otherUser.firstName.charAt(0).toUpperCase()}
+                                        </Avatar>
+                                        {item.unreadCount > 0 && (
+                                            <Box
                                                 sx={{
-                                                    width: 56,
-                                                    height: 56,
-                                                    backgroundColor: item.match.otherUser.accentColor || '#DAA373',
+                                                    position: 'absolute',
+                                                    top: -2,
+                                                    right: -2,
+                                                    width: 20,
+                                                    height: 20,
+                                                    borderRadius: '50%',
+                                                    backgroundColor: '#FF6B6B',
                                                     color: 'white',
-                                                    fontSize: '1.3rem',
-                                                    fontWeight: 600,
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    fontSize: '0.75rem',
+                                                    fontWeight: 700,
+                                                    border: '2px solid white',
+                                                    boxShadow: '0 2px 8px rgba(255, 107, 107, 0.3)',
                                                 }}
                                             >
-                                                {item.match.otherUser.firstName.charAt(0).toUpperCase()}
-                                            </Avatar>
-                                        </Badge>
-                                    </ListItemAvatar>
+                                                {item.unreadCount > 9 ? '9+' : item.unreadCount}
+                                            </Box>
+                                        )}
+                                    </Box>
 
-                                    <ListItemText
-                                        primary={item.match.otherUser.firstName}
-                                        secondary={
-                                            item.conversation?.lastMessage?.type === 'VOICE'
-                                                ? '🎤 Sprachnachricht'
-                                                : item.conversation?.lastMessage?.content || 'Sagt Hallo!'
-                                        }
-                                        primaryTypographyProps={{
-                                            variant: "body1",
-                                            sx: {
-                                                fontWeight: item.unreadCount > 0 ? 600 : 400,
-                                                color: 'text.primary',
-                                                mb: 0.5,
-                                            }
-                                        }}
-                                        secondaryTypographyProps={{
-                                            variant: "body2",
-                                            sx: {
-                                                color: 'text.secondary',
+                                    {/* Chat Info */}
+                                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
+                                            <Typography
+                                                variant="body1"
+                                                sx={{
+                                                    fontWeight: item.unreadCount > 0 ? 700 : 600,
+                                                    color: '#2C3E50',
+                                                    fontSize: '1.1rem',
+                                                }}
+                                            >
+                                                {item.match.otherUser.firstName}
+                                            </Typography>
+                                            <Typography
+                                                variant="caption"
+                                                sx={{
+                                                    color: item.unreadCount > 0 ? (item.match.otherUser.accentColor || '#BFA9BE') : 'text.secondary',
+                                                    fontWeight: item.unreadCount > 0 ? 600 : 400,
+                                                    fontSize: '0.8rem',
+                                                }}
+                                            >
+                                                {formatTimestamp(item.lastActivity)}
+                                            </Typography>
+                                        </Box>
+                                        <Typography
+                                            variant="body2"
+                                            sx={{
+                                                color: item.unreadCount > 0 ? '#5A6C7D' : 'text.secondary',
                                                 fontWeight: item.unreadCount > 0 ? 500 : 400,
                                                 overflow: 'hidden',
                                                 textOverflow: 'ellipsis',
                                                 whiteSpace: 'nowrap',
-                                                maxWidth: '180px',
-                                            }
-                                        }}
-                                        sx={{ pr: 2 }}
-                                    />
-
-                                    <Box sx={{ textAlign: 'right' }}>
-                                        <Typography
-                                            variant="caption"
-                                            sx={{
-                                                color: item.unreadCount > 0 ? '#BB7D67' : 'text.secondary',
-                                                fontWeight: item.unreadCount > 0 ? 600 : 400,
-                                                fontSize: '0.75rem',
+                                                lineHeight: 1.4,
                                             }}
                                         >
-                                            {formatTimestamp(item.lastActivity)}
+                                            {item.conversation?.lastMessage?.type === 'VOICE'
+                                                ? '🎤 Sprachnachricht'
+                                                : item.conversation?.lastMessage?.content || 'Sagt Hallo!'}
                                         </Typography>
                                     </Box>
-                                </ListItem>
-                                {index < chatItems.length - 1 && (
-                                    <Divider sx={{ ml: 10, borderColor: '#f0f0f0' }} />
-                                )}
-                            </React.Fragment>
+                                </Box>
+                            </Box>
                         ))}
-                    </List>
+                    </Box>
                 )}
             </Box>
 
