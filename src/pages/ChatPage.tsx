@@ -37,6 +37,11 @@ const ChatPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [sending, setSending] = useState(false);
+    const [isTyping, setIsTyping] = useState(false);
+    const [suggestions] = useState(chatService.getMockSuggestions());
+    const [isRecording, setIsRecording] = useState(false);
+    const [recordingDuration, setRecordingDuration] = useState(0);
+    const [showNewMessageNotification, setShowNewMessageNotification] = useState(false);
 
     // Current user aus localStorage - mit Backend-kompatible UUID
     const user = getCurrentUser();    // Chat-Conversation laden
@@ -75,18 +80,59 @@ const ChatPage: React.FC = () => {
         if (conversation && startWith) {
             if (startWith === 'voice') {
                 console.log('🎤 Auto-starting voice message recording...');
-                // TODO: Implement voice recording auto-start
-                // For now, just focus on the input
+                // Auto-start voice recording after a short delay
+                setTimeout(() => {
+                    handleVoiceRecording();
+                }, 1000);
             } else if (startWith === 'text') {
                 console.log('📝 Auto-focusing text input...');
-                // Focus the text input
-                const textInput = document.querySelector('#message-input') as HTMLInputElement;
-                if (textInput) {
-                    textInput.focus();
-                }
+                // Focus the text input and show welcome message
+                setTimeout(() => {
+                    const textInput = document.querySelector('#message-input') as HTMLInputElement;
+                    if (textInput) {
+                        textInput.focus();
+                        textInput.placeholder = `Hi ${conversation.otherUser.name}! Schreib deine erste Nachricht...`;
+                    }
+                }, 500);
             }
         }
     }, [conversation, startWith]);
+
+    // Listen for mock responses in real-time
+    useEffect(() => {
+        const handleMockMessage = (event: CustomEvent) => {
+            const { matchId: eventMatchId, message } = event.detail;
+            if (eventMatchId === matchId) {
+                console.log('📨 Received mock message:', message);
+
+                // Show typing indicator
+                setIsTyping(true);
+
+                // Simulate typing delay
+                setTimeout(() => {
+                    setIsTyping(false);
+                    setConversation(prev => {
+                        if (!prev) return prev;
+                        return {
+                            ...prev,
+                            messages: [...prev.messages, message],
+                            lastMessage: message,
+                            unreadCount: prev.unreadCount + 1
+                        };
+                    });
+
+                    // Show new message notification
+                    setShowNewMessageNotification(true);
+                    setTimeout(() => setShowNewMessageNotification(false), 3000);
+                }, 1500); // 1.5 second typing simulation
+            }
+        };
+
+        window.addEventListener('newMockMessage', handleMockMessage as EventListener);
+        return () => {
+            window.removeEventListener('newMockMessage', handleMockMessage as EventListener);
+        };
+    }, [matchId]);
 
     const handleNavChange = (_event: React.SyntheticEvent, newValue: number) => {
         setNavValue(newValue);
@@ -95,10 +141,10 @@ const ChatPage: React.FC = () => {
                 navigate('/dashboard');
                 break;
             case 1:
-                navigate('/profile');
+                navigate('/matches');
                 break;
             case 2:
-                // Already on chat page
+                navigate('/chats');
                 break;
             case 3:
                 navigate('/settings');
@@ -115,7 +161,7 @@ const ChatPage: React.FC = () => {
             console.log('📤 Sending message:', message);
 
             const newMessage = await chatService.sendMessage({
-                matchId,
+                matchId: matchId!,
                 senderId: user.id,
                 content: message.trim(),
                 type: 'TEXT'
@@ -139,6 +185,58 @@ const ChatPage: React.FC = () => {
             setError('Fehler beim Senden der Nachricht.');
         } finally {
             setSending(false);
+        }
+    };
+
+    const handleVoiceRecording = async () => {
+        if (isRecording) {
+            // Stop recording
+            setIsRecording(false);
+            setRecordingDuration(0);
+
+            try {
+                setSending(true);
+                // Mock voice message
+                const voiceMessage = await chatService.sendMessage({
+                    matchId: matchId!,
+                    senderId: user.id,
+                    content: 'Sprachnachricht',
+                    type: 'VOICE'
+                });
+
+                // Update conversation
+                setConversation(prev => {
+                    if (!prev) return prev;
+                    return {
+                        ...prev,
+                        messages: [...prev.messages, voiceMessage],
+                        lastMessage: voiceMessage
+                    };
+                });
+
+                console.log('✅ Voice message sent successfully');
+            } catch (err) {
+                console.error('❌ Error sending voice message:', err);
+                setError('Fehler beim Senden der Sprachnachricht.');
+            } finally {
+                setSending(false);
+            }
+        } else {
+            // Start recording
+            setIsRecording(true);
+            setRecordingDuration(0);
+
+            // Mock recording timer
+            const timer = setInterval(() => {
+                setRecordingDuration(prev => {
+                    if (prev >= 30) { // Max 30 seconds
+                        clearInterval(timer);
+                        handleVoiceRecording(); // Auto-stop
+                        return prev;
+                    }
+                    return prev + 1;
+                });
+            }, 1000);
         }
     };
 
@@ -208,8 +306,66 @@ const ChatPage: React.FC = () => {
                 backgroundColor: 'background.default',
                 display: 'flex',
                 flexDirection: 'column',
+                '& @keyframes typing': {
+                    '0%, 60%, 100%': {
+                        transform: 'translateY(0)',
+                        opacity: 0.4,
+                    },
+                    '30%': {
+                        transform: 'translateY(-10px)',
+                        opacity: 1,
+                    },
+                },
+                '& @keyframes pulse': {
+                    '0%': {
+                        transform: 'scale(1)',
+                        boxShadow: '0 0 0 0 rgba(244, 67, 54, 0.7)',
+                    },
+                    '70%': {
+                        transform: 'scale(1.1)',
+                        boxShadow: '0 0 0 10px rgba(244, 67, 54, 0)',
+                    },
+                    '100%': {
+                        transform: 'scale(1)',
+                        boxShadow: '0 0 0 0 rgba(244, 67, 54, 0)',
+                    },
+                },
+                '& @keyframes slideDown': {
+                    '0%': {
+                        transform: 'translateX(-50%) translateY(-100%)',
+                        opacity: 0,
+                    },
+                    '100%': {
+                        transform: 'translateX(-50%) translateY(0)',
+                        opacity: 1,
+                    },
+                },
             }}
         >
+            {/* New Message Notification */}
+            {showNewMessageNotification && (
+                <Box
+                    sx={{
+                        position: 'fixed',
+                        top: 100,
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        backgroundColor: 'success.main',
+                        color: 'white',
+                        px: 3,
+                        py: 1,
+                        borderRadius: 25,
+                        boxShadow: 3,
+                        zIndex: 1000,
+                        animation: 'slideDown 0.3s ease-out',
+                    }}
+                >
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                        📱 Neue Nachricht von {conversation?.otherUser.name}
+                    </Typography>
+                </Box>
+            )}
+
             {/* Header */}
             <AppBar
                 position="static"
@@ -222,7 +378,7 @@ const ChatPage: React.FC = () => {
                     <IconButton
                         edge="start"
                         color="inherit"
-                        onClick={() => navigate('/profile')}
+                        onClick={() => navigate('/chats')}
                         sx={{ mr: 2 }}
                     >
                         <ArrowBackIcon />
@@ -294,12 +450,26 @@ const ChatPage: React.FC = () => {
                                         variant="caption"
                                         sx={{
                                             opacity: 0.7,
-                                            display: 'block',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: 0.5,
                                             mt: 0.5,
                                             fontSize: '0.75rem',
                                         }}
                                     >
                                         {formatTime(msg.timestamp)}
+                                        {msg.senderId === user.id && (
+                                            <Box
+                                                sx={{
+                                                    width: 8,
+                                                    height: 8,
+                                                    borderRadius: '50%',
+                                                    backgroundColor: msg.isRead ? '#4CAF50' : '#FFC107',
+                                                    ml: 0.5,
+                                                }}
+                                                title={msg.isRead ? 'Gelesen' : 'Zugestellt'}
+                                            />
+                                        )}
                                     </Typography>
                                 </CardContent>
                             </Card>
@@ -315,7 +485,141 @@ const ChatPage: React.FC = () => {
                         </Typography>
                     </Box>
                 )}
+
+                {/* Typing Indicator */}
+                {isTyping && (
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'flex-start',
+                            mb: 2,
+                        }}
+                    >
+                        <Card
+                            sx={{
+                                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                color: 'text.primary',
+                                borderRadius: 3,
+                                border: '1px solid rgba(0,0,0,0.1)',
+                                px: 2,
+                                py: 1,
+                            }}
+                        >
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                    {conversation.otherUser.name} schreibt
+                                </Typography>
+                                <Box sx={{ display: 'flex', gap: 0.5 }}>
+                                    <Box
+                                        sx={{
+                                            width: 6,
+                                            height: 6,
+                                            borderRadius: '50%',
+                                            backgroundColor: 'text.secondary',
+                                            animation: 'typing 1.4s infinite ease-in-out',
+                                            animationDelay: '0s',
+                                        }}
+                                    />
+                                    <Box
+                                        sx={{
+                                            width: 6,
+                                            height: 6,
+                                            borderRadius: '50%',
+                                            backgroundColor: 'text.secondary',
+                                            animation: 'typing 1.4s infinite ease-in-out',
+                                            animationDelay: '0.2s',
+                                        }}
+                                    />
+                                    <Box
+                                        sx={{
+                                            width: 6,
+                                            height: 6,
+                                            borderRadius: '50%',
+                                            backgroundColor: 'text.secondary',
+                                            animation: 'typing 1.4s infinite ease-in-out',
+                                            animationDelay: '0.4s',
+                                        }}
+                                    />
+                                </Box>
+                            </Box>
+                        </Card>
+                    </Box>
+                )}
             </Box>
+
+            {/* Quick Suggestions */}
+            {conversation && conversation.messages.length === 1 && !message && (
+                <Box
+                    sx={{
+                        position: 'fixed',
+                        bottom: 200, // Above message input
+                        left: 0,
+                        right: 0,
+                        backgroundColor: 'transparent',
+                        p: 2,
+                        maxHeight: 100,
+                        overflowX: 'auto',
+                    }}
+                >
+                    <Typography variant="caption" sx={{ color: 'text.secondary', mb: 1, display: 'block' }}>
+                        Schnelle Antworten:
+                    </Typography>
+                    <Box sx={{ display: 'flex', gap: 1, pb: 1 }}>
+                        {suggestions.slice(0, 3).map((suggestion, index) => (
+                            <Button
+                                key={index}
+                                variant="outlined"
+                                size="small"
+                                onClick={async () => {
+                                    // Sende die Suggestion direkt ohne das message state zu setzen
+                                    if (!conversation || !matchId || sending) return;
+
+                                    try {
+                                        setSending(true);
+
+                                        const newMessage = await chatService.sendMessage({
+                                            matchId: matchId!,
+                                            senderId: user.id,
+                                            content: suggestion,
+                                            type: 'TEXT'
+                                        });
+
+                                        // Update conversation with new message
+                                        setConversation(prev => {
+                                            if (!prev) return prev;
+                                            return {
+                                                ...prev,
+                                                messages: [...prev.messages, newMessage],
+                                                lastMessage: newMessage
+                                            };
+                                        });
+
+                                        console.log('✅ Suggestion sent successfully');
+                                    } catch (err) {
+                                        console.error('❌ Error sending suggestion:', err);
+                                        setError('Fehler beim Senden der Nachricht.');
+                                    } finally {
+                                        setSending(false);
+                                    }
+                                }}
+                                sx={{
+                                    borderRadius: 20,
+                                    textTransform: 'none',
+                                    fontSize: '0.75rem',
+                                    minWidth: 'auto',
+                                    whiteSpace: 'nowrap',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                    '&:hover': {
+                                        backgroundColor: 'rgba(255, 255, 255, 1)',
+                                    },
+                                }}
+                            >
+                                {suggestion}
+                            </Button>
+                        ))}
+                    </Box>
+                </Box>
+            )}
 
             {/* Message Input */}
             <Box
@@ -352,16 +656,38 @@ const ChatPage: React.FC = () => {
                         }}
                     />
                     <IconButton
-                        onClick={() => console.log('Voice recording not implemented yet')}
+                        onClick={handleVoiceRecording}
+                        disabled={sending}
                         sx={{
-                            backgroundColor: 'primary.main',
+                            backgroundColor: isRecording ? '#f44336' : 'primary.main',
                             color: 'white',
                             '&:hover': {
-                                backgroundColor: 'primary.dark',
+                                backgroundColor: isRecording ? '#d32f2f' : 'primary.dark',
                             },
+                            '&:disabled': {
+                                backgroundColor: 'rgba(0,0,0,0.1)',
+                                color: 'rgba(0,0,0,0.3)',
+                            },
+                            animation: isRecording ? 'pulse 1s infinite' : 'none',
                         }}
                     >
                         <MicIcon />
+                        {isRecording && recordingDuration > 0 && (
+                            <Typography
+                                variant="caption"
+                                sx={{
+                                    position: 'absolute',
+                                    bottom: -20,
+                                    left: '50%',
+                                    transform: 'translateX(-50%)',
+                                    color: '#f44336',
+                                    fontSize: '10px',
+                                    fontWeight: 'bold',
+                                }}
+                            >
+                                {recordingDuration}s
+                            </Typography>
+                        )}
                     </IconButton>
                     <IconButton
                         onClick={handleSendMessage}

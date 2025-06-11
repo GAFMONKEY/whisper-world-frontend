@@ -21,7 +21,7 @@ import type { DisplayMatch } from '../services/matchService';
 
 const MatchesPage: React.FC = () => {
     const navigate = useNavigate();
-    const [navValue, setNavValue] = useState(2); // Chat tab aktiv
+    const [navValue, setNavValue] = useState(1); // Matches tab aktiv
     const [matches, setMatches] = useState<DisplayMatch[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -60,10 +60,10 @@ const MatchesPage: React.FC = () => {
                 navigate('/dashboard');
                 break;
             case 1:
-                navigate('/profile');
+                // Already on matches page
                 break;
             case 2:
-                // Already on matches/chat page
+                navigate('/chats');
                 break;
             case 3:
                 navigate('/settings');
@@ -71,8 +71,8 @@ const MatchesPage: React.FC = () => {
         }
     };
 
-    const handleChatClick = (matchUserId: string) => {
-        navigate(`/chat/${matchUserId}`);
+    const handleChatClick = (matchId: string) => {
+        navigate(`/chat/${matchId}`);
     };
 
     const formatLastMessage = (match: DisplayMatch) => {
@@ -217,7 +217,7 @@ const MatchesPage: React.FC = () => {
                     matches.map((match) => (
                         <Card
                             key={match.id}
-                            onClick={() => handleChatClick(match.user.id)}
+                            onClick={() => handleChatClick(match.id)}
                             sx={{
                                 mb: 2,
                                 backgroundColor: 'rgba(255, 255, 255, 0.9)',

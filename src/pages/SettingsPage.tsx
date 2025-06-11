@@ -27,10 +27,10 @@ const SettingsPage: React.FC = () => {
                 navigate('/dashboard');
                 break;
             case 1:
-                navigate('/profile');
+                navigate('/matches');
                 break;
             case 2:
-                navigate('/matches');
+                navigate('/chats');
                 break;
             case 3:
                 // Already on settings page

@@ -47,238 +47,162 @@ export interface SendMessageRequest {
     imageFile?: File;
 }
 
-// Mock data für Fallback
-const mockMessages: ChatMessage[] = [
-    {
-        id: 'msg-1',
-        matchId: 'match-1',
-        senderId: 'other-user',
-        content: 'Hey! Wie geht es dir denn so?',
-        type: 'TEXT',
-        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-        isRead: true,
-        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
-        updatedAt: new Date(Date.now() - 2 * 60 * 60 * 1000)
-    },
-    {
-        id: 'msg-2',
-        matchId: 'match-1',
-        senderId: 'current-user',
-        content: 'Hi! Mir geht es gut, danke! Wie war dein Tag?',
-        type: 'TEXT',
-        timestamp: new Date(Date.now() - 90 * 60 * 1000),
-        isRead: true,
-        createdAt: new Date(Date.now() - 90 * 60 * 1000),
-        updatedAt: new Date(Date.now() - 90 * 60 * 1000)
-    },
-    {
-        id: 'msg-3',
-        matchId: 'match-1',
-        senderId: 'other-user',
-        content: 'Hier ist eine Sprachnachricht für dich!',
-        type: 'VOICE',
-        timestamp: new Date(Date.now() - 30 * 60 * 1000),
-        isRead: false,
-        audioUrl: '/mock-audio.mp3',
-        duration: 15,
-        createdAt: new Date(Date.now() - 30 * 60 * 1000),
-        updatedAt: new Date(Date.now() - 30 * 60 * 1000)
-    }
+// Mock data für erweiterten Chat
+const mockResponses = [
+    "Das klingt ja interessant! Erzähl mir mehr davon 😊",
+    "Haha, das kann ich gut verstehen!",
+    "Oh wow, das hätte ich nicht gedacht!",
+    "Das ist ja eine tolle Idee!",
+    "Sehr cool! Wo hast du das denn gemacht?",
+    "Das würde ich auch gerne mal ausprobieren!",
+    "Stimmt, das sehe ich genauso!",
+    "Ich mag deine Art zu denken 😄",
+    "Das passt ja perfekt zu dem, was ich auch interessant finde!",
+    "Erzähl ruhig weiter, ich höre zu!",
+    "Das erinnert mich an etwas Ähnliches, was mir auch passiert ist...",
+    "Du scheinst wirklich vielseitig interessiert zu sein!",
+    "Das finde ich sehr sympathisch an dir!",
+    "Hast du Lust, das mal zusammen zu machen?",
+    "Das wäre doch mal ein tolles Date, oder? 😉"
 ];
+
+const mockVoiceResponses = [
+    "Schön, deine Stimme zu hören! 🎤",
+    "Eine Sprachnachricht! Das ist ja mal was Besonderes 😊",
+    "Ich liebe es, wenn Leute Sprachnachrichten schicken!",
+    "Deine Stimme klingt sehr sympathisch!",
+    "Soll ich dir auch eine Sprachnachricht zurückschicken?",
+    "Das war eine sehr süße Nachricht! 💕"
+];
+
+const mockQuestions = [
+    "Was machst du denn beruflich?",
+    "Hast du heute schon was Schönes erlebt?",
+    "Was ist denn dein Lieblingshobby?",
+    "Wo würdest du am liebsten mal hinreisen?",
+    "Was für Musik hörst du gerne?",
+    "Bist du eher ein Morgen- oder Abendmensch?",
+    "Was ist dein Lieblingsgericht?",
+    "Gehst du gerne ins Kino oder schaust lieber zu Hause?",
+    "Sport oder entspannen auf der Couch?",
+    "Hund oder Katze? 🐕🐱"
+];
+
+// Global store für Mock-Conversations
+const mockConversationStore = new Map<string, ChatMessage[]>();
+let messageIdCounter = 1000;
+
+// Export für externe Verwendung
+export { mockConversationStore };
 
 const chatService = {
     async getChatConversation(matchId: string, currentUserId: string): Promise<ChatConversation> {
         try {
-            const response = await api.get(`/chats/${matchId}`);
-            const conversationData = response.data;
+            // Lade Match-Details inkl. Chat-Nachrichten direkt vom Backend
+            console.log('📡 Loading match with chat messages from backend:', matchId);
+            const response = await api.get(`/matches/${matchId}`);
+            const matchData = response.data;
 
-            // Konvertiere Date-Strings zu Date-Objekten
-            return {
-                ...conversationData,
-                otherUser: {
-                    ...conversationData.otherUser,
-                    lastSeen: conversationData.otherUser.lastSeen ? new Date(conversationData.otherUser.lastSeen) : undefined
-                },
-                messages: conversationData.messages?.map((msg: any) => ({
-                    ...msg,
-                    timestamp: new Date(msg.timestamp),
-                    createdAt: new Date(msg.createdAt),
-                    updatedAt: new Date(msg.updatedAt)
-                })) || [],
-                lastMessage: conversationData.lastMessage ? {
-                    ...conversationData.lastMessage,
-                    timestamp: new Date(conversationData.lastMessage.timestamp),
-                    createdAt: new Date(conversationData.lastMessage.createdAt),
-                    updatedAt: new Date(conversationData.lastMessage.updatedAt)
-                } : undefined
+            console.log('✅ Loaded match data from backend:', matchData);
+
+            // Konvertiere Backend-Nachrichten zu Frontend-Format
+            const messages: ChatMessage[] = matchData.chatMessages.map((msg: any) => ({
+                id: msg.id,
+                matchId: matchId,
+                senderId: msg.senderId,
+                content: msg.message,
+                type: 'TEXT' as const,
+                timestamp: new Date(msg.sentAt),
+                isRead: false, // Backend hat kein read-status, daher default false
+                createdAt: new Date(msg.sentAt),
+                updatedAt: new Date(msg.sentAt)
+            }));
+
+            // Finde den anderen User aus dem Match
+            const otherUserId = matchData.user1Id === currentUserId ? matchData.user2Id : matchData.user1Id;
+
+            // Lade User-Details für den anderen User
+            let otherUser = {
+                id: otherUserId,
+                name: 'Match Partner',
+                age: 25,
+                isOnline: false
             };
-        } catch (error) {
-            console.warn('Backend not available for chat, using mock data:', error);
 
-            // Erstelle intelligente Mock-Conversation basierend auf matchId
-            console.log('🔍 Creating mock conversation for matchId:', matchId);
-            console.log('📱 Current user ID:', currentUserId);
-
-            // Versuche den anderen User aus dem Backend zu holen
-            let otherUserName = 'Match Partner';
-            let otherUserAge = 25;
-            let otherUserId = 'unknown';
-
-            // Lade alle User und finde den Match-Partner
             try {
-                const allUsersResponse = await fetch('http://localhost:3000/users');
-                const allUsers = await allUsersResponse.json();
+                const userResponse = await api.get(`/users/${otherUserId}`);
+                const userData = userResponse.data;
 
-                // Wenn matchId eine echte Match-ID ist, versuche den Match zu finden
-                if (matchId && matchId.startsWith('match-')) {
-                    // Versuche den Match aus dem Backend zu holen
-                    try {
-                        const matchResponse = await fetch(`http://localhost:3000/matches/${currentUserId}`);
-                        const matches = await matchResponse.json();
-                        const targetMatch = matches.find((m: any) => m.id === matchId);
+                const birthDate = new Date(userData.birthDate);
+                const age = new Date().getFullYear() - birthDate.getFullYear();
 
-                        if (targetMatch) {
-                            // Finde den anderen User aus dem Match
-                            const otherUserId_fromMatch = targetMatch.user1Id === currentUserId ? targetMatch.user2Id : targetMatch.user1Id;
-                            const otherUser = allUsers.find((u: any) => u.id === otherUserId_fromMatch);
-
-                            if (otherUser) {
-                                otherUserName = `${otherUser.firstName} ${otherUser.lastName}`;
-                                otherUserAge = new Date().getFullYear() - new Date(otherUser.birthDate).getFullYear();
-                                otherUserId = otherUser.id;
-                                console.log('✅ Found actual match partner from backend:', otherUserName);
-                            }
-                        }
-                    } catch (matchErr) {
-                        console.log('Could not fetch match data, falling back to user lookup');
-                    }
-                }
-
-                // Fallback: Wenn matchId ein User-ID ist, verwende diese direkt
-                if (otherUserId === 'unknown' && matchId && !matchId.startsWith('match-')) {
-                    const otherUser = allUsers.find((u: any) => u.id === matchId);
-                    if (otherUser) {
-                        otherUserName = `${otherUser.firstName} ${otherUser.lastName}`;
-                        otherUserAge = new Date().getFullYear() - new Date(otherUser.birthDate).getFullYear();
-                        otherUserId = otherUser.id;
-                        console.log('✅ Found match partner by ID:', otherUserName);
-                    }
-                }
-
-                // Final fallback: Finde irgendeinen anderen User
-                if (otherUserId === 'unknown') {
-                    const otherUser = allUsers.find((u: any) => u.id !== currentUserId);
-                    if (otherUser) {
-                        otherUserName = `${otherUser.firstName} ${otherUser.lastName}`;
-                        otherUserAge = new Date().getFullYear() - new Date(otherUser.birthDate).getFullYear();
-                        otherUserId = otherUser.id;
-                        console.log('⚠️ Using fallback match partner:', otherUserName);
-                    }
-                }
-            } catch (err) {
-                console.log('Could not fetch users for mock data');
+                otherUser = {
+                    id: otherUserId,
+                    name: `${userData.firstName} ${userData.lastName}`,
+                    age: age,
+                    isOnline: Math.random() > 0.5 // Placeholder für Online-Status
+                };
+                console.log('✅ Loaded user details for:', otherUser.name);
+            } catch (userErr) {
+                console.warn('Could not load user details:', userErr);
             }
 
-            // Mock conversation für Fallback
-            console.log('🎭 Creating mock conversation with user:', otherUserName, 'ID:', otherUserId);
-
-            return {
+            const conversation: ChatConversation = {
                 matchId,
-                otherUser: {
-                    id: otherUserId,
-                    name: otherUserName,
-                    age: otherUserAge,
-                    lastSeen: new Date(Date.now() - 10 * 60 * 1000),
-                    isOnline: Math.random() > 0.5 // Random online status
-                },
-                messages: [
-                    {
-                        ...mockMessages[0],
-                        matchId,
-                        content: `Hey ${JSON.parse(localStorage.getItem('user') || '{}').firstName || 'there'}! Schön, dass wir gematcht haben! 😊`
-                    },
-                    {
-                        ...mockMessages[1],
-                        matchId,
-                        senderId: currentUserId,
-                        content: `Hi ${otherUserName.split(' ')[0]}! Freut mich auch sehr! 🎉`
-                    }
-                ],
-                lastMessage: {
-                    ...mockMessages[1],
-                    matchId,
-                    senderId: currentUserId,
-                    content: `Hi ${otherUserName.split(' ')[0]}! Freut mich auch sehr! 🎉`
-                },
-                unreadCount: 0
+                otherUser,
+                messages,
+                lastMessage: messages.length > 0 ? messages[messages.length - 1] : undefined,
+                unreadCount: messages.filter(msg => msg.senderId !== currentUserId && !msg.isRead).length
             };
+
+            return conversation;
+        } catch (error) {
+            console.warn('Backend not available for chat:', error);
+            // Wenn Backend nicht verfügbar ist oder Match nicht existiert, Fehler werfen
+            throw new Error(`Chat conversation for match ${matchId} not found`);
         }
     },
 
     async sendMessage(messageData: SendMessageRequest): Promise<ChatMessage> {
         try {
-            if (messageData.type === 'VOICE' && messageData.audioFile) {
-                // Voice message upload
-                const formData = new FormData();
-                formData.append('audio', messageData.audioFile);
-                formData.append('matchId', messageData.matchId);
-                formData.append('senderId', messageData.senderId);
-                formData.append('content', messageData.content);
-
-                const response = await api.post('/chats/send-voice', formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' }
-                });
-
-                const messageResponse = response.data;
-                return {
-                    ...messageResponse,
-                    timestamp: new Date(messageResponse.timestamp),
-                    createdAt: new Date(messageResponse.createdAt),
-                    updatedAt: new Date(messageResponse.updatedAt)
-                };
-
-            } else if (messageData.type === 'IMAGE' && messageData.imageFile) {
-                // Image message upload
-                const formData = new FormData();
-                formData.append('image', messageData.imageFile);
-                formData.append('matchId', messageData.matchId);
-                formData.append('senderId', messageData.senderId);
-                formData.append('content', messageData.content);
-
-                const response = await api.post('/chats/send-image', formData, {
-                    headers: { 'Content-Type': 'multipart/form-data' }
-                });
-
-                const messageResponse = response.data;
-                return {
-                    ...messageResponse,
-                    timestamp: new Date(messageResponse.timestamp),
-                    createdAt: new Date(messageResponse.createdAt),
-                    updatedAt: new Date(messageResponse.updatedAt)
-                };
-
-            } else {
-                // Text message
-                const response = await api.post('/chats/send-text', {
-                    matchId: messageData.matchId,
-                    senderId: messageData.senderId,
-                    content: messageData.content
-                });
-
-                const messageResponse = response.data;
-                return {
-                    ...messageResponse,
-                    timestamp: new Date(messageResponse.timestamp),
-                    createdAt: new Date(messageResponse.createdAt),
-                    updatedAt: new Date(messageResponse.updatedAt)
-                };
+            // Aktuell unterstützt das Backend nur Text-Nachrichten
+            // Voice und Image Messages werden als Mock behandelt
+            if (messageData.type === 'VOICE' || messageData.type === 'IMAGE') {
+                console.warn('Voice and image messages not yet supported by backend, using mock response');
+                throw new Error('Voice/Image not supported yet');
             }
-        } catch (error) {
-            console.warn('Backend not available for sending message, simulating:', error);
 
-            // Mock response für Fallback
+            // Text message - verwende das echte Backend-API
+            console.log('📤 Sending text message via backend API:', messageData);
+
+            const response = await api.post(`/matches/${messageData.matchId}/chat-messages`, {
+                sender: messageData.senderId,
+                message: messageData.content
+            });
+
+            console.log('✅ Message sent via backend:', response.data);
+
+            // Konvertiere Backend-Response zu Frontend-Format
+            const backendMessage = response.data;
+            const frontendMessage: ChatMessage = {
+                id: backendMessage.id,
+                matchId: messageData.matchId,
+                senderId: messageData.senderId,
+                content: messageData.content,
+                type: 'TEXT',
+                timestamp: new Date(backendMessage.sentAt),
+                isRead: false,
+                createdAt: new Date(backendMessage.sentAt),
+                updatedAt: new Date(backendMessage.sentAt)
+            };
+
+            return frontendMessage;
+        } catch (error) {
+            console.warn('Backend not available for sending message, using enhanced mock:', error);
+
+            // Enhanced Mock response system
             const mockMessage: ChatMessage = {
-                id: `msg-${Date.now()}`,
+                id: `msg-${messageIdCounter++}`,
                 matchId: messageData.matchId,
                 senderId: messageData.senderId,
                 content: messageData.content,
@@ -287,10 +211,21 @@ const chatService = {
                 isRead: false,
                 audioUrl: messageData.type === 'VOICE' ? '/mock-audio.mp3' : undefined,
                 imageUrl: messageData.type === 'IMAGE' ? '/mock-image.jpg' : undefined,
-                duration: messageData.type === 'VOICE' ? 10 : undefined,
+                duration: messageData.type === 'VOICE' ? Math.floor(Math.random() * 20) + 5 : undefined,
                 createdAt: new Date(),
                 updatedAt: new Date()
             };
+
+            // Speichere die Nachricht im Mock Store
+            const conversationKey = `${messageData.matchId}-${messageData.senderId}`;
+            const existingMessages = mockConversationStore.get(conversationKey) || [];
+            existingMessages.push(mockMessage);
+            mockConversationStore.set(conversationKey, existingMessages);
+
+            // Simuliere automatische Antwort nach kurzer Verzögerung
+            setTimeout(() => {
+                this.generateMockResponse(messageData.matchId, messageData.senderId, messageData.type, messageData.content);
+            }, Math.random() * 3000 + 2000); // 2-5 Sekunden Verzögerung
 
             return mockMessage;
         }
@@ -314,48 +249,72 @@ const chatService = {
 
     async getAllConversations(userId: string): Promise<ChatConversation[]> {
         try {
-            const response = await api.get(`/chats/user/${userId}`);
-            const conversationsData = response.data;
+            // Lade alle Matches mit Chat-Nachrichten direkt vom Backend
+            console.log('📡 Loading all matches with chat messages from backend for user:', userId);
+            const matchesResponse = await api.get(`/matches/user/${userId}`);
+            const matches = matchesResponse.data;
 
-            // Konvertiere Date-Strings zu Date-Objekten
-            return conversationsData.map((conversation: any) => ({
-                ...conversation,
-                otherUser: {
-                    ...conversation.otherUser,
-                    lastSeen: conversation.otherUser.lastSeen ? new Date(conversation.otherUser.lastSeen) : undefined
-                },
-                messages: conversation.messages?.map((msg: any) => ({
-                    ...msg,
-                    timestamp: new Date(msg.timestamp),
-                    createdAt: new Date(msg.createdAt),
-                    updatedAt: new Date(msg.updatedAt)
-                })) || [],
-                lastMessage: conversation.lastMessage ? {
-                    ...conversation.lastMessage,
-                    timestamp: new Date(conversation.lastMessage.timestamp),
-                    createdAt: new Date(conversation.lastMessage.createdAt),
-                    updatedAt: new Date(conversation.lastMessage.updatedAt)
-                } : undefined
-            }));
-        } catch (error) {
-            console.warn('Backend not available for conversations, using mock data:', error);
+            console.log('✅ Loaded matches from backend:', matches.length);
 
-            // Mock conversations für Fallback
-            return [
-                {
-                    matchId: 'match-1',
-                    otherUser: {
-                        id: 'max-26',
-                        name: 'Max',
-                        age: 26,
-                        lastSeen: new Date(Date.now() - 10 * 60 * 1000),
-                        isOnline: false
-                    },
-                    messages: mockMessages,
-                    lastMessage: mockMessages[mockMessages.length - 1],
-                    unreadCount: 1
+            const conversations: ChatConversation[] = [];
+
+            // Für jeden Match, konvertiere die bereits enthaltenen Chat-Nachrichten
+            for (const match of matches) {
+                const messages: ChatMessage[] = match.chatMessages.map((msg: any) => ({
+                    id: msg.id,
+                    matchId: match.id,
+                    senderId: msg.senderId,
+                    content: msg.message,
+                    type: 'TEXT' as const,
+                    timestamp: new Date(msg.sentAt),
+                    isRead: false,
+                    createdAt: new Date(msg.sentAt),
+                    updatedAt: new Date(msg.sentAt)
+                }));
+
+                // Finde den anderen User im Match
+                const otherUserId = match.user1Id === userId ? match.user2Id : match.user1Id;
+
+                // Lade User-Details für den anderen User
+                let otherUserName = 'Match Partner';
+                let otherUserAge = 25;
+
+                try {
+                    const userResponse = await api.get(`/users/${otherUserId}`);
+                    const userData = userResponse.data;
+
+                    const birthDate = new Date(userData.birthDate);
+                    const age = new Date().getFullYear() - birthDate.getFullYear();
+
+                    otherUserName = `${userData.firstName} ${userData.lastName}`;
+                    otherUserAge = age;
+                } catch (userErr) {
+                    console.warn(`Could not load user details for ${otherUserId}:`, userErr);
                 }
-            ];
+
+                const conversation: ChatConversation = {
+                    matchId: match.id,
+                    otherUser: {
+                        id: otherUserId,
+                        name: otherUserName,
+                        age: otherUserAge,
+                        lastSeen: new Date(Date.now() - 10 * 60 * 1000),
+                        isOnline: Math.random() > 0.5
+                    },
+                    messages,
+                    lastMessage: messages.length > 0 ? messages[messages.length - 1] : undefined,
+                    unreadCount: messages.filter(msg => msg.senderId !== userId && !msg.isRead).length
+                };
+
+                conversations.push(conversation);
+            }
+
+            console.log('✅ Created conversations from backend data:', conversations.length);
+            return conversations;
+        } catch (error) {
+            console.warn('Backend not available for conversations:', error);
+            // Wenn Backend nicht verfügbar ist, leere Liste zurückgeben
+            return [];
         }
     },
 
@@ -402,6 +361,83 @@ const chatService = {
             console.error('Error playing voice message:', error);
             throw error;
         }
+    },
+
+    // Enhanced mock response system
+    generateMockResponse(matchId: string, currentUserId: string, messageType: 'TEXT' | 'VOICE' | 'IMAGE', userMessage: string): void {
+        const conversationKey = `${matchId}-${currentUserId}`;
+        const existingMessages = mockConversationStore.get(conversationKey) || [];
+
+        // Finde den anderen User
+        const otherUserId = existingMessages.find(msg => msg.senderId !== currentUserId)?.senderId || 'other-user';
+
+        let responseContent = '';
+
+        if (messageType === 'VOICE') {
+            // Antwort auf Sprachnachricht
+            responseContent = mockVoiceResponses[Math.floor(Math.random() * mockVoiceResponses.length)];
+        } else {
+            // Intelligente Textantwort basierend auf Inhalt
+            const userMessageLower = userMessage.toLowerCase();
+
+            if (userMessageLower.includes('hallo') || userMessageLower.includes('hi') || userMessageLower.includes('hey')) {
+                responseContent = "Hallo! Schön von dir zu hören! 😊";
+            } else if (userMessageLower.includes('wie geht') || userMessageLower.includes('wie gehts')) {
+                responseContent = "Mir geht es super, danke der Nachfrage! Und dir?";
+            } else if (userMessageLower.includes('?')) {
+                // Auf Fragen antworten und eine Gegenfrage stellen
+                responseContent = mockResponses[Math.floor(Math.random() * mockResponses.length)];
+            } else if (Math.random() > 0.7) {
+                // 30% Chance auf eine Frage zurück
+                responseContent = mockQuestions[Math.floor(Math.random() * mockQuestions.length)];
+            } else {
+                // Normale Antwort
+                responseContent = mockResponses[Math.floor(Math.random() * mockResponses.length)];
+            }
+        }
+
+        const mockResponse: ChatMessage = {
+            id: `msg-${messageIdCounter++}`,
+            matchId,
+            senderId: otherUserId,
+            content: responseContent,
+            type: 'TEXT',
+            timestamp: new Date(),
+            isRead: false,
+            createdAt: new Date(),
+            updatedAt: new Date()
+        };
+
+        existingMessages.push(mockResponse);
+        mockConversationStore.set(conversationKey, existingMessages);
+
+        // Simuliere automatisches "Lesen" der Nachrichten nach kurzer Zeit
+        setTimeout(() => {
+            const updatedMessages = mockConversationStore.get(conversationKey) || [];
+            updatedMessages.forEach(msg => {
+                if (msg.senderId === otherUserId) {
+                    msg.isRead = true;
+                }
+            });
+            mockConversationStore.set(conversationKey, updatedMessages);
+        }, 5000); // Nach 5 Sekunden als "gelesen" markieren
+
+        // Trigger ein Event für Live-Updates (falls der Chat offen ist)
+        window.dispatchEvent(new CustomEvent('newMockMessage', {
+            detail: { matchId, message: mockResponse }
+        }));
+    },
+
+    // Hole Mock-Antworten für automatische Vervollständigung
+    getMockSuggestions(): string[] {
+        return [
+            "Das klingt interessant!",
+            "Erzähl mir mehr davon",
+            "Wie war dein Tag?",
+            "Hast du Lust auf ein Date?",
+            "Das würde ich auch gerne mal machen!",
+            "Du bist wirklich sympathisch 😊"
+        ];
     }
 };
 

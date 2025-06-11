@@ -173,30 +173,6 @@ function convertUserToDiscoverUser(user: UserProfile): DiscoverUser {
     };
 }
 
-function convertMatchToDisplayMatch(match: Match, currentUserId: string): DisplayMatch {
-    const otherUser = match.user1Id === currentUserId ? match.user2 : match.user1;
-
-    if (!otherUser) {
-        throw new Error('Match data incomplete');
-    }
-
-    const age = new Date().getFullYear() - new Date(otherUser.birthDate).getFullYear();
-
-    return {
-        id: match.id,
-        user: {
-            id: otherUser.id,
-            name: `${otherUser.firstName} ${otherUser.lastName}`,
-            age
-        },
-        matchedAt: match.createdAt, // Bereits Date-Objekt
-        lastMessage: {
-            content: 'Noch keine Nachrichten',
-            timestamp: match.createdAt // Bereits Date-Objekt
-        }
-    };
-}
-
 const matchService = {
     async discoverUsers(userId: string): Promise<DiscoverUser[]> {
         try {
@@ -235,30 +211,70 @@ const matchService = {
 
     async getMatches(userId: string): Promise<DisplayMatch[]> {
         try {
-            const response = await api.get(`/matches/${userId}`);
+            console.log(`🚀 Loading matches for user: ${userId}`);
+            const response = await api.get(`/matches/user/${userId}`);
             const matches: any[] = response.data;
 
-            // Konvertiere Date-Strings zu Date-Objekten
-            const convertedMatches: Match[] = matches.map(match => ({
-                ...match,
-                createdAt: new Date(match.createdAt),
-                user1: match.user1 ? {
-                    ...match.user1,
-                    birthDate: new Date(match.user1.birthDate),
-                    lastActive: new Date(match.user1.lastActive),
-                    createdAt: new Date(match.user1.createdAt),
-                    updatedAt: new Date(match.user1.updatedAt)
-                } : undefined,
-                user2: match.user2 ? {
-                    ...match.user2,
-                    birthDate: new Date(match.user2.birthDate),
-                    lastActive: new Date(match.user2.lastActive),
-                    createdAt: new Date(match.user2.createdAt),
-                    updatedAt: new Date(match.user2.updatedAt)
-                } : undefined
-            }));
+            console.log(`✅ Loaded ${matches.length} matches from backend`);
 
-            return convertedMatches.map(match => convertMatchToDisplayMatch(match, userId));
+            // Das Backend gibt uns bereits ein vereinfachtes Format zurück
+            // Für jeden Match laden wir die User-Details separat
+            const displayMatches: DisplayMatch[] = [];
+
+            for (const match of matches) {
+                try {
+                    // Finde den anderen User im Match
+                    const otherUserId = match.user1Id === userId ? match.user2Id : match.user1Id;
+
+                    // Lade User-Details für den anderen User
+                    const userResponse = await api.get(`/users/${otherUserId}`);
+                    const userData = userResponse.data;
+
+                    const birthDate = new Date(userData.birthDate);
+                    const age = new Date().getFullYear() - birthDate.getFullYear();
+
+                    // Erstelle DisplayMatch
+                    const displayMatch: DisplayMatch = {
+                        id: match.id,
+                        user: {
+                            id: otherUserId,
+                            name: `${userData.firstName} ${userData.lastName}`,
+                            age: age
+                        },
+                        matchedAt: new Date(match.matchedAt),
+                        lastMessage: match.chatMessages && match.chatMessages.length > 0
+                            ? {
+                                content: match.chatMessages[match.chatMessages.length - 1].message,
+                                timestamp: new Date(match.chatMessages[match.chatMessages.length - 1].sentAt)
+                            }
+                            : {
+                                content: 'Noch keine Nachrichten',
+                                timestamp: new Date(match.matchedAt)
+                            }
+                    };
+
+                    displayMatches.push(displayMatch);
+                } catch (userErr) {
+                    console.warn(`Could not load user details for match ${match.id}:`, userErr);
+                    // Fallback für unvollständige User-Daten
+                    const otherUserId = match.user1Id === userId ? match.user2Id : match.user1Id;
+                    displayMatches.push({
+                        id: match.id,
+                        user: {
+                            id: otherUserId,
+                            name: 'Match Partner',
+                            age: 25
+                        },
+                        matchedAt: new Date(match.matchedAt),
+                        lastMessage: {
+                            content: 'Noch keine Nachrichten',
+                            timestamp: new Date(match.matchedAt)
+                        }
+                    });
+                }
+            }
+
+            return displayMatches;
         } catch (error) {
             console.error('❌ Backend error for matches:', error);
             throw new Error('Backend not available for matches');
