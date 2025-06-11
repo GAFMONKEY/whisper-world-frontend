@@ -9,6 +9,7 @@ import SettingsPage from './pages/SettingsPage';
 import ProfilePage from './pages/ProfilePage';
 import ChatPage from './pages/ChatPage';
 import MatchesPage from './pages/MatchesPage';
+import MatchSuccessPage from './pages/MatchSuccessPage';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/matches" element={<MatchesPage />} />
+          <Route path="/match-success" element={<MatchSuccessPage />} />
           <Route path="/chat/:matchId" element={<ChatPage />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Routes>

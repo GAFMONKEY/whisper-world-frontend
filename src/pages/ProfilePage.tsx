@@ -137,15 +137,15 @@ const ProfilePage: React.FC = () => {
 
             if (response.matched) {
                 // Es ist ein Match! 🎉
-                console.log('🎉 IT\'S A MATCH! Redirecting to chat...');
+                console.log('🎉 IT\'S A MATCH! Redirecting to match success page...');
                 setIsActualMatch(true);
                 setShowMatchMessage(true);
 
-                // Nach 3 Sekunden automatisch zum Chat weiterleiten
+                // Nach 3 Sekunden zur Match Success Page weiterleiten
                 setTimeout(() => {
                     setShowMatchMessage(false);
-                    console.log('Navigating to chat with matchId:', response.matchId);
-                    navigate(`/chat/${response.matchId || currentProfile.id}`);
+                    console.log('Navigating to match success page with matchId:', response.matchId);
+                    navigate(`/match-success?matchId=${response.matchId || currentProfile.id}&partnerName=${encodeURIComponent(currentProfile.name)}`);
                 }, 3000);
             } else {
                 // Like gesendet, warten auf Gegenseitigkeit

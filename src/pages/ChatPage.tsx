@@ -21,7 +21,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import SendIcon from '@mui/icons-material/Send';
 import MicIcon from '@mui/icons-material/Mic';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { chatService } from '../services';
 import type { ChatConversation } from '../services';
 import { getCurrentUser } from '../utils/setupUser';
@@ -29,6 +29,8 @@ import { getCurrentUser } from '../utils/setupUser';
 const ChatPage: React.FC = () => {
     const navigate = useNavigate();
     const { matchId } = useParams(); // Verwende matchId statt userId
+    const [searchParams] = useSearchParams();
+    const startWith = searchParams.get('startWith'); // 'voice' oder 'text'
     const [navValue, setNavValue] = useState(2); // Chat tab aktiv
     const [message, setMessage] = useState('');
     const [conversation, setConversation] = useState<ChatConversation | null>(null);
@@ -37,9 +39,7 @@ const ChatPage: React.FC = () => {
     const [sending, setSending] = useState(false);
 
     // Current user aus localStorage - mit Backend-kompatible UUID
-    const user = getCurrentUser();
-
-    // Chat-Conversation laden
+    const user = getCurrentUser();    // Chat-Conversation laden
     useEffect(() => {
         const loadConversation = async () => {
             if (!matchId || !user.id) {
@@ -54,10 +54,10 @@ const ChatPage: React.FC = () => {
 
                 console.log('🔍 Loading conversation for matchId:', matchId);
                 console.log('📱 Current user:', user.id);
+                console.log('🎯 Start with:', startWith);
 
                 const conv = await chatService.getChatConversation(matchId, user.id);
                 setConversation(conv);
-
                 console.log('✅ Conversation loaded:', conv);
             } catch (err) {
                 console.error('❌ Error loading conversation:', err);
@@ -68,7 +68,25 @@ const ChatPage: React.FC = () => {
         };
 
         loadConversation();
-    }, [matchId, user.id]);
+    }, [matchId, user.id, startWith]);
+
+    // Handle startWith intent after conversation is loaded
+    useEffect(() => {
+        if (conversation && startWith) {
+            if (startWith === 'voice') {
+                console.log('🎤 Auto-starting voice message recording...');
+                // TODO: Implement voice recording auto-start
+                // For now, just focus on the input
+            } else if (startWith === 'text') {
+                console.log('📝 Auto-focusing text input...');
+                // Focus the text input
+                const textInput = document.querySelector('#message-input') as HTMLInputElement;
+                if (textInput) {
+                    textInput.focus();
+                }
+            }
+        }
+    }, [conversation, startWith]);
 
     const handleNavChange = (_event: React.SyntheticEvent, newValue: number) => {
         setNavValue(newValue);
@@ -313,6 +331,7 @@ const ChatPage: React.FC = () => {
             >
                 <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                     <TextField
+                        id="message-input"
                         fullWidth
                         placeholder={`Nachricht an ${conversation.otherUser.name}...`}
                         value={message}
