@@ -48,7 +48,7 @@ const DashboardPage: React.FC = () => {
         }
     }, [navigate]);
 
-    const handleNavChange = (event: React.SyntheticEvent, newValue: number) => {
+    const handleNavChange = (_event: React.SyntheticEvent, newValue: number) => {
         setNavValue(newValue);
         switch (newValue) {
             case 0:
@@ -58,8 +58,7 @@ const DashboardPage: React.FC = () => {
                 navigate('/profile');
                 break;
             case 2:
-                // For now, navigate to chat with demo user
-                navigate('/chat/max-26');
+                navigate('/matches');
                 break;
             case 3:
                 navigate('/settings');

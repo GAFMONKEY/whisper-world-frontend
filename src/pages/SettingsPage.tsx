@@ -20,7 +20,7 @@ const SettingsPage: React.FC = () => {
     const navigate = useNavigate();
     const [navValue, setNavValue] = useState(3); // Settings tab aktiv
 
-    const handleNavChange = (event: React.SyntheticEvent, newValue: number) => {
+    const handleNavChange = (_event: React.SyntheticEvent, newValue: number) => {
         setNavValue(newValue);
         switch (newValue) {
             case 0:
@@ -30,7 +30,7 @@ const SettingsPage: React.FC = () => {
                 navigate('/profile');
                 break;
             case 2:
-                navigate('/chat/max-26');
+                navigate('/matches');
                 break;
             case 3:
                 // Already on settings page

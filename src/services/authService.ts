@@ -11,11 +11,21 @@ const api = axios.create({
 });
 
 export interface LoginResponse {
-    user: {
-        id: string;
-        email: string;
-        name?: string;
+    id: string;
+    firstName: string;
+    lastName: string;
+    gender: string;
+    email: string;
+    birthDate: string;
+    interests: string[];
+    datingPreferences: string[];
+    likert: {
+        openness: number;
+        closeness: number;
+        quietness: number;
     };
+    likedUsers: string[];
+    passedUsers: string[];
 }
 
 export const authService = {
