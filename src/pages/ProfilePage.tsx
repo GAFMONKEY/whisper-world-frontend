@@ -444,7 +444,7 @@ const ProfilePage: React.FC = () => {
                                 <Card
                                     key={questionIndex}
                                     sx={{
-                                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+                                        background: 'white',
                                         borderRadius: 4,
                                         border: '2px solid',
                                         borderColor: category.color,
@@ -478,7 +478,7 @@ const ProfilePage: React.FC = () => {
                                                 sx={{
                                                     color: 'text.primary',
                                                     fontStyle: 'italic',
-                                                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%)',
+                                                    background: 'white',
                                                     border: `2px solid ${category?.color || '#BFA9BE'}`,
                                                     borderRadius: 3,
                                                     p: 2,
@@ -577,7 +577,7 @@ const ProfilePage: React.FC = () => {
                             {currentProfile.lifestyle.childrenWish && currentProfile.lifestyle.childrenWish !== 'not specified' && (
                                 <Card
                                     sx={{
-                                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+                                        background: 'white',
                                         borderRadius: 4,
                                         border: '2px solid #FF9800',
                                         mb: 2,
@@ -605,7 +605,7 @@ const ProfilePage: React.FC = () => {
                                             sx={{
                                                 color: 'text.primary',
                                                 fontStyle: 'italic',
-                                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%)',
+                                                background: 'white',
                                                 border: '2px solid #FF9800',
                                                 borderRadius: 3,
                                                 p: 2,
@@ -625,7 +625,7 @@ const ProfilePage: React.FC = () => {
                             {currentProfile.lifestyle.children && currentProfile.lifestyle.children !== 'not specified' && (
                                 <Card
                                     sx={{
-                                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+                                        background: 'white',
                                         borderRadius: 4,
                                         border: '2px solid #FF9800',
                                         mb: 2,
@@ -653,7 +653,7 @@ const ProfilePage: React.FC = () => {
                                             sx={{
                                                 color: 'text.primary',
                                                 fontStyle: 'italic',
-                                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%)',
+                                                background: 'white',
                                                 border: '2px solid #FF9800',
                                                 borderRadius: 3,
                                                 p: 2,
@@ -672,7 +672,7 @@ const ProfilePage: React.FC = () => {
                             {currentProfile.lifestyle.politics && currentProfile.lifestyle.politics !== 'not specified' && (
                                 <Card
                                     sx={{
-                                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+                                        background: 'white',
                                         borderRadius: 4,
                                         border: '2px solid #FF9800',
                                         mb: 2,
@@ -700,7 +700,7 @@ const ProfilePage: React.FC = () => {
                                             sx={{
                                                 color: 'text.primary',
                                                 fontStyle: 'italic',
-                                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%)',
+                                                background: 'white',
                                                 border: '2px solid #FF9800',
                                                 borderRadius: 3,
                                                 p: 2,
@@ -742,7 +742,7 @@ const ProfilePage: React.FC = () => {
                             {currentProfile.lifestyle.alcohol && currentProfile.lifestyle.alcohol !== 'not specified' && (
                                 <Card
                                     sx={{
-                                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+                                        background: 'white',
                                         borderRadius: 4,
                                         border: '2px solid #4CAF50',
                                         mb: 2,
@@ -770,7 +770,7 @@ const ProfilePage: React.FC = () => {
                                             sx={{
                                                 color: 'text.primary',
                                                 fontStyle: 'italic',
-                                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%)',
+                                                background: 'white',
                                                 border: '2px solid #4CAF50',
                                                 borderRadius: 3,
                                                 p: 2,
@@ -790,7 +790,7 @@ const ProfilePage: React.FC = () => {
                             {currentProfile.lifestyle.smoking && currentProfile.lifestyle.smoking !== 'not specified' && (
                                 <Card
                                     sx={{
-                                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+                                        background: 'white',
                                         borderRadius: 4,
                                         border: '2px solid #4CAF50',
                                         mb: 2,
@@ -818,7 +818,7 @@ const ProfilePage: React.FC = () => {
                                             sx={{
                                                 color: 'text.primary',
                                                 fontStyle: 'italic',
-                                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%)',
+                                                background: 'white',
                                                 border: '2px solid #4CAF50',
                                                 borderRadius: 3,
                                                 p: 2,
@@ -838,7 +838,7 @@ const ProfilePage: React.FC = () => {
                             {currentProfile.lifestyle.cannabis && currentProfile.lifestyle.cannabis !== 'not specified' && (
                                 <Card
                                     sx={{
-                                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+                                        background: 'white',
                                         borderRadius: 4,
                                         border: '2px solid #4CAF50',
                                         mb: 2,
@@ -866,7 +866,7 @@ const ProfilePage: React.FC = () => {
                                             sx={{
                                                 color: 'text.primary',
                                                 fontStyle: 'italic',
-                                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%)',
+                                                background: 'white',
                                                 border: '2px solid #4CAF50',
                                                 borderRadius: 3,
                                                 p: 2,
@@ -886,7 +886,7 @@ const ProfilePage: React.FC = () => {
                 ) : (
                     <Card
                         sx={{
-                            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+                            background: 'white',
                             borderRadius: 4,
                             border: '2px solid',
                             borderColor: 'secondary.main',

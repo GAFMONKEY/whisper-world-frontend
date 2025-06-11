@@ -184,14 +184,14 @@ const ChatListPage: React.FC = () => {
         <Box
             sx={{
                 minHeight: '100vh',
-                backgroundColor: '#F8F9FA',
+                backgroundColor: '#F2EEE9',
                 pb: 8,
             }}
         >
             {/* Header */}
             <Box
                 sx={{
-                    background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)',
+                    backgroundColor: 'white',
                     borderBottom: '1px solid rgba(0,0,0,0.08)',
                     px: 3,
                     py: 3,
@@ -211,8 +211,8 @@ const ChatListPage: React.FC = () => {
                 >
                     Chats
                 </Typography>
-                <IconButton 
-                    sx={{ 
+                <IconButton
+                    sx={{
                         color: '#BFA9BE',
                         backgroundColor: 'rgba(191, 169, 190, 0.1)',
                         '&:hover': {

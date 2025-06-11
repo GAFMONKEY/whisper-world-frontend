@@ -114,12 +114,12 @@ const DashboardPage: React.FC = () => {
                 {/* Impuls des Tages Card */}
                 <Card
                     sx={{
-                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+                        backgroundColor: 'white',
                         borderRadius: 4,
                         border: '2px solid',
                         borderColor: 'secondary.main',
                         mb: 3,
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
                     }}
                 >
                     <CardContent sx={{ p: 3 }}>
@@ -147,7 +147,7 @@ const DashboardPage: React.FC = () => {
 
                         <Box
                             sx={{
-                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%)',
+                                backgroundColor: 'white',
                                 border: '2px solid',
                                 borderColor: 'secondary.main',
                                 borderRadius: 3,
@@ -221,12 +221,12 @@ const DashboardPage: React.FC = () => {
                 {/* Premium Card */}
                 <Card
                     sx={{
-                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+                        backgroundColor: 'white',
                         borderRadius: 4,
                         border: '2px solid',
                         borderColor: 'secondary.main',
                         mb: 3,
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
                     }}
                 >
                     <CardContent sx={{ p: 3, textAlign: 'center' }}>
