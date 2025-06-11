@@ -11,7 +11,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 const MatchSuccessPage: React.FC = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-    
+
     const matchId = searchParams.get('matchId');
     const partnerName = searchParams.get('partnerName') || 'deinem Match';
 
@@ -48,7 +48,17 @@ const MatchSuccessPage: React.FC = () => {
                     sx={{
                         position: 'absolute',
                         top: 60,
-                        left: 20
+                        left: 20,
+                        // Back link fades in early
+                        animation: 'fadeIn 0.6s ease-out 0.2s both',
+                        '@keyframes fadeIn': {
+                            '0%': {
+                                opacity: 0
+                            },
+                            '100%': {
+                                opacity: 1
+                            }
+                        }
                     }}
                 >
                     <Typography
@@ -57,7 +67,12 @@ const MatchSuccessPage: React.FC = () => {
                         sx={{
                             color: '#D4A574',
                             cursor: 'pointer',
-                            textDecoration: 'underline'
+                            textDecoration: 'underline',
+                            transition: 'all 0.2s ease',
+                            '&:hover': {
+                                color: '#C19660',
+                                transform: 'translateX(-2px)'
+                            }
                         }}
                     >
                         ← Zurück
@@ -71,7 +86,19 @@ const MatchSuccessPage: React.FC = () => {
                         fontWeight: 'bold',
                         color: 'text.primary',
                         mb: 4,
-                        fontFamily: 'Inter, sans-serif'
+                        fontFamily: 'Inter, sans-serif',
+                        // Title fades in from top
+                        animation: 'fadeInDown 0.8s ease-out',
+                        '@keyframes fadeInDown': {
+                            '0%': {
+                                opacity: 0,
+                                transform: 'translateY(-20px)'
+                            },
+                            '100%': {
+                                opacity: 1,
+                                transform: 'translateY(0)'
+                            }
+                        }
                     }}
                 >
                     Ihr mögt euch beide!
@@ -83,7 +110,17 @@ const MatchSuccessPage: React.FC = () => {
                     sx={{
                         color: 'text.secondary',
                         mb: 4,
-                        fontWeight: 500
+                        fontWeight: 500,
+                        // Partner name appears with slight delay
+                        animation: 'fadeIn 1s ease-out 0.3s both',
+                        '@keyframes fadeIn': {
+                            '0%': {
+                                opacity: 0
+                            },
+                            '100%': {
+                                opacity: 1
+                            }
+                        }
                     }}
                 >
                     Du und {partnerName}
@@ -95,7 +132,19 @@ const MatchSuccessPage: React.FC = () => {
                         position: 'relative',
                         mb: 6,
                         width: 200,
-                        height: 120
+                        height: 120,
+                        // Container Animation
+                        animation: 'slideInUp 0.8s ease-out 0.5s both',
+                        '@keyframes slideInUp': {
+                            '0%': {
+                                opacity: 0,
+                                transform: 'translateY(30px)'
+                            },
+                            '100%': {
+                                opacity: 1,
+                                transform: 'translateY(0)'
+                            }
+                        }
                     }}
                 >
                     {/* Left Circle */}
@@ -107,10 +156,22 @@ const MatchSuccessPage: React.FC = () => {
                             borderRadius: '50%',
                             backgroundColor: '#D4A574', // Beige/Brown
                             left: 0,
-                            top: 10
+                            top: 10,
+                            // Left circle slides in from left
+                            animation: 'slideInLeft 1s ease-out 0.7s both',
+                            '@keyframes slideInLeft': {
+                                '0%': {
+                                    opacity: 0,
+                                    transform: 'translateX(-50px) scale(0.8)'
+                                },
+                                '100%': {
+                                    opacity: 1,
+                                    transform: 'translateX(0) scale(1)'
+                                }
+                            }
                         }}
                     />
-                    
+
                     {/* Right Circle */}
                     <Box
                         sx={{
@@ -120,10 +181,22 @@ const MatchSuccessPage: React.FC = () => {
                             borderRadius: '50%',
                             backgroundColor: '#C8A8D8', // Light Purple
                             right: 0,
-                            top: 10
+                            top: 10,
+                            // Right circle slides in from right
+                            animation: 'slideInRight 1s ease-out 0.9s both',
+                            '@keyframes slideInRight': {
+                                '0%': {
+                                    opacity: 0,
+                                    transform: 'translateX(50px) scale(0.8)'
+                                },
+                                '100%': {
+                                    opacity: 1,
+                                    transform: 'translateX(0) scale(1)'
+                                }
+                            }
                         }}
                     />
-                    
+
                     {/* Heart Icon */}
                     <Box
                         sx={{
@@ -139,11 +212,34 @@ const MatchSuccessPage: React.FC = () => {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                            // Heart appears last with bounce and continuous pulse
+                            animation: 'heartAppear 1.2s ease-out 1.3s both, heartPulse 2s ease-in-out 2.5s infinite',
+                            '@keyframes heartAppear': {
+                                '0%': {
+                                    opacity: 0,
+                                    transform: 'translate(-50%, -50%) scale(0.3)',
+                                },
+                                '50%': {
+                                    transform: 'translate(-50%, -50%) scale(1.3)',
+                                },
+                                '100%': {
+                                    opacity: 1,
+                                    transform: 'translate(-50%, -50%) scale(1)',
+                                }
+                            },
+                            '@keyframes heartPulse': {
+                                '0%, 100%': {
+                                    transform: 'translate(-50%, -50%) scale(1)',
+                                },
+                                '50%': {
+                                    transform: 'translate(-50%, -50%) scale(1.1)',
+                                }
+                            }
                         }}
                     >
-                        <FavoriteIcon 
-                            sx={{ 
+                        <FavoriteIcon
+                            sx={{
                                 fontSize: 32,
                                 color: '#E91E63' // Pink heart color
                             }}
@@ -159,7 +255,19 @@ const MatchSuccessPage: React.FC = () => {
                         mb: 6,
                         fontStyle: 'italic',
                         maxWidth: 300,
-                        lineHeight: 1.6
+                        lineHeight: 1.6,
+                        // Description fades in after circles
+                        animation: 'fadeInUp 0.8s ease-out 1.5s both',
+                        '@keyframes fadeInUp': {
+                            '0%': {
+                                opacity: 0,
+                                transform: 'translateY(20px)'
+                            },
+                            '100%': {
+                                opacity: 1,
+                                transform: 'translateY(0)'
+                            }
+                        }
                     }}
                 >
                     Schicke eine Text- oder Sprachnachricht um das Gespräch zu beginnen.
@@ -172,7 +280,19 @@ const MatchSuccessPage: React.FC = () => {
                         maxWidth: 300,
                         display: 'flex',
                         flexDirection: 'column',
-                        gap: 2
+                        gap: 2,
+                        // Buttons container slides in from bottom
+                        animation: 'slideInUp 0.8s ease-out 1.8s both',
+                        '@keyframes slideInUp': {
+                            '0%': {
+                                opacity: 0,
+                                transform: 'translateY(30px)'
+                            },
+                            '100%': {
+                                opacity: 1,
+                                transform: 'translateY(0)'
+                            }
+                        }
                     }}
                 >
                     <Button
@@ -187,8 +307,11 @@ const MatchSuccessPage: React.FC = () => {
                             fontWeight: 'bold',
                             textTransform: 'none',
                             boxShadow: 'none',
+                            transition: 'all 0.3s ease',
                             '&:hover': {
-                                backgroundColor: '#C19660'
+                                backgroundColor: '#C19660',
+                                transform: 'translateY(-2px)',
+                                boxShadow: '0 4px 12px rgba(196, 150, 96, 0.3)'
                             }
                         }}
                     >
@@ -207,8 +330,11 @@ const MatchSuccessPage: React.FC = () => {
                             fontWeight: 'bold',
                             textTransform: 'none',
                             boxShadow: 'none',
+                            transition: 'all 0.3s ease',
                             '&:hover': {
-                                backgroundColor: '#A67F5B'
+                                backgroundColor: '#A67F5B',
+                                transform: 'translateY(-2px)',
+                                boxShadow: '0 4px 12px rgba(166, 127, 91, 0.3)'
                             }
                         }}
                     >

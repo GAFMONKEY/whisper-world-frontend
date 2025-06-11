@@ -78,12 +78,17 @@ const DashboardPage: React.FC = () => {
         <Box
             sx={{
                 minHeight: '100vh',
-                backgroundColor: 'background.default',
+                backgroundColor: '#F2EEE9',
                 pb: 8, // Platz für Bottom Navigation
+                background: '#F2EEE9',
             }}
         >
             {/* Header */}
-            <Box sx={{ p: 3, pt: 4 }}>
+            <Box sx={{ 
+                p: 3, 
+                pt: 4,
+                backgroundColor: 'transparent',
+            }}>
                 <Typography
                     variant="h4"
                     sx={{
@@ -109,11 +114,12 @@ const DashboardPage: React.FC = () => {
                 {/* Impuls des Tages Card */}
                 <Card
                     sx={{
-                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                        borderRadius: 3,
+                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+                        borderRadius: 4,
                         border: '2px solid',
                         borderColor: 'secondary.main',
                         mb: 3,
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
                     }}
                 >
                     <CardContent sx={{ p: 3 }}>
@@ -141,10 +147,10 @@ const DashboardPage: React.FC = () => {
 
                         <Box
                             sx={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%)',
                                 border: '2px solid',
                                 borderColor: 'secondary.main',
-                                borderRadius: 2,
+                                borderRadius: 3,
                                 p: 2,
                                 mb: 3,
                             }}
@@ -165,15 +171,21 @@ const DashboardPage: React.FC = () => {
                                 variant="contained"
                                 fullWidth
                                 sx={{
-                                    backgroundColor: 'primary.main',
+                                    background: 'linear-gradient(135deg, #BFA9BE 0%, #A693A1 100%)',
                                     color: 'white',
                                     borderRadius: 25,
                                     py: 1.5,
                                     fontSize: '1rem',
-                                    fontWeight: 500,
+                                    fontWeight: 600,
+                                    textTransform: 'none',
+                                    boxShadow: '0 4px 12px rgba(191, 169, 190, 0.3)',
+                                    border: 'none',
                                     '&:hover': {
-                                        backgroundColor: 'primary.dark',
+                                        background: 'linear-gradient(135deg, #A693A1 0%, #96818A 100%)',
+                                        transform: 'translateY(-1px)',
+                                        boxShadow: '0 6px 20px rgba(191, 169, 190, 0.4)',
                                     },
+                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                 }}
                             >
                                 Sprachnachricht aufnehmen
@@ -183,15 +195,21 @@ const DashboardPage: React.FC = () => {
                                 variant="contained"
                                 fullWidth
                                 sx={{
-                                    backgroundColor: 'primary.main',
+                                    background: 'linear-gradient(135deg, #BFA9BE 0%, #A693A1 100%)',
                                     color: 'white',
                                     borderRadius: 25,
                                     py: 1.5,
                                     fontSize: '1rem',
-                                    fontWeight: 500,
+                                    fontWeight: 600,
+                                    textTransform: 'none',
+                                    boxShadow: '0 4px 12px rgba(191, 169, 190, 0.3)',
+                                    border: 'none',
                                     '&:hover': {
-                                        backgroundColor: 'primary.dark',
+                                        background: 'linear-gradient(135deg, #A693A1 0%, #96818A 100%)',
+                                        transform: 'translateY(-1px)',
+                                        boxShadow: '0 6px 20px rgba(191, 169, 190, 0.4)',
                                     },
+                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                 }}
                             >
                                 Text eingeben
@@ -203,11 +221,12 @@ const DashboardPage: React.FC = () => {
                 {/* Premium Card */}
                 <Card
                     sx={{
-                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                        borderRadius: 3,
+                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+                        borderRadius: 4,
                         border: '2px solid',
                         borderColor: 'secondary.main',
                         mb: 3,
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
                     }}
                 >
                     <CardContent sx={{ p: 3, textAlign: 'center' }}>
@@ -238,18 +257,25 @@ const DashboardPage: React.FC = () => {
                             variant="contained"
                             fullWidth
                             sx={{
-                                backgroundColor: 'secondary.main',
+                                background: 'linear-gradient(135deg, #D4A574 0%, #C69C6D 100%)',
                                 color: 'white',
                                 borderRadius: 25,
                                 py: 1.5,
                                 fontSize: '1rem',
                                 fontWeight: 600,
+                                textTransform: 'none',
+                                boxShadow: '0 4px 12px rgba(212, 165, 116, 0.3)',
+                                border: 'none',
                                 '&:hover': {
-                                    backgroundColor: 'secondary.dark',
+                                    background: 'linear-gradient(135deg, #C69C6D 0%, #B8926B 100%)',
+                                    transform: 'translateY(-1px)',
+                                    boxShadow: '0 6px 20px rgba(212, 165, 116, 0.4)',
                                 },
+                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                             }}
                         >
-                            Mehr zu Premium erfahren                        </Button>
+                            Mehr zu Premium erfahren
+                        </Button>
                     </CardContent>
                 </Card>
             </Box>

@@ -291,6 +291,17 @@ const ProfilePage: React.FC = () => {
                 minHeight: '100vh',
                 backgroundColor: 'background.default',
                 pb: 8, // Platz für Bottom Navigation
+                animation: 'fadeIn 0.6s ease-out',
+                '@keyframes fadeIn': {
+                    '0%': {
+                        opacity: 0,
+                        transform: 'translateY(20px)'
+                    },
+                    '100%': {
+                        opacity: 1,
+                        transform: 'translateY(0)'
+                    }
+                }
             }}
         >
             {/* Header */}
@@ -299,8 +310,13 @@ const ProfilePage: React.FC = () => {
                     variant="h4"
                     sx={{
                         fontWeight: 'bold',
-                        color: 'text.primary',
                         mb: 2,
+                        background: 'linear-gradient(135deg, #2C3E50 0%, #4A6741 100%)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        textAlign: 'center',
+                        letterSpacing: '0.5px',
+                        fontFamily: 'Inter, sans-serif',
                     }}
                 >
                     {currentProfile?.name || 'Unbekannt'}, {currentProfile?.age || 0}
@@ -310,27 +326,78 @@ const ProfilePage: React.FC = () => {
                 {showMatchMessage && (
                     <Box
                         sx={{
-                            backgroundColor: isActualMatch ? '#4CAF50' : '#2196F3',
+                            background: isActualMatch 
+                                ? 'linear-gradient(135deg, #4CAF50 0%, #45A049 100%)'
+                                : 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)',
                             color: 'white',
-                            borderRadius: 3,
-                            p: 2,
-                            mb: 2,
-                            animation: 'fadeIn 0.5s ease-in-out',
-                            '@keyframes fadeIn': {
-                                from: { opacity: 0, transform: 'translateY(-10px)' },
-                                to: { opacity: 1, transform: 'translateY(0)' },
+                            borderRadius: 4,
+                            p: 3,
+                            mb: 3,
+                            boxShadow: isActualMatch 
+                                ? '0 8px 25px rgba(76, 175, 80, 0.3)' 
+                                : '0 8px 25px rgba(33, 150, 243, 0.3)',
+                            border: '2px solid rgba(255, 255, 255, 0.2)',
+                            animation: 'matchAppear 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+                            '@keyframes matchAppear': {
+                                '0%': { 
+                                    opacity: 0, 
+                                    transform: 'translateY(-20px) scale(0.9)',
+                                    filter: 'blur(4px)'
+                                },
+                                '50%': { 
+                                    transform: 'translateY(-5px) scale(1.02)',
+                                    filter: 'blur(0px)'
+                                },
+                                '100%': { 
+                                    opacity: 1, 
+                                    transform: 'translateY(0) scale(1)',
+                                    filter: 'blur(0px)'
+                                },
                             },
                         }}
                     >
-                        <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                        <Typography 
+                            variant="h6" 
+                            sx={{ 
+                                fontWeight: 700,
+                                textAlign: 'center',
+                                fontSize: '1.1rem',
+                                letterSpacing: '0.5px',
+                                textShadow: '0 2px 4px rgba(0,0,0,0.3)',
+                            }}
+                        >
                             {isActualMatch ? (
-                                `🎉 IT'S A MATCH! Du und ${currentProfile?.name || 'dieser Nutzer'} mögt euch!`
+                                `🎉 IT'S A MATCH!`
                             ) : (
-                                `💌 Like gesendet! Warte auf Antwort von ${currentProfile?.name || 'diesem Nutzer'}`
+                                `💌 Like gesendet!`
+                            )}
+                        </Typography>
+                        <Typography 
+                            variant="body1" 
+                            sx={{ 
+                                mt: 1, 
+                                textAlign: 'center',
+                                fontWeight: 500,
+                                opacity: 0.95,
+                            }}
+                        >
+                            {isActualMatch ? (
+                                `Du und ${currentProfile?.name || 'dieser Nutzer'} mögt euch beide!`
+                            ) : (
+                                `Warte auf Antwort von ${currentProfile?.name || 'diesem Nutzer'}`
                             )}
                         </Typography>
                         {isActualMatch && (
-                            <Typography variant="body2" sx={{ mt: 1, opacity: 0.9 }}>
+                            <Typography 
+                                variant="body2" 
+                                sx={{ 
+                                    mt: 2, 
+                                    textAlign: 'center',
+                                    opacity: 0.85,
+                                    fontStyle: 'italic',
+                                    fontSize: '0.9rem',
+                                }}
+                            >
                                 Ihr werdet automatisch zum Chat weitergeleitet...
                             </Typography>
                         )}
@@ -359,6 +426,13 @@ const ProfilePage: React.FC = () => {
                                     fontWeight: 600,
                                     mb: 2,
                                     fontSize: '0.9rem',
+                                    borderRadius: 3,
+                                    height: 40,
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                                    '& .MuiChip-label': {
+                                        px: 2,
+                                        fontWeight: 'bold'
+                                    }
                                 }}
                             />
 
@@ -367,16 +441,18 @@ const ProfilePage: React.FC = () => {
                                 <Card
                                     key={questionIndex}
                                     sx={{
-                                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                                        borderRadius: 3,
+                                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+                                        borderRadius: 4,
                                         border: '2px solid',
                                         borderColor: category.color,
                                         mb: 2,
-                                        transition: 'all 0.3s ease-in-out',
+                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                         cursor: q.hasAudio ? 'pointer' : 'default',
+                                        boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
                                         '&:hover': {
-                                            transform: q.hasAudio ? 'translateY(-2px)' : 'none',
-                                            boxShadow: q.hasAudio ? '0 4px 20px rgba(0,0,0,0.1)' : 'none',
+                                            transform: q.hasAudio ? 'translateY(-4px) scale(1.02)' : 'none',
+                                            boxShadow: q.hasAudio ? '0 8px 25px rgba(0,0,0,0.12)' : '0 4px 12px rgba(0,0,0,0.05)',
+                                            borderColor: q.hasAudio ? category.color : category.color,
                                         },
                                     }}
                                     onClick={q.hasAudio ? () => handlePlayAudio(categoryIndex, questionIndex) : undefined}
@@ -399,10 +475,11 @@ const ProfilePage: React.FC = () => {
                                                 sx={{
                                                     color: 'text.primary',
                                                     fontStyle: 'italic',
-                                                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                                                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%)',
                                                     border: `2px solid ${category?.color || '#BFA9BE'}`,
-                                                    borderRadius: 2,
+                                                    borderRadius: 3,
                                                     p: 2,
+                                                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
                                                 }}
                                             >
                                                 {q.answer}
@@ -414,24 +491,25 @@ const ProfilePage: React.FC = () => {
                                                 <IconButton
                                                     onClick={() => handlePlayAudio(categoryIndex, questionIndex)}
                                                     sx={{
-                                                        backgroundColor: category.color,
+                                                        background: `linear-gradient(135deg, ${category.color} 0%, ${category.color}CC 100%)`,
                                                         color: 'white',
                                                         width: 60,
                                                         height: 60,
+                                                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                                                         animation: playingAudio?.categoryIndex === categoryIndex &&
                                                             playingAudio?.questionIndex === questionIndex
                                                             ? 'pulse 1.5s infinite' : 'none',
                                                         '@keyframes pulse': {
-                                                            '0%': { transform: 'scale(1)' },
-                                                            '50%': { transform: 'scale(1.1)' },
-                                                            '100%': { transform: 'scale(1)' },
+                                                            '0%': { transform: 'scale(1)', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' },
+                                                            '50%': { transform: 'scale(1.1)', boxShadow: '0 6px 20px rgba(0,0,0,0.25)' },
+                                                            '100%': { transform: 'scale(1)', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' },
                                                         },
                                                         '&:hover': {
-                                                            backgroundColor: category.color,
-                                                            opacity: 0.8,
-                                                            transform: 'scale(1.05)',
+                                                            background: `linear-gradient(135deg, ${category.color}DD 0%, ${category.color}AA 100%)`,
+                                                            transform: 'scale(1.08)',
+                                                            boxShadow: '0 6px 20px rgba(0,0,0,0.2)',
                                                         },
-                                                        transition: 'all 0.2s ease-in-out',
+                                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                                     }}
                                                 >
                                                     {playingAudio?.categoryIndex === categoryIndex &&
@@ -469,130 +547,360 @@ const ProfilePage: React.FC = () => {
                     </Card>
                 )}
 
-                {/* Lifestyle Section */}
-                <Card
-                    sx={{
-                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                        borderRadius: 3,
-                        border: '2px solid',
-                        borderColor: 'secondary.main',
-                        mb: 3,
-                    }}
-                >
-                    <CardContent sx={{ p: 3 }}>
-                        {currentProfile && currentProfile.lifestyle ? (
-                            <>
-                                {/* Dating & Lifestyle Info */}
-                                <Box sx={{ mb: 3 }}>
-                                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, color: 'primary.main' }}>
-                                        💫 Lifestyle & Dating
-                                    </Typography>
+                {/* Lifestyle Section - Now styled like other categories */}
+                {currentProfile && currentProfile.lifestyle ? (
+                    <>
+                        {/* Lifestyle & Dating Category */}
+                        <Box sx={{ mb: 3 }}>
+                            <Chip
+                                label="💫 Lifestyle & Dating"
+                                sx={{
+                                    backgroundColor: '#FF9800', // Orange color
+                                    color: 'white',
+                                    fontWeight: 600,
+                                    mb: 2,
+                                    fontSize: '0.9rem',
+                                    borderRadius: 3,
+                                    height: 40,
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                                    '& .MuiChip-label': {
+                                        px: 2,
+                                        fontWeight: 'bold'
+                                    }
+                                }}
+                            />
 
-                                    <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mb: 3 }}>
-                                        {currentProfile.lifestyle.childrenWish && currentProfile.lifestyle.childrenWish !== 'not specified' && (
-                                            <Box>
-                                                <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5, fontSize: '0.8rem' }}>
-                                                    👶 Kinderwunsch
-                                                </Typography>
-                                                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                                    {currentProfile.lifestyle.childrenWish === 'yes' ? 'Ja' :
-                                                        currentProfile.lifestyle.childrenWish === 'no' ? 'Nein' :
-                                                            currentProfile.lifestyle.childrenWish === 'maybe' ? 'Vielleicht' :
-                                                                currentProfile.lifestyle.childrenWish}
-                                                </Typography>
-                                            </Box>
-                                        )}
+                            {/* Kinderwunsch Card */}
+                            {currentProfile.lifestyle.childrenWish && currentProfile.lifestyle.childrenWish !== 'not specified' && (
+                                <Card
+                                    sx={{
+                                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+                                        borderRadius: 4,
+                                        border: '2px solid #FF9800',
+                                        mb: 2,
+                                        boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        '&:hover': {
+                                            transform: 'translateY(-2px)',
+                                            boxShadow: '0 6px 20px rgba(255, 152, 0, 0.15)',
+                                        },
+                                    }}
+                                >
+                                    <CardContent sx={{ p: 3 }}>
+                                        <Typography
+                                            variant="body1"
+                                            sx={{
+                                                color: 'text.primary',
+                                                fontWeight: 500,
+                                                mb: 2,
+                                            }}
+                                        >
+                                            👶 Kinderwunsch
+                                        </Typography>
+                                        <Typography
+                                            variant="body1"
+                                            sx={{
+                                                color: 'text.primary',
+                                                fontStyle: 'italic',
+                                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%)',
+                                                border: '2px solid #FF9800',
+                                                borderRadius: 3,
+                                                p: 2,
+                                                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                                            }}
+                                        >
+                                            {currentProfile.lifestyle.childrenWish === 'yes' ? 'Ja' :
+                                                currentProfile.lifestyle.childrenWish === 'no' ? 'Nein' :
+                                                    currentProfile.lifestyle.childrenWish === 'maybe' ? 'Vielleicht' :
+                                                        currentProfile.lifestyle.childrenWish}
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+                            )}
 
-                                        {currentProfile.lifestyle.children && currentProfile.lifestyle.children !== 'not specified' && (
-                                            <Box>
-                                                <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5, fontSize: '0.8rem' }}>
-                                                    👶 Hat Kinder
-                                                </Typography>
-                                                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                                    {currentProfile.lifestyle.children === 'yes' ? 'Ja' :
-                                                        currentProfile.lifestyle.children === 'no' ? 'Nein' :
-                                                            currentProfile.lifestyle.children}
-                                                </Typography>
-                                            </Box>
-                                        )}
+                            {/* Hat Kinder Card */}
+                            {currentProfile.lifestyle.children && currentProfile.lifestyle.children !== 'not specified' && (
+                                <Card
+                                    sx={{
+                                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+                                        borderRadius: 4,
+                                        border: '2px solid #FF9800',
+                                        mb: 2,
+                                        boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        '&:hover': {
+                                            transform: 'translateY(-2px)',
+                                            boxShadow: '0 6px 20px rgba(255, 152, 0, 0.15)',
+                                        },
+                                    }}
+                                >
+                                    <CardContent sx={{ p: 3 }}>
+                                        <Typography
+                                            variant="body1"
+                                            sx={{
+                                                color: 'text.primary',
+                                                fontWeight: 500,
+                                                mb: 2,
+                                            }}
+                                        >
+                                            👶 Hat Kinder
+                                        </Typography>
+                                        <Typography
+                                            variant="body1"
+                                            sx={{
+                                                color: 'text.primary',
+                                                fontStyle: 'italic',
+                                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%)',
+                                                border: '2px solid #FF9800',
+                                                borderRadius: 3,
+                                                p: 2,
+                                                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                                            }}
+                                        >
+                                            {currentProfile.lifestyle.children === 'yes' ? 'Ja' :
+                                                currentProfile.lifestyle.children === 'no' ? 'Nein' :
+                                                    currentProfile.lifestyle.children}
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+                            )}
 
-                                        {currentProfile.lifestyle.politics && currentProfile.lifestyle.politics !== 'not specified' && (
-                                            <Box>
-                                                <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5, fontSize: '0.8rem' }}>
-                                                    🗳️ Politik
-                                                </Typography>
-                                                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                                    {currentProfile.lifestyle.politics === 'left' ? 'Links' :
-                                                        currentProfile.lifestyle.politics === 'right' ? 'Rechts' :
-                                                            currentProfile.lifestyle.politics === 'center' ? 'Mitte' :
-                                                                currentProfile.lifestyle.politics === 'not political' ? 'Unpolitisch' :
-                                                                    currentProfile.lifestyle.politics}
-                                                </Typography>
-                                            </Box>
-                                        )}
-                                    </Box>
-                                </Box>
+                            {/* Politik Card */}
+                            {currentProfile.lifestyle.politics && currentProfile.lifestyle.politics !== 'not specified' && (
+                                <Card
+                                    sx={{
+                                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+                                        borderRadius: 4,
+                                        border: '2px solid #FF9800',
+                                        mb: 2,
+                                        boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        '&:hover': {
+                                            transform: 'translateY(-2px)',
+                                            boxShadow: '0 6px 20px rgba(255, 152, 0, 0.15)',
+                                        },
+                                    }}
+                                >
+                                    <CardContent sx={{ p: 3 }}>
+                                        <Typography
+                                            variant="body1"
+                                            sx={{
+                                                color: 'text.primary',
+                                                fontWeight: 500,
+                                                mb: 2,
+                                            }}
+                                        >
+                                            🗳️ Politik
+                                        </Typography>
+                                        <Typography
+                                            variant="body1"
+                                            sx={{
+                                                color: 'text.primary',
+                                                fontStyle: 'italic',
+                                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%)',
+                                                border: '2px solid #FF9800',
+                                                borderRadius: 3,
+                                                p: 2,
+                                                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                                            }}
+                                        >
+                                            {currentProfile.lifestyle.politics === 'left' ? 'Links' :
+                                                currentProfile.lifestyle.politics === 'right' ? 'Rechts' :
+                                                    currentProfile.lifestyle.politics === 'center' ? 'Mitte' :
+                                                        currentProfile.lifestyle.politics === 'not political' ? 'Unpolitisch' :
+                                                            currentProfile.lifestyle.politics}
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+                            )}
+                        </Box>
 
-                                {/* Substances & Health */}
-                                <Box sx={{ mb: 3 }}>
-                                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, color: 'primary.main' }}>
-                                        🏃‍♀️ Gesundheit & Substanzen
-                                    </Typography>
+                        {/* Gesundheit & Substanzen Category */}
+                        <Box sx={{ mb: 3 }}>
+                            <Chip
+                                label="🏃‍♀️ Gesundheit & Substanzen"
+                                sx={{
+                                    backgroundColor: '#4CAF50', // Green color
+                                    color: 'white',
+                                    fontWeight: 600,
+                                    mb: 2,
+                                    fontSize: '0.9rem',
+                                    borderRadius: 3,
+                                    height: 40,
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                                    '& .MuiChip-label': {
+                                        px: 2,
+                                        fontWeight: 'bold'
+                                    }
+                                }}
+                            />
 
-                                    <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-                                        {currentProfile.lifestyle.alcohol && currentProfile.lifestyle.alcohol !== 'not specified' && (
-                                            <Box>
-                                                <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5, fontSize: '0.8rem' }}>
-                                                    🍷 Alkohol
-                                                </Typography>
-                                                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                                    {currentProfile.lifestyle.alcohol === 'yes' ? 'Ja' :
-                                                        currentProfile.lifestyle.alcohol === 'no' ? 'Nein' :
-                                                            currentProfile.lifestyle.alcohol === 'sometimes' ? 'Manchmal' :
-                                                                currentProfile.lifestyle.alcohol}
-                                                </Typography>
-                                            </Box>
-                                        )}
+                            {/* Alkohol Card */}
+                            {currentProfile.lifestyle.alcohol && currentProfile.lifestyle.alcohol !== 'not specified' && (
+                                <Card
+                                    sx={{
+                                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+                                        borderRadius: 4,
+                                        border: '2px solid #4CAF50',
+                                        mb: 2,
+                                        boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        '&:hover': {
+                                            transform: 'translateY(-2px)',
+                                            boxShadow: '0 6px 20px rgba(76, 175, 80, 0.15)',
+                                        },
+                                    }}
+                                >
+                                    <CardContent sx={{ p: 3 }}>
+                                        <Typography
+                                            variant="body1"
+                                            sx={{
+                                                color: 'text.primary',
+                                                fontWeight: 500,
+                                                mb: 2,
+                                            }}
+                                        >
+                                            🍷 Alkohol
+                                        </Typography>
+                                        <Typography
+                                            variant="body1"
+                                            sx={{
+                                                color: 'text.primary',
+                                                fontStyle: 'italic',
+                                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%)',
+                                                border: '2px solid #4CAF50',
+                                                borderRadius: 3,
+                                                p: 2,
+                                                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                                            }}
+                                        >
+                                            {currentProfile.lifestyle.alcohol === 'yes' ? 'Ja' :
+                                                currentProfile.lifestyle.alcohol === 'no' ? 'Nein' :
+                                                    currentProfile.lifestyle.alcohol === 'sometimes' ? 'Manchmal' :
+                                                        currentProfile.lifestyle.alcohol}
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+                            )}
 
-                                        {currentProfile.lifestyle.smoking && currentProfile.lifestyle.smoking !== 'not specified' && (
-                                            <Box>
-                                                <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5, fontSize: '0.8rem' }}>
-                                                    🚬 Rauchen
-                                                </Typography>
-                                                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                                    {currentProfile.lifestyle.smoking === 'yes' ? 'Ja' :
-                                                        currentProfile.lifestyle.smoking === 'no' ? 'Nein' :
-                                                            currentProfile.lifestyle.smoking === 'sometimes' ? 'Manchmal' :
-                                                                currentProfile.lifestyle.smoking}
-                                                </Typography>
-                                            </Box>
-                                        )}
+                            {/* Rauchen Card */}
+                            {currentProfile.lifestyle.smoking && currentProfile.lifestyle.smoking !== 'not specified' && (
+                                <Card
+                                    sx={{
+                                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+                                        borderRadius: 4,
+                                        border: '2px solid #4CAF50',
+                                        mb: 2,
+                                        boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        '&:hover': {
+                                            transform: 'translateY(-2px)',
+                                            boxShadow: '0 6px 20px rgba(76, 175, 80, 0.15)',
+                                        },
+                                    }}
+                                >
+                                    <CardContent sx={{ p: 3 }}>
+                                        <Typography
+                                            variant="body1"
+                                            sx={{
+                                                color: 'text.primary',
+                                                fontWeight: 500,
+                                                mb: 2,
+                                            }}
+                                        >
+                                            🚬 Rauchen
+                                        </Typography>
+                                        <Typography
+                                            variant="body1"
+                                            sx={{
+                                                color: 'text.primary',
+                                                fontStyle: 'italic',
+                                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%)',
+                                                border: '2px solid #4CAF50',
+                                                borderRadius: 3,
+                                                p: 2,
+                                                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                                            }}
+                                        >
+                                            {currentProfile.lifestyle.smoking === 'yes' ? 'Ja' :
+                                                currentProfile.lifestyle.smoking === 'no' ? 'Nein' :
+                                                    currentProfile.lifestyle.smoking === 'sometimes' ? 'Manchmal' :
+                                                        currentProfile.lifestyle.smoking}
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+                            )}
 
-                                        {currentProfile.lifestyle.cannabis && currentProfile.lifestyle.cannabis !== 'not specified' && (
-                                            <Box>
-                                                <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5, fontSize: '0.8rem' }}>
-                                                    🌿 Cannabis
-                                                </Typography>
-                                                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                                    {currentProfile.lifestyle.cannabis === 'yes' ? 'Ja' :
-                                                        currentProfile.lifestyle.cannabis === 'no' ? 'Nein' :
-                                                            currentProfile.lifestyle.cannabis === 'sometimes' ? 'Manchmal' :
-                                                                currentProfile.lifestyle.cannabis}
-                                                </Typography>
-                                            </Box>
-                                        )}
-                                    </Box>
-                                </Box>
-                            </>
-                        ) : (
-                            <Box sx={{ textAlign: 'center', py: 2 }}>
-                                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                    Lifestyle-Informationen werden geladen...
-                                </Typography>
-                            </Box>
-                        )}
-                    </CardContent>
-                </Card>
+                            {/* Cannabis Card */}
+                            {currentProfile.lifestyle.cannabis && currentProfile.lifestyle.cannabis !== 'not specified' && (
+                                <Card
+                                    sx={{
+                                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+                                        borderRadius: 4,
+                                        border: '2px solid #4CAF50',
+                                        mb: 2,
+                                        boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        '&:hover': {
+                                            transform: 'translateY(-2px)',
+                                            boxShadow: '0 6px 20px rgba(76, 175, 80, 0.15)',
+                                        },
+                                    }}
+                                >
+                                    <CardContent sx={{ p: 3 }}>
+                                        <Typography
+                                            variant="body1"
+                                            sx={{
+                                                color: 'text.primary',
+                                                fontWeight: 500,
+                                                mb: 2,
+                                            }}
+                                        >
+                                            🌿 Cannabis
+                                        </Typography>
+                                        <Typography
+                                            variant="body1"
+                                            sx={{
+                                                color: 'text.primary',
+                                                fontStyle: 'italic',
+                                                background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%)',
+                                                border: '2px solid #4CAF50',
+                                                borderRadius: 3,
+                                                p: 2,
+                                                boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                                            }}
+                                        >
+                                            {currentProfile.lifestyle.cannabis === 'yes' ? 'Ja' :
+                                                currentProfile.lifestyle.cannabis === 'no' ? 'Nein' :
+                                                    currentProfile.lifestyle.cannabis === 'sometimes' ? 'Manchmal' :
+                                                        currentProfile.lifestyle.cannabis}
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+                            )}
+                        </Box>
+                    </>
+                ) : (
+                    <Card
+                        sx={{
+                            background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%)',
+                            borderRadius: 4,
+                            border: '2px solid',
+                            borderColor: 'secondary.main',
+                            mb: 3,
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+                        }}
+                    >
+                        <CardContent sx={{ p: 3, textAlign: 'center' }}>
+                            <Typography variant="body1" sx={{ color: 'text.secondary', mb: 2 }}>
+                                🎭 Profil wird geladen...
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                Lifestyle-Informationen werden geladen...
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                )}
 
                 {/* Progress Indicator */}
                 <Box sx={{ textAlign: 'center', mb: 3 }}>
@@ -647,14 +955,21 @@ const ProfilePage: React.FC = () => {
                         onClick={handleSkip}
                         sx={{
                             flex: 1,
-                            backgroundColor: '#F5F5DC', // Beige
+                            background: 'linear-gradient(135deg, #F5F5DC 0%, #EAEAC8 100%)',
                             color: 'text.primary',
                             borderRadius: 25,
-                            py: 1.5,
+                            py: 2,
                             fontSize: '1rem',
-                            fontWeight: 600,
+                            fontWeight: 700,
+                            textTransform: 'none',
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                            border: '2px solid transparent',
+                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                             '&:hover': {
-                                backgroundColor: '#F0F0DC',
+                                background: 'linear-gradient(135deg, #EAEAC8 0%, #E0E0B8 100%)',
+                                transform: 'translateY(-2px)',
+                                boxShadow: '0 6px 20px rgba(0,0,0,0.15)',
+                                border: '2px solid rgba(0,0,0,0.1)',
                             },
                         }}
                     >
@@ -667,19 +982,26 @@ const ProfilePage: React.FC = () => {
                         disabled={isMatching}
                         sx={{
                             flex: 1,
-                            backgroundColor: 'secondary.main',
+                            background: 'linear-gradient(135deg, #BFA9BE 0%, #A693A1 100%)',
                             color: 'white',
                             borderRadius: 25,
-                            py: 1.5,
+                            py: 2,
                             fontSize: '1rem',
-                            fontWeight: 600,
-                            transition: 'all 0.3s ease-in-out',
+                            fontWeight: 700,
+                            textTransform: 'none',
+                            boxShadow: '0 4px 12px rgba(191, 169, 190, 0.3)',
+                            border: '2px solid transparent',
+                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                             '&:hover': {
-                                backgroundColor: 'secondary.dark',
-                                transform: 'scale(1.02)',
+                                background: 'linear-gradient(135deg, #A693A1 0%, #96818A 100%)',
+                                transform: 'translateY(-2px) scale(1.02)',
+                                boxShadow: '0 8px 25px rgba(191, 169, 190, 0.4)',
+                                border: '2px solid rgba(255,255,255,0.2)',
                             },
                             '&:disabled': {
-                                backgroundColor: 'rgba(0,0,0,0.3)',
+                                background: 'linear-gradient(135deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.3) 100%)',
+                                transform: 'none',
+                                boxShadow: 'none',
                             },
                         }}
                     >
@@ -689,7 +1011,7 @@ const ProfilePage: React.FC = () => {
                                 Sende Like...
                             </Box>
                         ) : (
-                            '❤️ Match anfragen'
+                            'Gespräch anfangen'
                         )}
                     </Button>
                 </Box>
