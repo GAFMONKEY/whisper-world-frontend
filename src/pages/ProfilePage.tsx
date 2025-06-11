@@ -293,183 +293,162 @@ const ProfilePage: React.FC = () => {
                 pb: 8, // Platz für Bottom Navigation
             }}
         >
-                {/* Header */}
-                <Box sx={{ p: 3, pt: 4, textAlign: 'center' }}>
-                    <Typography
-                        variant="h4"
+            {/* Header */}
+            <Box sx={{ p: 3, pt: 4, textAlign: 'center' }}>
+                <Typography
+                    variant="h4"
+                    sx={{
+                        fontWeight: 'bold',
+                        color: 'text.primary',
+                        mb: 2,
+                    }}
+                >
+                    {currentProfile?.name || 'Unbekannt'}, {currentProfile?.age || 0}
+                </Typography>
+
+                {/* Match Success Message */}
+                {showMatchMessage && (
+                    <Box
                         sx={{
-                            fontWeight: 'bold',
-                            color: 'text.primary',
+                            backgroundColor: isActualMatch ? '#4CAF50' : '#2196F3',
+                            color: 'white',
+                            borderRadius: 3,
+                            p: 2,
                             mb: 2,
+                            animation: 'fadeIn 0.5s ease-in-out',
+                            '@keyframes fadeIn': {
+                                from: { opacity: 0, transform: 'translateY(-10px)' },
+                                to: { opacity: 1, transform: 'translateY(0)' },
+                            },
                         }}
                     >
-                        {currentProfile?.name || 'Unbekannt'}, {currentProfile?.age || 0}
-                    </Typography>
-
-                    {/* Match Success Message */}
-                    {showMatchMessage && (
-                        <Box
-                            sx={{
-                                backgroundColor: isActualMatch ? '#4CAF50' : '#2196F3',
-                                color: 'white',
-                                borderRadius: 3,
-                                p: 2,
-                                mb: 2,
-                                animation: 'fadeIn 0.5s ease-in-out',
-                                '@keyframes fadeIn': {
-                                    from: { opacity: 0, transform: 'translateY(-10px)' },
-                                    to: { opacity: 1, transform: 'translateY(0)' },
-                                },
-                            }}
-                        >
-                            <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                                {isActualMatch ? (
-                                    `🎉 IT'S A MATCH! Du und ${currentProfile?.name || 'dieser Nutzer'} mögt euch!`
-                                ) : (
-                                    `💌 Like gesendet! Warte auf Antwort von ${currentProfile?.name || 'diesem Nutzer'}`
-                                )}
-                            </Typography>
-                            {isActualMatch && (
-                                <Typography variant="body2" sx={{ mt: 1, opacity: 0.9 }}>
-                                    Ihr werdet automatisch zum Chat weitergeleitet...
-                                </Typography>
+                        <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                            {isActualMatch ? (
+                                `🎉 IT'S A MATCH! Du und ${currentProfile?.name || 'dieser Nutzer'} mögt euch!`
+                            ) : (
+                                `💌 Like gesendet! Warte auf Antwort von ${currentProfile?.name || 'diesem Nutzer'}`
                             )}
-                        </Box>
-                    )}
-                </Box>
+                        </Typography>
+                        {isActualMatch && (
+                            <Typography variant="body2" sx={{ mt: 1, opacity: 0.9 }}>
+                                Ihr werdet automatisch zum Chat weitergeleitet...
+                            </Typography>
+                        )}
+                    </Box>
+                )}
+            </Box>
 
-                {/* Scrollable Content */}
-                <Box sx={{
-                    px: 3,
-                    pb: 3,
-                    transition: 'all 0.3s ease-in-out',
-                    opacity: playingAudio ? 0.9 : 1,
-                    transform: showMatchMessage ? 'scale(0.98)' : 'scale(1)',
-                }}>
-                    {/* Categories mit Fragen */}
-                    {currentProfile && currentProfile.categories && Array.isArray(currentProfile.categories) && currentProfile.categories.length > 0 ? (
-                        currentProfile.categories.map((category, categoryIndex) => (
-                            <Box key={categoryIndex} sx={{ mb: 3 }}>
-                                {/* Category Tag */}
-                                <Chip
-                                    label={category?.name || 'Unbekannt'}
+            {/* Scrollable Content */}
+            <Box sx={{
+                px: 3,
+                pb: 3,
+                transition: 'all 0.3s ease-in-out',
+                opacity: playingAudio ? 0.9 : 1,
+                transform: showMatchMessage ? 'scale(0.98)' : 'scale(1)',
+            }}>
+                {/* Categories mit Fragen */}
+                {currentProfile && currentProfile.categories && Array.isArray(currentProfile.categories) && currentProfile.categories.length > 0 ? (
+                    currentProfile.categories.map((category, categoryIndex) => (
+                        <Box key={categoryIndex} sx={{ mb: 3 }}>
+                            {/* Category Tag */}
+                            <Chip
+                                label={category?.name || 'Unbekannt'}
+                                sx={{
+                                    backgroundColor: category?.color || '#BFA9BE',
+                                    color: 'white',
+                                    fontWeight: 600,
+                                    mb: 2,
+                                    fontSize: '0.9rem',
+                                }}
+                            />
+
+                            {/* Questions */}
+                            {category?.questions && Array.isArray(category.questions) && category.questions.map((q, questionIndex) => (
+                                <Card
+                                    key={questionIndex}
                                     sx={{
-                                        backgroundColor: category?.color || '#BFA9BE',
-                                        color: 'white',
-                                        fontWeight: 600,
+                                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                        borderRadius: 3,
+                                        border: '2px solid',
+                                        borderColor: category.color,
                                         mb: 2,
-                                        fontSize: '0.9rem',
+                                        transition: 'all 0.3s ease-in-out',
+                                        cursor: q.hasAudio ? 'pointer' : 'default',
+                                        '&:hover': {
+                                            transform: q.hasAudio ? 'translateY(-2px)' : 'none',
+                                            boxShadow: q.hasAudio ? '0 4px 20px rgba(0,0,0,0.1)' : 'none',
+                                        },
                                     }}
-                                />
+                                    onClick={q.hasAudio ? () => handlePlayAudio(categoryIndex, questionIndex) : undefined}
+                                >
+                                    <CardContent sx={{ p: 3 }}>
+                                        <Typography
+                                            variant="body1"
+                                            sx={{
+                                                color: 'text.primary',
+                                                fontWeight: 500,
+                                                mb: (q?.answer && typeof q.answer === 'string') || q?.hasAudio ? 2 : 0,
+                                            }}
+                                        >
+                                            {q?.question || 'Frage ohne Text'}
+                                        </Typography>
 
-                                {/* Questions */}
-                                {category?.questions && Array.isArray(category.questions) && category.questions.map((q, questionIndex) => (
-                                    <Card
-                                        key={questionIndex}
-                                        sx={{
-                                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                                            borderRadius: 3,
-                                            border: '2px solid',
-                                            borderColor: category.color,
-                                            mb: 2,
-                                            transition: 'all 0.3s ease-in-out',
-                                            cursor: q.hasAudio ? 'pointer' : 'default',
-                                            '&:hover': {
-                                                transform: q.hasAudio ? 'translateY(-2px)' : 'none',
-                                                boxShadow: q.hasAudio ? '0 4px 20px rgba(0,0,0,0.1)' : 'none',
-                                            },
-                                        }}
-                                        onClick={q.hasAudio ? () => handlePlayAudio(categoryIndex, questionIndex) : undefined}
-                                    >
-                                        <CardContent sx={{ p: 3 }}>
+                                        {q?.answer && typeof q.answer === 'string' && (
                                             <Typography
                                                 variant="body1"
                                                 sx={{
                                                     color: 'text.primary',
-                                                    fontWeight: 500,
-                                                    mb: (q?.answer && typeof q.answer === 'string') || q?.hasAudio ? 2 : 0,
+                                                    fontStyle: 'italic',
+                                                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                                                    border: `2px solid ${category?.color || '#BFA9BE'}`,
+                                                    borderRadius: 2,
+                                                    p: 2,
                                                 }}
                                             >
-                                                {q?.question || 'Frage ohne Text'}
+                                                {q.answer}
                                             </Typography>
+                                        )}
 
-                                            {q?.answer && typeof q.answer === 'string' && (
-                                                <Typography
-                                                    variant="body1"
+                                        {q.hasAudio && (
+                                            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+                                                <IconButton
+                                                    onClick={() => handlePlayAudio(categoryIndex, questionIndex)}
                                                     sx={{
-                                                        color: 'text.primary',
-                                                        fontStyle: 'italic',
-                                                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                                                        border: `2px solid ${category?.color || '#BFA9BE'}`,
-                                                        borderRadius: 2,
-                                                        p: 2,
+                                                        backgroundColor: category.color,
+                                                        color: 'white',
+                                                        width: 60,
+                                                        height: 60,
+                                                        animation: playingAudio?.categoryIndex === categoryIndex &&
+                                                            playingAudio?.questionIndex === questionIndex
+                                                            ? 'pulse 1.5s infinite' : 'none',
+                                                        '@keyframes pulse': {
+                                                            '0%': { transform: 'scale(1)' },
+                                                            '50%': { transform: 'scale(1.1)' },
+                                                            '100%': { transform: 'scale(1)' },
+                                                        },
+                                                        '&:hover': {
+                                                            backgroundColor: category.color,
+                                                            opacity: 0.8,
+                                                            transform: 'scale(1.05)',
+                                                        },
+                                                        transition: 'all 0.2s ease-in-out',
                                                     }}
                                                 >
-                                                    {q.answer}
-                                                </Typography>
-                                            )}
-
-                                            {q.hasAudio && (
-                                                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-                                                    <IconButton
-                                                        onClick={() => handlePlayAudio(categoryIndex, questionIndex)}
-                                                        sx={{
-                                                            backgroundColor: category.color,
-                                                            color: 'white',
-                                                            width: 60,
-                                                            height: 60,
-                                                            animation: playingAudio?.categoryIndex === categoryIndex &&
-                                                                playingAudio?.questionIndex === questionIndex
-                                                                ? 'pulse 1.5s infinite' : 'none',
-                                                            '@keyframes pulse': {
-                                                                '0%': { transform: 'scale(1)' },
-                                                                '50%': { transform: 'scale(1.1)' },
-                                                                '100%': { transform: 'scale(1)' },
-                                                            },
-                                                            '&:hover': {
-                                                                backgroundColor: category.color,
-                                                                opacity: 0.8,
-                                                                transform: 'scale(1.05)',
-                                                            },
-                                                            transition: 'all 0.2s ease-in-out',
-                                                        }}
-                                                    >
-                                                        {playingAudio?.categoryIndex === categoryIndex &&
-                                                            playingAudio?.questionIndex === questionIndex ? (
-                                                            <PauseIcon sx={{ fontSize: 30 }} />
-                                                        ) : (
-                                                            <PlayArrowIcon sx={{ fontSize: 30 }} />
-                                                        )}
-                                                    </IconButton>
-                                                </Box>
-                                            )}
-                                        </CardContent>
-                                    </Card>
-                                ))}
-                            </Box>
-                        ))
-                    ) : (
-                        <Card
-                            sx={{
-                                backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                                borderRadius: 3,
-                                border: '2px solid',
-                                borderColor: 'secondary.main',
-                                mb: 3,
-                            }}
-                        >
-                            <CardContent sx={{ p: 3, textAlign: 'center' }}>
-                                <Typography variant="body1" sx={{ color: 'text.secondary', mb: 2 }}>
-                                    🎭 Profil wird geladen...
-                                </Typography>
-                                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                    {currentProfile?.name || 'Dieser Nutzer'} hat noch keine Inhalte hinzugefügt.
-                                </Typography>
-                            </CardContent>
-                        </Card>
-                    )}
-
-                    {/* Lifestyle Section */}
+                                                    {playingAudio?.categoryIndex === categoryIndex &&
+                                                        playingAudio?.questionIndex === questionIndex ? (
+                                                        <PauseIcon sx={{ fontSize: 30 }} />
+                                                    ) : (
+                                                        <PlayArrowIcon sx={{ fontSize: 30 }} />
+                                                    )}
+                                                </IconButton>
+                                            </Box>
+                                        )}
+                                    </CardContent>
+                                </Card>
+                            ))}
+                        </Box>
+                    ))
+                ) : (
                     <Card
                         sx={{
                             backgroundColor: 'rgba(255, 255, 255, 0.9)',
@@ -479,260 +458,281 @@ const ProfilePage: React.FC = () => {
                             mb: 3,
                         }}
                     >
-                        <CardContent sx={{ p: 3 }}>
-                            {currentProfile && currentProfile.lifestyle ? (
-                                <>
-                                    {/* Dating & Lifestyle Info */}
-                                    <Box sx={{ mb: 3 }}>
-                                        <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, color: 'primary.main' }}>
-                                            💫 Lifestyle & Dating
-                                        </Typography>
-
-                                        <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mb: 3 }}>
-                                            {currentProfile.lifestyle.childrenWish && currentProfile.lifestyle.childrenWish !== 'not specified' && (
-                                                <Box>
-                                                    <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5, fontSize: '0.8rem' }}>
-                                                        👶 Kinderwunsch
-                                                    </Typography>
-                                                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                                        {currentProfile.lifestyle.childrenWish === 'yes' ? 'Ja' :
-                                                            currentProfile.lifestyle.childrenWish === 'no' ? 'Nein' :
-                                                                currentProfile.lifestyle.childrenWish === 'maybe' ? 'Vielleicht' :
-                                                                    currentProfile.lifestyle.childrenWish}
-                                                    </Typography>
-                                                </Box>
-                                            )}
-
-                                            {currentProfile.lifestyle.children && currentProfile.lifestyle.children !== 'not specified' && (
-                                                <Box>
-                                                    <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5, fontSize: '0.8rem' }}>
-                                                        👶 Hat Kinder
-                                                    </Typography>
-                                                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                                        {currentProfile.lifestyle.children === 'yes' ? 'Ja' :
-                                                            currentProfile.lifestyle.children === 'no' ? 'Nein' :
-                                                                currentProfile.lifestyle.children}
-                                                    </Typography>
-                                                </Box>
-                                            )}
-
-                                            {currentProfile.lifestyle.politics && currentProfile.lifestyle.politics !== 'not specified' && (
-                                                <Box>
-                                                    <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5, fontSize: '0.8rem' }}>
-                                                        🗳️ Politik
-                                                    </Typography>
-                                                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                                        {currentProfile.lifestyle.politics === 'left' ? 'Links' :
-                                                            currentProfile.lifestyle.politics === 'right' ? 'Rechts' :
-                                                                currentProfile.lifestyle.politics === 'center' ? 'Mitte' :
-                                                                    currentProfile.lifestyle.politics === 'not political' ? 'Unpolitisch' :
-                                                                        currentProfile.lifestyle.politics}
-                                                    </Typography>
-                                                </Box>
-                                            )}
-                                        </Box>
-                                    </Box>
-
-                                    {/* Substances & Health */}
-                                    <Box sx={{ mb: 3 }}>
-                                        <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, color: 'primary.main' }}>
-                                            🏃‍♀️ Gesundheit & Substanzen
-                                        </Typography>
-
-                                        <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-                                            {currentProfile.lifestyle.alcohol && currentProfile.lifestyle.alcohol !== 'not specified' && (
-                                                <Box>
-                                                    <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5, fontSize: '0.8rem' }}>
-                                                        🍷 Alkohol
-                                                    </Typography>
-                                                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                                        {currentProfile.lifestyle.alcohol === 'yes' ? 'Ja' :
-                                                            currentProfile.lifestyle.alcohol === 'no' ? 'Nein' :
-                                                                currentProfile.lifestyle.alcohol === 'sometimes' ? 'Manchmal' :
-                                                                    currentProfile.lifestyle.alcohol}
-                                                    </Typography>
-                                                </Box>
-                                            )}
-
-                                            {currentProfile.lifestyle.smoking && currentProfile.lifestyle.smoking !== 'not specified' && (
-                                                <Box>
-                                                    <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5, fontSize: '0.8rem' }}>
-                                                        🚬 Rauchen
-                                                    </Typography>
-                                                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                                        {currentProfile.lifestyle.smoking === 'yes' ? 'Ja' :
-                                                            currentProfile.lifestyle.smoking === 'no' ? 'Nein' :
-                                                                currentProfile.lifestyle.smoking === 'sometimes' ? 'Manchmal' :
-                                                                    currentProfile.lifestyle.smoking}
-                                                    </Typography>
-                                                </Box>
-                                            )}
-
-                                            {currentProfile.lifestyle.cannabis && currentProfile.lifestyle.cannabis !== 'not specified' && (
-                                                <Box>
-                                                    <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5, fontSize: '0.8rem' }}>
-                                                        🌿 Cannabis
-                                                    </Typography>
-                                                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                                        {currentProfile.lifestyle.cannabis === 'yes' ? 'Ja' :
-                                                            currentProfile.lifestyle.cannabis === 'no' ? 'Nein' :
-                                                                currentProfile.lifestyle.cannabis === 'sometimes' ? 'Manchmal' :
-                                                                    currentProfile.lifestyle.cannabis}
-                                                    </Typography>
-                                                </Box>
-                                            )}
-                                        </Box>
-                                    </Box>
-                                </>
-                            ) : (
-                                <Box sx={{ textAlign: 'center', py: 2 }}>
-                                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                        Lifestyle-Informationen werden geladen...
-                                    </Typography>
-                                </Box>
-                            )}
+                        <CardContent sx={{ p: 3, textAlign: 'center' }}>
+                            <Typography variant="body1" sx={{ color: 'text.secondary', mb: 2 }}>
+                                🎭 Profil wird geladen...
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                {currentProfile?.name || 'Dieser Nutzer'} hat noch keine Inhalte hinzugefügt.
+                            </Typography>
                         </CardContent>
                     </Card>
+                )}
 
-                    {/* Progress Indicator */}
-                    <Box sx={{ textAlign: 'center', mb: 3 }}>
-                        <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
-                            Profil {profileIndex + 1} von {totalProfiles} für heute
-                        </Typography>
+                {/* Lifestyle Section */}
+                <Card
+                    sx={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        borderRadius: 3,
+                        border: '2px solid',
+                        borderColor: 'secondary.main',
+                        mb: 3,
+                    }}
+                >
+                    <CardContent sx={{ p: 3 }}>
+                        {currentProfile && currentProfile.lifestyle ? (
+                            <>
+                                {/* Dating & Lifestyle Info */}
+                                <Box sx={{ mb: 3 }}>
+                                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, color: 'primary.main' }}>
+                                        💫 Lifestyle & Dating
+                                    </Typography>
 
-                        {profileIndex === totalProfiles - 1 && (
-                            <Typography
-                                variant="body2"
-                                sx={{
-                                    mb: 2,
-                                    color: 'secondary.main',
-                                    fontWeight: 600,
-                                }}
-                            >
-                                🔥 Letztes kostenloses Profil! Mehr mit Premium
-                            </Typography>
-                        )}
+                                    <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mb: 3 }}>
+                                        {currentProfile.lifestyle.childrenWish && currentProfile.lifestyle.childrenWish !== 'not specified' && (
+                                            <Box>
+                                                <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5, fontSize: '0.8rem' }}>
+                                                    👶 Kinderwunsch
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                                    {currentProfile.lifestyle.childrenWish === 'yes' ? 'Ja' :
+                                                        currentProfile.lifestyle.childrenWish === 'no' ? 'Nein' :
+                                                            currentProfile.lifestyle.childrenWish === 'maybe' ? 'Vielleicht' :
+                                                                currentProfile.lifestyle.childrenWish}
+                                                </Typography>
+                                            </Box>
+                                        )}
 
-                        {profileIndex < totalProfiles - 1 && (
-                            <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
-                                Du möchtest mehr entdecken?
-                            </Typography>
-                        )}
+                                        {currentProfile.lifestyle.children && currentProfile.lifestyle.children !== 'not specified' && (
+                                            <Box>
+                                                <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5, fontSize: '0.8rem' }}>
+                                                    👶 Hat Kinder
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                                    {currentProfile.lifestyle.children === 'yes' ? 'Ja' :
+                                                        currentProfile.lifestyle.children === 'no' ? 'Nein' :
+                                                            currentProfile.lifestyle.children}
+                                                </Typography>
+                                            </Box>
+                                        )}
 
-                        {/* Progress Dots */}
-                        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, mb: 3 }}>
-                            {profiles.map((_, index) => (
-                                <Box
-                                    key={index}
-                                    sx={{
-                                        width: 12,
-                                        height: 12,
-                                        borderRadius: '50%',
-                                        backgroundColor: index === profileIndex
-                                            ? 'secondary.main'
-                                            : index < profileIndex
-                                                ? 'rgba(191, 169, 190, 0.6)' // Viewed profiles
-                                                : 'rgba(0,0,0,0.2)', // Unviewed profiles
-                                        transition: 'all 0.3s ease-in-out',
-                                    }}
-                                />
-                            ))}
-                        </Box>
-                    </Box>
-
-                    {/* Action Buttons */}
-                    <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-                        <Button
-                            variant="contained"
-                            onClick={handleSkip}
-                            sx={{
-                                flex: 1,
-                                backgroundColor: '#F5F5DC', // Beige
-                                color: 'text.primary',
-                                borderRadius: 25,
-                                py: 1.5,
-                                fontSize: '1rem',
-                                fontWeight: 600,
-                                '&:hover': {
-                                    backgroundColor: '#F0F0DC',
-                                },
-                            }}
-                        >
-                            {profileIndex === totalProfiles - 1 ? 'Zurück zum Dashboard' : 'Überspringen'}
-                        </Button>
-
-                        <Button
-                            variant="contained"
-                            onClick={handleRequestMatch}
-                            disabled={isMatching}
-                            sx={{
-                                flex: 1,
-                                backgroundColor: 'secondary.main',
-                                color: 'white',
-                                borderRadius: 25,
-                                py: 1.5,
-                                fontSize: '1rem',
-                                fontWeight: 600,
-                                transition: 'all 0.3s ease-in-out',
-                                '&:hover': {
-                                    backgroundColor: 'secondary.dark',
-                                    transform: 'scale(1.02)',
-                                },
-                                '&:disabled': {
-                                    backgroundColor: 'rgba(0,0,0,0.3)',
-                                },
-                            }}
-                        >
-                            {isMatching ? (
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <CircularProgress size={20} sx={{ color: 'white' }} />
-                                    Sende Like...
+                                        {currentProfile.lifestyle.politics && currentProfile.lifestyle.politics !== 'not specified' && (
+                                            <Box>
+                                                <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5, fontSize: '0.8rem' }}>
+                                                    🗳️ Politik
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                                    {currentProfile.lifestyle.politics === 'left' ? 'Links' :
+                                                        currentProfile.lifestyle.politics === 'right' ? 'Rechts' :
+                                                            currentProfile.lifestyle.politics === 'center' ? 'Mitte' :
+                                                                currentProfile.lifestyle.politics === 'not political' ? 'Unpolitisch' :
+                                                                    currentProfile.lifestyle.politics}
+                                                </Typography>
+                                            </Box>
+                                        )}
+                                    </Box>
                                 </Box>
-                            ) : (
-                                '❤️ Match anfragen'
-                            )}
-                        </Button>
+
+                                {/* Substances & Health */}
+                                <Box sx={{ mb: 3 }}>
+                                    <Typography variant="h6" sx={{ fontWeight: 600, mb: 2, color: 'primary.main' }}>
+                                        🏃‍♀️ Gesundheit & Substanzen
+                                    </Typography>
+
+                                    <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+                                        {currentProfile.lifestyle.alcohol && currentProfile.lifestyle.alcohol !== 'not specified' && (
+                                            <Box>
+                                                <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5, fontSize: '0.8rem' }}>
+                                                    🍷 Alkohol
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                                    {currentProfile.lifestyle.alcohol === 'yes' ? 'Ja' :
+                                                        currentProfile.lifestyle.alcohol === 'no' ? 'Nein' :
+                                                            currentProfile.lifestyle.alcohol === 'sometimes' ? 'Manchmal' :
+                                                                currentProfile.lifestyle.alcohol}
+                                                </Typography>
+                                            </Box>
+                                        )}
+
+                                        {currentProfile.lifestyle.smoking && currentProfile.lifestyle.smoking !== 'not specified' && (
+                                            <Box>
+                                                <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5, fontSize: '0.8rem' }}>
+                                                    🚬 Rauchen
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                                    {currentProfile.lifestyle.smoking === 'yes' ? 'Ja' :
+                                                        currentProfile.lifestyle.smoking === 'no' ? 'Nein' :
+                                                            currentProfile.lifestyle.smoking === 'sometimes' ? 'Manchmal' :
+                                                                currentProfile.lifestyle.smoking}
+                                                </Typography>
+                                            </Box>
+                                        )}
+
+                                        {currentProfile.lifestyle.cannabis && currentProfile.lifestyle.cannabis !== 'not specified' && (
+                                            <Box>
+                                                <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5, fontSize: '0.8rem' }}>
+                                                    🌿 Cannabis
+                                                </Typography>
+                                                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                                    {currentProfile.lifestyle.cannabis === 'yes' ? 'Ja' :
+                                                        currentProfile.lifestyle.cannabis === 'no' ? 'Nein' :
+                                                            currentProfile.lifestyle.cannabis === 'sometimes' ? 'Manchmal' :
+                                                                currentProfile.lifestyle.cannabis}
+                                                </Typography>
+                                            </Box>
+                                        )}
+                                    </Box>
+                                </Box>
+                            </>
+                        ) : (
+                            <Box sx={{ textAlign: 'center', py: 2 }}>
+                                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                    Lifestyle-Informationen werden geladen...
+                                </Typography>
+                            </Box>
+                        )}
+                    </CardContent>
+                </Card>
+
+                {/* Progress Indicator */}
+                <Box sx={{ textAlign: 'center', mb: 3 }}>
+                    <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+                        Profil {profileIndex + 1} von {totalProfiles} für heute
+                    </Typography>
+
+                    {profileIndex === totalProfiles - 1 && (
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                mb: 2,
+                                color: 'secondary.main',
+                                fontWeight: 600,
+                            }}
+                        >
+                            🔥 Letztes kostenloses Profil! Mehr mit Premium
+                        </Typography>
+                    )}
+
+                    {profileIndex < totalProfiles - 1 && (
+                        <Typography variant="body2" sx={{ mb: 2, color: 'text.secondary' }}>
+                            Du möchtest mehr entdecken?
+                        </Typography>
+                    )}
+
+                    {/* Progress Dots */}
+                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, mb: 3 }}>
+                        {profiles.map((_, index) => (
+                            <Box
+                                key={index}
+                                sx={{
+                                    width: 12,
+                                    height: 12,
+                                    borderRadius: '50%',
+                                    backgroundColor: index === profileIndex
+                                        ? 'secondary.main'
+                                        : index < profileIndex
+                                            ? 'rgba(191, 169, 190, 0.6)' // Viewed profiles
+                                            : 'rgba(0,0,0,0.2)', // Unviewed profiles
+                                    transition: 'all 0.3s ease-in-out',
+                                }}
+                            />
+                        ))}
                     </Box>
                 </Box>
 
-                {/* Bottom Navigation */}
-                <BottomNavigation
-                    value={navValue}
-                    onChange={handleNavChange}
-                    sx={{
-                        position: 'fixed',
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        backgroundColor: 'background.default',
-                        borderTop: '1px solid',
-                        borderColor: 'secondary.main',
-                        '& .MuiBottomNavigationAction-root': {
-                            color: 'text.secondary',
-                            '&.Mui-selected': {
-                                color: 'secondary.main',
+                {/* Action Buttons */}
+                <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
+                    <Button
+                        variant="contained"
+                        onClick={handleSkip}
+                        sx={{
+                            flex: 1,
+                            backgroundColor: '#F5F5DC', // Beige
+                            color: 'text.primary',
+                            borderRadius: 25,
+                            py: 1.5,
+                            fontSize: '1rem',
+                            fontWeight: 600,
+                            '&:hover': {
+                                backgroundColor: '#F0F0DC',
                             },
-                        },
-                    }}
-                >
-                    <BottomNavigationAction
-                        icon={<HomeIcon />}
-                        sx={{ minWidth: 'auto' }}
-                    />
-                    <BottomNavigationAction
-                        icon={<FavoriteIcon />}
-                        sx={{ minWidth: 'auto' }}
-                    />
-                    <BottomNavigationAction
-                        icon={<ChatIcon />}
-                        sx={{ minWidth: 'auto' }}
-                    />
-                    <BottomNavigationAction
-                        icon={<SettingsIcon />}
-                        sx={{ minWidth: 'auto' }}
-                    />
-                </BottomNavigation>
+                        }}
+                    >
+                        {profileIndex === totalProfiles - 1 ? 'Zurück zum Dashboard' : 'Überspringen'}
+                    </Button>
+
+                    <Button
+                        variant="contained"
+                        onClick={handleRequestMatch}
+                        disabled={isMatching}
+                        sx={{
+                            flex: 1,
+                            backgroundColor: 'secondary.main',
+                            color: 'white',
+                            borderRadius: 25,
+                            py: 1.5,
+                            fontSize: '1rem',
+                            fontWeight: 600,
+                            transition: 'all 0.3s ease-in-out',
+                            '&:hover': {
+                                backgroundColor: 'secondary.dark',
+                                transform: 'scale(1.02)',
+                            },
+                            '&:disabled': {
+                                backgroundColor: 'rgba(0,0,0,0.3)',
+                            },
+                        }}
+                    >
+                        {isMatching ? (
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <CircularProgress size={20} sx={{ color: 'white' }} />
+                                Sende Like...
+                            </Box>
+                        ) : (
+                            '❤️ Match anfragen'
+                        )}
+                    </Button>
+                </Box>
             </Box>
+
+            {/* Bottom Navigation */}
+            <BottomNavigation
+                value={navValue}
+                onChange={handleNavChange}
+                sx={{
+                    position: 'fixed',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    backgroundColor: 'background.default',
+                    borderTop: '1px solid',
+                    borderColor: 'secondary.main',
+                    '& .MuiBottomNavigationAction-root': {
+                        color: 'text.secondary',
+                        '&.Mui-selected': {
+                            color: 'secondary.main',
+                        },
+                    },
+                }}
+            >
+                <BottomNavigationAction
+                    icon={<HomeIcon />}
+                    sx={{ minWidth: 'auto' }}
+                />
+                <BottomNavigationAction
+                    icon={<FavoriteIcon />}
+                    sx={{ minWidth: 'auto' }}
+                />
+                <BottomNavigationAction
+                    icon={<ChatIcon />}
+                    sx={{ minWidth: 'auto' }}
+                />
+                <BottomNavigationAction
+                    icon={<SettingsIcon />}
+                    sx={{ minWidth: 'auto' }}
+                />
+            </BottomNavigation>
+        </Box>
     );
 };
 
