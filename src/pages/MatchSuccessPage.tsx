@@ -16,12 +16,10 @@ const MatchSuccessPage: React.FC = () => {
     const partnerName = searchParams.get('partnerName') || 'deinem Match';
 
     const handleVoiceMessage = () => {
-        // Navigiere zum Chat mit Voice-Message Intent
         navigate(`/chat/${matchId}?startWith=voice`);
     };
 
     const handleTextMessage = () => {
-        // Navigiere zum Chat mit Text-Message Intent
         navigate(`/chat/${matchId}?startWith=text`);
     };
 
@@ -49,7 +47,6 @@ const MatchSuccessPage: React.FC = () => {
                         position: 'absolute',
                         top: 60,
                         left: 20,
-                        // Back link fades in early
                         animation: 'fadeIn 0.6s ease-out 0.2s both',
                         '@keyframes fadeIn': {
                             '0%': {
@@ -87,7 +84,6 @@ const MatchSuccessPage: React.FC = () => {
                         color: 'text.primary',
                         mb: 4,
                         fontFamily: 'Inter, sans-serif',
-                        // Title fades in from top
                         animation: 'fadeInDown 0.8s ease-out',
                         '@keyframes fadeInDown': {
                             '0%': {
@@ -111,7 +107,6 @@ const MatchSuccessPage: React.FC = () => {
                         color: 'text.secondary',
                         mb: 4,
                         fontWeight: 500,
-                        // Partner name appears with slight delay
                         animation: 'fadeIn 1s ease-out 0.3s both',
                         '@keyframes fadeIn': {
                             '0%': {
@@ -133,7 +128,6 @@ const MatchSuccessPage: React.FC = () => {
                         mb: 6,
                         width: 200,
                         height: 120,
-                        // Container Animation
                         animation: 'slideInUp 0.8s ease-out 0.5s both',
                         '@keyframes slideInUp': {
                             '0%': {
@@ -157,7 +151,6 @@ const MatchSuccessPage: React.FC = () => {
                             backgroundColor: '#D4A574', // Beige/Brown
                             left: 0,
                             top: 10,
-                            // Left circle slides in from left
                             animation: 'slideInLeft 1s ease-out 0.7s both',
                             '@keyframes slideInLeft': {
                                 '0%': {
@@ -213,7 +206,6 @@ const MatchSuccessPage: React.FC = () => {
                             alignItems: 'center',
                             justifyContent: 'center',
                             boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                            // Heart appears last with bounce and continuous pulse
                             animation: 'heartAppear 1.2s ease-out 1.3s both, heartPulse 2s ease-in-out 2.5s infinite',
                             '@keyframes heartAppear': {
                                 '0%': {
@@ -256,7 +248,6 @@ const MatchSuccessPage: React.FC = () => {
                         fontStyle: 'italic',
                         maxWidth: 300,
                         lineHeight: 1.6,
-                        // Description fades in after circles
                         animation: 'fadeInUp 0.8s ease-out 1.5s both',
                         '@keyframes fadeInUp': {
                             '0%': {
@@ -281,7 +272,6 @@ const MatchSuccessPage: React.FC = () => {
                         display: 'flex',
                         flexDirection: 'column',
                         gap: 2,
-                        // Buttons container slides in from bottom
                         animation: 'slideInUp 0.8s ease-out 1.8s both',
                         '@keyframes slideInUp': {
                             '0%': {

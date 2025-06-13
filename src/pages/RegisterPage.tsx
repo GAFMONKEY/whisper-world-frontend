@@ -23,14 +23,8 @@ const RegisterPage: React.FC = () => {
     };
 
     const handleSubmit = () => {
-        // TODO: Implement registration logic
         console.log('Register:', formData);
-        // Hier würde die Registration API aufgerufen
     };
-
-    // const handleBackToLogin = () => {
-    //     navigate('/');
-    // };
 
     return (
         <Box

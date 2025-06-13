@@ -23,7 +23,6 @@ import { matchService } from '../services/matchService';
 import type { DiscoverUser } from '../services/matchService';
 import { getCurrentUser } from '../utils/setupUser';
 
-// ProfileData interface wird jetzt von DiscoverUser aus matchingService verwendet
 
 const ProfilePage: React.FC = () => {
     const navigate = useNavigate();
@@ -40,10 +39,8 @@ const ProfilePage: React.FC = () => {
     const currentProfile = profiles[profileIndex];
     const totalProfiles = profiles.length;
 
-    // User laden aus localStorage - mit Backend-kompatible UUID
     const user = getCurrentUser();
 
-    // Profile vom Backend laden
     useEffect(() => {
         const loadProfiles = async () => {
             if (!user.id) {
@@ -93,23 +90,18 @@ const ProfilePage: React.FC = () => {
         if (!currentProfile) return;
 
         try {
-            // Pass API call zum Backend
             await matchService.passUser(user.id, currentProfile.id);
             console.log('Profil übersprungen:', currentProfile.name);
 
-            // Nächstes Profil laden oder zurück zum Dashboard
             if (profileIndex < totalProfiles - 1) {
                 setProfileIndex(profileIndex + 1);
-                // Reset match states für neues Profil
                 setShowMatchMessage(false);
                 setIsActualMatch(false);
             } else {
-                // Alle Profile durchgeschaut, zurück zum Dashboard
                 navigate('/dashboard');
             }
         } catch (error) {
             console.error('Error passing user:', error);
-            // Bei Fehler trotzdem weiter zum nächsten Profil
             if (profileIndex < totalProfiles - 1) {
                 setProfileIndex(profileIndex + 1);
                 setShowMatchMessage(false);
@@ -127,42 +119,34 @@ const ProfilePage: React.FC = () => {
             setIsMatching(true);
             console.log('Match angefragt für:', currentProfile.name);
 
-            // Like API call zum Backend
             const response = await matchService.likeUser(user.id, currentProfile.id);
 
-            // Debug-Logs hinzugefügt
             console.log('🔍 Like response:', response);
             console.log('📊 Current profile index:', profileIndex, 'Total profiles:', totalProfiles);
             console.log('👤 Current profile:', currentProfile.name);
 
             if (response.matched) {
-                // Es ist ein Match! 🎉
                 console.log('🎉 IT\'S A MATCH! Redirecting to match success page...');
                 setIsActualMatch(true);
                 setShowMatchMessage(true);
 
-                // Nach 3 Sekunden zur Match Success Page weiterleiten
                 setTimeout(() => {
                     setShowMatchMessage(false);
                     console.log('Navigating to match success page with matchId:', response.matchId);
                     navigate(`/match-success?matchId=${response.matchId || currentProfile.id}&partnerName=${encodeURIComponent(currentProfile.name)}`);
                 }, 3000);
             } else {
-                // Like gesendet, warten auf Gegenseitigkeit
                 console.log('💌 Like sent, no match yet. Moving to next profile...');
                 setIsActualMatch(false);
                 setShowMatchMessage(true);
 
-                // Verstecke die Match-Nachricht nach 2 Sekunden
                 setTimeout(() => {
                     setShowMatchMessage(false);
-                    // Weiter zum nächsten Profil oder Dashboard wenn keine mehr da sind
                     if (profileIndex < totalProfiles - 1) {
                         console.log('Moving to next profile...');
                         setProfileIndex(profileIndex + 1);
                         setIsActualMatch(false);
                     } else {
-                        // Alle Profile durch - zurück zum Dashboard
                         console.log('⚠️ No more profiles, returning to dashboard');
                         navigate('/dashboard');
                     }
@@ -180,15 +164,11 @@ const ProfilePage: React.FC = () => {
         console.log(`Audio abspielen: Kategorie ${categoryIndex}, Frage ${questionIndex}`);
         setPlayingAudio({ categoryIndex, questionIndex });
 
-        // Simuliere Audio-Wiedergabe (3 Sekunden)
         setTimeout(() => {
             setPlayingAudio(null);
         }, 3000);
-
-        // TODO: Echte Audio-Wiedergabe implementieren
     };
 
-    // Loading State
     if (loading) {
         return (
             <Box
@@ -253,7 +233,6 @@ const ProfilePage: React.FC = () => {
         );
     }
 
-    // No current profile available
     if (!currentProfile) {
         return (
             <Box
@@ -292,7 +271,7 @@ const ProfilePage: React.FC = () => {
                 background: currentProfile?.accentColor 
                     ? `linear-gradient(135deg, ${currentProfile.accentColor}15 0%, ${currentProfile.accentColor}08 100%)`
                     : 'linear-gradient(135deg, #BFA9BE15 0%, #BFA9BE08 100%)',
-                pb: 20, // More space for sticky buttons + bottom navigation
+                pb: 20,
                 animation: 'fadeIn 0.6s ease-out',
                 '@keyframes fadeIn': {
                     '0%': {
@@ -414,7 +393,7 @@ const ProfilePage: React.FC = () => {
                 transition: 'all 0.3s ease-in-out',
                 opacity: playingAudio ? 0.9 : 1,
                 transform: showMatchMessage ? 'scale(0.98)' : 'scale(1)',
-                mb: 10, // Extra Platz für Sticky Buttons
+                mb: 10,
             }}>
                 {/* Categories mit Fragen */}
                 {currentProfile && currentProfile.categories && Array.isArray(currentProfile.categories) && currentProfile.categories.length > 0 ? (

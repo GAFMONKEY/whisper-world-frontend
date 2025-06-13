@@ -28,12 +28,10 @@ const MatchesPage: React.FC = () => {
     const navigate = useNavigate();
     const [navValue, setNavValue] = useState(1); // Discovery tab aktiv
     const [users, setUsers] = useState<DiscoverUser[]>(() => {
-        // Lade gespeicherte Users aus sessionStorage
         const saved = sessionStorage.getItem('discoveryUsers');
         return saved ? JSON.parse(saved) : [];
     });
     const [currentUserIndex, setCurrentUserIndex] = useState(() => {
-        // Lade gespeicherten Index aus sessionStorage
         const saved = sessionStorage.getItem('discoveryIndex');
         return saved ? parseInt(saved, 10) : 0;
     });
@@ -43,19 +41,16 @@ const MatchesPage: React.FC = () => {
     const user = getCurrentUser();
     const currentUser = users[currentUserIndex];
 
-    // Speichere Users in sessionStorage bei Änderungen
     useEffect(() => {
         if (users.length > 0) {
             sessionStorage.setItem('discoveryUsers', JSON.stringify(users));
         }
     }, [users]);
 
-    // Speichere Index in sessionStorage bei Änderungen
     useEffect(() => {
         sessionStorage.setItem('discoveryIndex', currentUserIndex.toString());
     }, [currentUserIndex]);
 
-    // User zum Discovern laden (nur einmal beim Mount)
     useEffect(() => {
         const loadUsers = async () => {
             if (!user.id) {
@@ -63,13 +58,11 @@ const MatchesPage: React.FC = () => {
                 return;
             }
 
-            // Prüfe zuerst sessionStorage
             const savedUsers = sessionStorage.getItem('discoveryUsers');
             const savedIndex = sessionStorage.getItem('discoveryIndex'); if (savedUsers && savedIndex) {
                 const parsedUsers = JSON.parse(savedUsers);
                 const parsedIndex = parseInt(savedIndex, 10);
 
-                // Nur setzen wenn noch nicht gesetzt
                 if (users.length === 0) {
                     setUsers(parsedUsers);
                     setCurrentUserIndex(parsedIndex);
@@ -78,7 +71,6 @@ const MatchesPage: React.FC = () => {
                 return;
             }
 
-            // Nur laden wenn wirklich keine Users vorhanden sind
             if (users.length > 0) {
                 setLoading(false);
                 return;
@@ -125,7 +117,6 @@ const MatchesPage: React.FC = () => {
         try {
             const response = await matchService.likeUser(user.id, currentUser.id);
             if (response.matched) {
-                // Navigation zu Match Success Page
                 navigate('/match-success', {
                     state: {
                         matchedUser: currentUser,
@@ -149,12 +140,10 @@ const MatchesPage: React.FC = () => {
             setCurrentUserIndex(prev => prev + 1);
         } catch (error) {
             console.error('Error passing user:', error);
-            // Auch bei Fehler zum nächsten User
             setCurrentUserIndex(prev => prev + 1);
         }
     };
 
-    // Reset Discovery Session
     const resetDiscoverySession = async () => {
         sessionStorage.removeItem('discoveryUsers');
         sessionStorage.removeItem('discoveryIndex');
@@ -174,7 +163,6 @@ const MatchesPage: React.FC = () => {
         }
     };
 
-    // Loading State
     if (loading) {
         return (
             <Box
@@ -196,7 +184,6 @@ const MatchesPage: React.FC = () => {
         );
     }
 
-    // Error State
     if (error) {
         return (
             <Box
@@ -228,7 +215,6 @@ const MatchesPage: React.FC = () => {
         );
     }
 
-    // No more users
     if (!currentUser || currentUserIndex >= users.length) {
         return (
             <Box
