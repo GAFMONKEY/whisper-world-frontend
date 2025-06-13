@@ -331,88 +331,6 @@ const ProfilePage: React.FC = () => {
                 >
                     {currentProfile?.name || 'Unbekannt'}, {currentProfile?.age || 0}
                 </Typography>
-
-                {/* Match Success Message */}
-                {showMatchMessage && (
-                    <Box
-                        sx={{
-                            background: isActualMatch
-                                ? 'linear-gradient(135deg, #4CAF50 0%, #45A049 100%)'
-                                : 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)',
-                            color: 'white',
-                            borderRadius: 4,
-                            p: 3,
-                            mb: 3,
-                            boxShadow: isActualMatch
-                                ? '0 8px 25px rgba(76, 175, 80, 0.3)'
-                                : '0 8px 25px rgba(33, 150, 243, 0.3)',
-                            border: '2px solid rgba(255, 255, 255, 0.2)',
-                            animation: 'matchAppear 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
-                            '@keyframes matchAppear': {
-                                '0%': {
-                                    opacity: 0,
-                                    transform: 'translateY(-20px) scale(0.9)',
-                                    filter: 'blur(4px)'
-                                },
-                                '50%': {
-                                    transform: 'translateY(-5px) scale(1.02)',
-                                    filter: 'blur(0px)'
-                                },
-                                '100%': {
-                                    opacity: 1,
-                                    transform: 'translateY(0) scale(1)',
-                                    filter: 'blur(0px)'
-                                },
-                            },
-                        }}
-                    >
-                        <Typography
-                            variant="h6"
-                            sx={{
-                                fontWeight: 700,
-                                textAlign: 'center',
-                                fontSize: '1.1rem',
-                                letterSpacing: '0.5px',
-                                textShadow: '0 2px 4px rgba(0,0,0,0.3)',
-                            }}
-                        >
-                            {isActualMatch ? (
-                                `🎉 IT'S A MATCH!`
-                            ) : (
-                                `💌 Like gesendet!`
-                            )}
-                        </Typography>
-                        <Typography
-                            variant="body1"
-                            sx={{
-                                mt: 1,
-                                textAlign: 'center',
-                                fontWeight: 500,
-                                opacity: 0.95,
-                            }}
-                        >
-                            {isActualMatch ? (
-                                `Du und ${currentProfile?.name || 'dieser Nutzer'} mögt euch beide!`
-                            ) : (
-                                `Warte auf Antwort von ${currentProfile?.name || 'diesem Nutzer'}`
-                            )}
-                        </Typography>
-                        {isActualMatch && (
-                            <Typography
-                                variant="body2"
-                                sx={{
-                                    mt: 2,
-                                    textAlign: 'center',
-                                    opacity: 0.85,
-                                    fontStyle: 'italic',
-                                    fontSize: '0.9rem',
-                                }}
-                            >
-                                Ihr werdet automatisch zum Chat weitergeleitet...
-                            </Typography>
-                        )}
-                    </Box>
-                )}
             </Box>
 
             {/* Scrollable Content */}
@@ -422,8 +340,7 @@ const ProfilePage: React.FC = () => {
                 pt: 2, // Additional top padding for better separation
                 transition: 'all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
                 opacity: isSkipping ? 0 : (playingAudio ? 0.9 : 1),
-                transform: isSkipping ? 'translateX(-120vw) rotate(-15deg) scale(0.8)' :
-                    showMatchMessage ? 'scale(0.98)' : 'scale(1)',
+                transform: isSkipping ? 'translateX(-120vw) rotate(-15deg) scale(0.8)' : 'scale(1)',
                 filter: isSkipping ? 'blur(2px)' : 'blur(0px)',
                 mb: 10,
             }}>
@@ -1254,6 +1171,129 @@ const ProfilePage: React.FC = () => {
                     sx={{ minWidth: 'auto' }}
                 />
             </BottomNavigation>
+
+            {/* Match Success Overlay */}
+            {showMatchMessage && (
+                <Box
+                    sx={{
+                        position: 'fixed',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        background: isActualMatch
+                            ? 'linear-gradient(135deg, rgba(248, 248, 250, 0.98) 0%, rgba(245, 245, 247, 0.98) 100%)'
+                            : 'linear-gradient(135deg, rgba(250, 250, 252, 0.98) 0%, rgba(247, 247, 249, 0.98) 100%)',
+                        color: '#2C2C2E',
+                        p: 4,
+                        zIndex: 1200,
+                        textAlign: 'center',
+                        animation: 'slideUpMatch 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+                        backdropFilter: 'blur(12px)',
+                        borderTop: '1px solid rgba(0, 0, 0, 0.08)',
+                        '@keyframes slideUpMatch': {
+                            '0%': {
+                                opacity: 0,
+                                transform: 'translateY(100%)',
+                            },
+                            '100%': {
+                                opacity: 1,
+                                transform: 'translateY(0)',
+                            }
+                        },
+                    }}
+                >
+                    {/* Subtle Visual Accent - Instead of emojis */}
+                    <Box sx={{
+                        width: 4,
+                        height: 4,
+                        backgroundColor: isActualMatch ? '#BFA9BE' : '#A0A0A2',
+                        borderRadius: '50%',
+                        mb: 3,
+                        mx: 'auto',
+                        animation: 'gentlePulse 2s ease-in-out infinite',
+                        '@keyframes gentlePulse': {
+                            '0%, 100%': {
+                                transform: 'scale(1)',
+                                opacity: 0.6,
+                                boxShadow: '0 0 0 0 rgba(191, 169, 190, 0.4)'
+                            },
+                            '50%': {
+                                transform: 'scale(1.5)',
+                                opacity: 1,
+                                boxShadow: '0 0 0 8px rgba(191, 169, 190, 0)'
+                            },
+                        }
+                    }} />
+
+                    <Typography
+                        variant="h5"
+                        sx={{
+                            fontWeight: 600,
+                            fontSize: '1.5rem',
+                            mb: 1,
+                            letterSpacing: '0.5px',
+                            color: '#1C1C1E',
+                        }}
+                    >
+                        {isActualMatch ? "Match!" : "Interesse gesendet"}
+                    </Typography>
+
+                    <Typography
+                        variant="body1"
+                        sx={{
+                            fontWeight: 500,
+                            opacity: 0.8,
+                            mb: 2,
+                            fontSize: '1.1rem',
+                            color: '#2C2C2E',
+                            lineHeight: 1.4,
+                        }}
+                    >
+                        {isActualMatch ? (
+                            `${currentProfile?.name || 'Diese Person'} findet Sie ebenfalls interessant`
+                        ) : (
+                            `${currentProfile?.name || 'Diese Person'} wurde benachrichtigt`
+                        )}
+                    </Typography>
+
+                    <Typography
+                        variant="body2"
+                        sx={{
+                            fontWeight: 400,
+                            opacity: 0.6,
+                            mb: isActualMatch ? 3 : 2,
+                            fontSize: '0.95rem',
+                            color: '#48484A',
+                            lineHeight: 1.5,
+                        }}
+                    >
+                        {isActualMatch ? (
+                            `Ihr könnt nun miteinander schreiben`
+                        ) : (
+                            `Sie werden benachrichtigt, falls das Interesse erwidert wird`
+                        )}
+                    </Typography>
+
+                    {isActualMatch && (
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                opacity: 0.6,
+                                fontStyle: 'normal',
+                                fontSize: '0.9rem',
+                                color: '#6D6D70',
+                                animation: 'fadeInUp 1s ease-out 1s both',
+                                '@keyframes fadeInUp': {
+                                    '0%': { opacity: 0, transform: 'translateY(10px)' },
+                                    '100%': { opacity: 0.6, transform: 'translateY(0)' },
+                                }
+                            }}
+                        >
+                            Sie werden in Kürze weitergeleitet.
+                        </Typography>
+                    )}
+                </Box>
+            )}
         </Box>
     );
 };
