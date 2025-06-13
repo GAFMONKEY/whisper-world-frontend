@@ -158,21 +158,17 @@ const chatService = {
             return conversation;
         } catch (error) {
             console.warn('Backend not available for chat:', error);
-            // Wenn Backend nicht verfügbar ist oder Match nicht existiert, Fehler werfen
             throw new Error(`Chat conversation for match ${matchId} not found`);
         }
     },
 
     async sendMessage(messageData: SendMessageRequest): Promise<ChatMessage> {
         try {
-            // Aktuell unterstützt das Backend nur Text-Nachrichten
-            // Voice und Image Messages werden als Mock behandelt
             if (messageData.type === 'VOICE' || messageData.type === 'IMAGE') {
                 console.warn('Voice and image messages not yet supported by backend, using mock response');
                 throw new Error('Voice/Image not supported yet');
             }
 
-            // Text message - verwende das echte Backend-API
             console.log('📤 Sending text message via backend API:', messageData);
 
             const response = await api.post(`/matches/${messageData.matchId}/chat-messages`, {
@@ -182,7 +178,6 @@ const chatService = {
 
             console.log('✅ Message sent via backend:', response.data);
 
-            // Konvertiere Backend-Response zu Frontend-Format
             const backendMessage = response.data;
             const frontendMessage: ChatMessage = {
                 id: backendMessage.id,
@@ -200,7 +195,6 @@ const chatService = {
         } catch (error) {
             console.warn('Backend not available for sending message, using enhanced mock:', error);
 
-            // Enhanced Mock response system
             const mockMessage: ChatMessage = {
                 id: `msg-${messageIdCounter++}`,
                 matchId: messageData.matchId,
@@ -216,16 +210,14 @@ const chatService = {
                 updatedAt: new Date()
             };
 
-            // Speichere die Nachricht im Mock Store
             const conversationKey = `${messageData.matchId}-${messageData.senderId}`;
             const existingMessages = mockConversationStore.get(conversationKey) || [];
             existingMessages.push(mockMessage);
             mockConversationStore.set(conversationKey, existingMessages);
 
-            // Simuliere automatische Antwort nach kurzer Verzögerung
             setTimeout(() => {
                 this.generateMockResponse(messageData.matchId, messageData.senderId, messageData.type, messageData.content);
-            }, Math.random() * 3000 + 2000); // 2-5 Sekunden Verzögerung
+            }, Math.random() * 3000 + 2000);
 
             return mockMessage;
         }
@@ -249,7 +241,6 @@ const chatService = {
 
     async getAllConversations(userId: string): Promise<ChatConversation[]> {
         try {
-            // Lade alle Matches mit Chat-Nachrichten direkt vom Backend
             console.log('📡 Loading all matches with chat messages from backend for user:', userId);
             const matchesResponse = await api.get(`/matches/user/${userId}`);
             const matches = matchesResponse.data;
@@ -258,7 +249,6 @@ const chatService = {
 
             const conversations: ChatConversation[] = [];
 
-            // Für jeden Match, konvertiere die bereits enthaltenen Chat-Nachrichten
             for (const match of matches) {
                 const messages: ChatMessage[] = match.chatMessages.map((msg: any) => ({
                     id: msg.id,
@@ -272,10 +262,8 @@ const chatService = {
                     updatedAt: new Date(msg.sentAt)
                 }));
 
-                // Finde den anderen User im Match
                 const otherUserId = match.user1Id === userId ? match.user2Id : match.user1Id;
 
-                // Lade User-Details für den anderen User
                 let otherUserName = 'Match Partner';
                 let otherUserAge = 25;
 
@@ -313,7 +301,6 @@ const chatService = {
             return conversations;
         } catch (error) {
             console.warn('Backend not available for conversations:', error);
-            // Wenn Backend nicht verfügbar ist, leere Liste zurückgeben
             return [];
         }
     },

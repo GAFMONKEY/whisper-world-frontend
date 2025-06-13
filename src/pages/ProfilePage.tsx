@@ -35,6 +35,7 @@ const ProfilePage: React.FC = () => {
     const [showMatchMessage, setShowMatchMessage] = useState(false);
     const [isMatching, setIsMatching] = useState(false);
     const [isActualMatch, setIsActualMatch] = useState(false);
+    const [isSkipping, setIsSkipping] = useState(false);
 
     const currentProfile = profiles[profileIndex];
     const totalProfiles = profiles.length;
@@ -87,29 +88,31 @@ const ProfilePage: React.FC = () => {
     };
 
     const handleSkip = async () => {
-        if (!currentProfile) return;
+        if (!currentProfile || isSkipping) return;
 
-        try {
-            await matchService.passUser(user.id, currentProfile.id);
-            console.log('Profil übersprungen:', currentProfile.name);
+        setIsSkipping(true);
 
-            if (profileIndex < totalProfiles - 1) {
-                setProfileIndex(profileIndex + 1);
-                setShowMatchMessage(false);
-                setIsActualMatch(false);
-            } else {
-                navigate('/dashboard');
+        // Warte kurz, damit die Animation startet
+        setTimeout(async () => {
+            try {
+                await matchService.passUser(user.id, currentProfile.id);
+                console.log('Profil übersprungen:', currentProfile.name);
+            } catch (error) {
+                console.error('Error passing user:', error);
             }
-        } catch (error) {
-            console.error('Error passing user:', error);
-            if (profileIndex < totalProfiles - 1) {
-                setProfileIndex(profileIndex + 1);
-                setShowMatchMessage(false);
-                setIsActualMatch(false);
-            } else {
-                navigate('/dashboard');
-            }
-        }
+
+            // Nach der Animation zum nächsten Profil
+            setTimeout(() => {
+                if (profileIndex < totalProfiles - 1) {
+                    setProfileIndex(profileIndex + 1);
+                    setShowMatchMessage(false);
+                    setIsActualMatch(false);
+                    setIsSkipping(false);
+                } else {
+                    navigate('/dashboard');
+                }
+            }, 800); // Animation dauert 800ms für mehr Flüssigkeit
+        }, 150);
     };
 
     const handleRequestMatch = async () => {
@@ -268,11 +271,11 @@ const ProfilePage: React.FC = () => {
         <Box
             sx={{
                 minHeight: '100vh',
-                background: currentProfile?.accentColor 
+                background: currentProfile?.accentColor
                     ? `linear-gradient(135deg, ${currentProfile.accentColor}15 0%, ${currentProfile.accentColor}08 100%)`
                     : 'linear-gradient(135deg, #BFA9BE15 0%, #BFA9BE08 100%)',
                 pb: 20,
-                animation: 'fadeIn 0.6s ease-out',
+                animation: !isSkipping ? 'slideInFromRight 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)' : 'none',
                 '@keyframes fadeIn': {
                     '0%': {
                         opacity: 0,
@@ -282,11 +285,38 @@ const ProfilePage: React.FC = () => {
                         opacity: 1,
                         transform: 'translateY(0)'
                     }
+                },
+                '@keyframes slideInFromRight': {
+                    '0%': {
+                        opacity: 0,
+                        transform: 'translateX(100vw) rotate(15deg) scale(0.8)',
+                        filter: 'blur(3px)'
+                    },
+                    '50%': {
+                        transform: 'translateX(-5vw) rotate(-2deg) scale(1.02)',
+                        filter: 'blur(1px)'
+                    },
+                    '100%': {
+                        opacity: 1,
+                        transform: 'translateX(0) rotate(0deg) scale(1)',
+                        filter: 'blur(0px)'
+                    }
                 }
             }}
         >
             {/* Header */}
-            <Box sx={{ p: 3, pt: 4, pb: 5, textAlign: 'center' }}>
+            <Box
+                sx={{
+                    p: 3,
+                    pt: 4,
+                    pb: 5,
+                    textAlign: 'center',
+                    transform: isSkipping ? 'translateX(-120vw) rotate(-15deg) scale(0.8)' : 'translateX(0) rotate(0deg) scale(1)',
+                    opacity: isSkipping ? 0 : 1,
+                    transition: 'all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+                    filter: isSkipping ? 'blur(2px)' : 'blur(0px)',
+                }}
+            >
                 <Typography
                     variant="h4"
                     sx={{
@@ -390,9 +420,11 @@ const ProfilePage: React.FC = () => {
                 px: 3,
                 pb: 3,
                 pt: 2, // Additional top padding for better separation
-                transition: 'all 0.3s ease-in-out',
-                opacity: playingAudio ? 0.9 : 1,
-                transform: showMatchMessage ? 'scale(0.98)' : 'scale(1)',
+                transition: 'all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+                opacity: isSkipping ? 0 : (playingAudio ? 0.9 : 1),
+                transform: isSkipping ? 'translateX(-120vw) rotate(-15deg) scale(0.8)' :
+                    showMatchMessage ? 'scale(0.98)' : 'scale(1)',
+                filter: isSkipping ? 'blur(2px)' : 'blur(0px)',
                 mb: 10,
             }}>
                 {/* Categories mit Fragen */}
@@ -428,13 +460,26 @@ const ProfilePage: React.FC = () => {
                                         border: '2px solid',
                                         borderColor: category.color,
                                         mb: 2,
-                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                                         cursor: q.hasAudio ? 'pointer' : 'default',
                                         boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                        transform: isSkipping ? 'translateX(-50px) scale(0.9)' : 'translateX(0) scale(1)',
+                                        opacity: isSkipping ? 0.3 : 1,
+                                        animation: !isSkipping ? `slideInCard 0.6s ease-out ${questionIndex * 0.1}s both` : 'none',
+                                        '@keyframes slideInCard': {
+                                            '0%': {
+                                                opacity: 0,
+                                                transform: 'translateY(20px) scale(0.95)',
+                                            },
+                                            '100%': {
+                                                opacity: 1,
+                                                transform: 'translateY(0) scale(1)',
+                                            }
+                                        },
                                         '&:hover': {
-                                            transform: q.hasAudio ? 'translateY(-4px) scale(1.02)' : 'none',
-                                            boxShadow: q.hasAudio ? '0 8px 25px rgba(0,0,0,0.12)' : '0 4px 12px rgba(0,0,0,0.05)',
-                                            borderColor: q.hasAudio ? category.color : category.color,
+                                            transform: q.hasAudio && !isSkipping ? 'translateY(-4px) scale(1.02)' : (!isSkipping ? 'translateY(-2px)' : 'translateX(-50px) scale(0.9)'),
+                                            boxShadow: q.hasAudio && !isSkipping ? '0 8px 25px rgba(0,0,0,0.12)' : (!isSkipping ? '0 6px 15px rgba(0,0,0,0.08)' : '0 4px 12px rgba(0,0,0,0.05)'),
+                                            borderColor: !isSkipping ? category.color : category.color,
                                         },
                                     }}
                                     onClick={q.hasAudio ? () => handlePlayAudio(categoryIndex, questionIndex) : undefined}
@@ -561,10 +606,23 @@ const ProfilePage: React.FC = () => {
                                         border: '2px solid #FF9800',
                                         mb: 2,
                                         boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        transform: isSkipping ? 'translateX(-30px) scale(0.95)' : 'translateX(0) scale(1)',
+                                        opacity: isSkipping ? 0.4 : 1,
+                                        animation: !isSkipping ? 'slideInCard 0.6s ease-out 0.2s both' : 'none',
+                                        '@keyframes slideInCard': {
+                                            '0%': {
+                                                opacity: 0,
+                                                transform: 'translateY(15px) scale(0.98)',
+                                            },
+                                            '100%': {
+                                                opacity: 1,
+                                                transform: 'translateY(0) scale(1)',
+                                            }
+                                        },
                                         '&:hover': {
-                                            transform: 'translateY(-2px)',
-                                            boxShadow: '0 6px 20px rgba(255, 152, 0, 0.15)',
+                                            transform: !isSkipping ? 'translateY(-2px) scale(1.01)' : 'translateX(-30px) scale(0.95)',
+                                            boxShadow: !isSkipping ? '0 6px 20px rgba(255, 152, 0, 0.15)' : '0 4px 12px rgba(0,0,0,0.05)',
                                         },
                                     }}
                                 >
@@ -609,10 +667,23 @@ const ProfilePage: React.FC = () => {
                                         border: '2px solid #FF9800',
                                         mb: 2,
                                         boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        transform: isSkipping ? 'translateX(-25px) scale(0.96)' : 'translateX(0) scale(1)',
+                                        opacity: isSkipping ? 0.5 : 1,
+                                        animation: !isSkipping ? 'slideInCard 0.6s ease-out 0.3s both' : 'none',
+                                        '@keyframes slideInCard': {
+                                            '0%': {
+                                                opacity: 0,
+                                                transform: 'translateY(15px) scale(0.98)',
+                                            },
+                                            '100%': {
+                                                opacity: 1,
+                                                transform: 'translateY(0) scale(1)',
+                                            }
+                                        },
                                         '&:hover': {
-                                            transform: 'translateY(-2px)',
-                                            boxShadow: '0 6px 20px rgba(255, 152, 0, 0.15)',
+                                            transform: !isSkipping ? 'translateY(-2px) scale(1.01)' : 'translateX(-25px) scale(0.96)',
+                                            boxShadow: !isSkipping ? '0 6px 20px rgba(255, 152, 0, 0.15)' : '0 4px 12px rgba(0,0,0,0.05)',
                                         },
                                     }}
                                 >
@@ -656,10 +727,23 @@ const ProfilePage: React.FC = () => {
                                         border: '2px solid #FF9800',
                                         mb: 2,
                                         boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        transform: isSkipping ? 'translateX(-20px) scale(0.97)' : 'translateX(0) scale(1)',
+                                        opacity: isSkipping ? 0.6 : 1,
+                                        animation: !isSkipping ? 'slideInCard 0.6s ease-out 0.4s both' : 'none',
+                                        '@keyframes slideInCard': {
+                                            '0%': {
+                                                opacity: 0,
+                                                transform: 'translateY(15px) scale(0.98)',
+                                            },
+                                            '100%': {
+                                                opacity: 1,
+                                                transform: 'translateY(0) scale(1)',
+                                            }
+                                        },
                                         '&:hover': {
-                                            transform: 'translateY(-2px)',
-                                            boxShadow: '0 6px 20px rgba(255, 152, 0, 0.15)',
+                                            transform: !isSkipping ? 'translateY(-2px) scale(1.01)' : 'translateX(-20px) scale(0.97)',
+                                            boxShadow: !isSkipping ? '0 6px 20px rgba(255, 152, 0, 0.15)' : '0 4px 12px rgba(0,0,0,0.05)',
                                         },
                                     }}
                                 >
@@ -726,10 +810,23 @@ const ProfilePage: React.FC = () => {
                                         border: '2px solid #4CAF50',
                                         mb: 2,
                                         boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        transform: isSkipping ? 'translateX(-15px) scale(0.98)' : 'translateX(0) scale(1)',
+                                        opacity: isSkipping ? 0.7 : 1,
+                                        animation: !isSkipping ? 'slideInCard 0.6s ease-out 0.1s both' : 'none',
+                                        '@keyframes slideInCard': {
+                                            '0%': {
+                                                opacity: 0,
+                                                transform: 'translateY(15px) scale(0.98)',
+                                            },
+                                            '100%': {
+                                                opacity: 1,
+                                                transform: 'translateY(0) scale(1)',
+                                            }
+                                        },
                                         '&:hover': {
-                                            transform: 'translateY(-2px)',
-                                            boxShadow: '0 6px 20px rgba(76, 175, 80, 0.15)',
+                                            transform: !isSkipping ? 'translateY(-2px) scale(1.01)' : 'translateX(-15px) scale(0.98)',
+                                            boxShadow: !isSkipping ? '0 6px 20px rgba(76, 175, 80, 0.15)' : '0 4px 12px rgba(0,0,0,0.05)',
                                         },
                                     }}
                                 >
@@ -774,10 +871,23 @@ const ProfilePage: React.FC = () => {
                                         border: '2px solid #4CAF50',
                                         mb: 2,
                                         boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        transform: isSkipping ? 'translateX(-10px) scale(0.99)' : 'translateX(0) scale(1)',
+                                        opacity: isSkipping ? 0.8 : 1,
+                                        animation: !isSkipping ? 'slideInCard 0.6s ease-out 0.2s both' : 'none',
+                                        '@keyframes slideInCard': {
+                                            '0%': {
+                                                opacity: 0,
+                                                transform: 'translateY(15px) scale(0.98)',
+                                            },
+                                            '100%': {
+                                                opacity: 1,
+                                                transform: 'translateY(0) scale(1)',
+                                            }
+                                        },
                                         '&:hover': {
-                                            transform: 'translateY(-2px)',
-                                            boxShadow: '0 6px 20px rgba(76, 175, 80, 0.15)',
+                                            transform: !isSkipping ? 'translateY(-2px) scale(1.01)' : 'translateX(-10px) scale(0.99)',
+                                            boxShadow: !isSkipping ? '0 6px 20px rgba(76, 175, 80, 0.15)' : '0 4px 12px rgba(0,0,0,0.05)',
                                         },
                                     }}
                                 >
@@ -822,10 +932,23 @@ const ProfilePage: React.FC = () => {
                                         border: '2px solid #4CAF50',
                                         mb: 2,
                                         boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        transform: isSkipping ? 'translateX(-5px) scale(0.995)' : 'translateX(0) scale(1)',
+                                        opacity: isSkipping ? 0.9 : 1,
+                                        animation: !isSkipping ? 'slideInCard 0.6s ease-out 0.3s both' : 'none',
+                                        '@keyframes slideInCard': {
+                                            '0%': {
+                                                opacity: 0,
+                                                transform: 'translateY(15px) scale(0.98)',
+                                            },
+                                            '100%': {
+                                                opacity: 1,
+                                                transform: 'translateY(0) scale(1)',
+                                            }
+                                        },
                                         '&:hover': {
-                                            transform: 'translateY(-2px)',
-                                            boxShadow: '0 6px 20px rgba(76, 175, 80, 0.15)',
+                                            transform: !isSkipping ? 'translateY(-2px) scale(1.01)' : 'translateX(-5px) scale(0.995)',
+                                            boxShadow: !isSkipping ? '0 6px 20px rgba(76, 175, 80, 0.15)' : '0 4px 12px rgba(0,0,0,0.05)',
                                         },
                                     }}
                                 >
@@ -923,7 +1046,20 @@ const ProfilePage: React.FC = () => {
                                         : index < profileIndex
                                             ? 'rgba(191, 169, 190, 0.6)' // Viewed profiles
                                             : 'rgba(0,0,0,0.2)', // Unviewed profiles
-                                    transition: 'all 0.3s ease-in-out',
+                                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                    transform: isSkipping ? 'scale(0.8)' : (index === profileIndex ? 'scale(1.2)' : 'scale(1)'),
+                                    opacity: isSkipping ? 0.5 : 1,
+                                    animation: index === profileIndex && !isSkipping ? 'pulse 2s ease-in-out infinite' : 'none',
+                                    '@keyframes pulse': {
+                                        '0%, 100%': {
+                                            transform: 'scale(1.2)',
+                                            boxShadow: '0 0 0 0 rgba(191, 169, 190, 0.7)',
+                                        },
+                                        '50%': {
+                                            transform: 'scale(1.3)',
+                                            boxShadow: '0 0 0 4px rgba(191, 169, 190, 0)',
+                                        },
+                                    },
                                 }}
                             />
                         ))}
@@ -949,29 +1085,47 @@ const ProfilePage: React.FC = () => {
                     pt: 2,
                     px: 3,
                     boxShadow: '0 -2px 20px rgba(0,0,0,0.05)',
+                    transform: isSkipping ? 'translateY(100px)' : 'translateY(0)',
+                    opacity: isSkipping ? 0.5 : 1,
+                    transition: 'all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
                 }}
             >
                 <Box sx={{ display: 'flex', gap: 2, mb: 1 }}>
                     <Button
                         variant="contained"
                         onClick={handleSkip}
+                        disabled={isSkipping}
                         sx={{
                             flex: 1,
-                            background: 'linear-gradient(135deg, #F5F5DC 0%, #EAEAC8 100%)',
-                            color: 'text.primary',
+                            background: isSkipping
+                                ? 'linear-gradient(135deg, #FF7043 0%, #E64A19 100%)'
+                                : 'linear-gradient(135deg, #78909C 0%, #607D8B 100%)',
+                            color: 'white',
                             borderRadius: 25,
                             py: 2,
                             fontSize: '1rem',
                             fontWeight: 700,
                             textTransform: 'none',
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                            boxShadow: isSkipping
+                                ? '0 4px 15px rgba(255, 112, 67, 0.4)'
+                                : '0 4px 12px rgba(120, 144, 156, 0.3)',
                             border: '2px solid transparent',
-                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                            transform: isSkipping ? 'scale(0.95)' : 'scale(1)',
                             '&:hover': {
-                                background: 'linear-gradient(135deg, #EAEAC8 0%, #E0E0B8 100%)',
-                                transform: 'translateY(-2px)',
-                                boxShadow: '0 6px 20px rgba(0,0,0,0.15)',
-                                border: '2px solid rgba(0,0,0,0.1)',
+                                background: isSkipping
+                                    ? 'linear-gradient(135deg, #FF7043 0%, #E64A19 100%)'
+                                    : 'linear-gradient(135deg, #90A4AE 0%, #78909C 100%)',
+                                transform: isSkipping ? 'scale(0.95)' : 'translateY(-2px) scale(1.02)',
+                                boxShadow: isSkipping
+                                    ? '0 4px 15px rgba(255, 112, 67, 0.4)'
+                                    : '0 8px 25px rgba(120, 144, 156, 0.4)',
+                                border: '2px solid rgba(255,255,255,0.2)',
+                            },
+                            '&:disabled': {
+                                background: 'linear-gradient(135deg, #FF7043 0%, #E64A19 100%)',
+                                color: 'white',
+                                opacity: 0.8,
                             },
                         }}
                     >
@@ -981,10 +1135,10 @@ const ProfilePage: React.FC = () => {
                     <Button
                         variant="contained"
                         onClick={handleRequestMatch}
-                        disabled={isMatching}
+                        disabled={isMatching || isSkipping}
                         sx={{
                             flex: 1,
-                            background: currentProfile?.accentColor 
+                            background: currentProfile?.accentColor
                                 ? `linear-gradient(135deg, ${currentProfile.accentColor} 0%, ${currentProfile.accentColor}CC 100%)`
                                 : 'linear-gradient(135deg, #BFA9BE 0%, #A693A1 100%)',
                             color: 'white',
@@ -993,33 +1147,67 @@ const ProfilePage: React.FC = () => {
                             fontSize: '1rem',
                             fontWeight: 700,
                             textTransform: 'none',
-                            boxShadow: currentProfile?.accentColor 
+                            boxShadow: currentProfile?.accentColor
                                 ? `0 4px 12px ${currentProfile.accentColor}40`
                                 : '0 4px 12px rgba(191, 169, 190, 0.3)',
                             border: '2px solid transparent',
-                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                            transform: isSkipping ? 'scale(0.95)' : (isMatching ? 'scale(1.05)' : 'scale(1)'),
+                            animation: isMatching ? 'heartbeat 1.5s ease-in-out infinite' : 'none',
+                            '@keyframes heartbeat': {
+                                '0%, 100%': {
+                                    transform: 'scale(1)',
+                                    boxShadow: currentProfile?.accentColor
+                                        ? `0 4px 12px ${currentProfile.accentColor}40`
+                                        : '0 4px 12px rgba(191, 169, 190, 0.3)'
+                                },
+                                '50%': {
+                                    transform: 'scale(1.05)',
+                                    boxShadow: currentProfile?.accentColor
+                                        ? `0 8px 25px ${currentProfile.accentColor}60`
+                                        : '0 8px 25px rgba(191, 169, 190, 0.4)'
+                                },
+                            },
                             '&:hover': {
-                                background: currentProfile?.accentColor 
+                                background: !isSkipping && !isMatching ? (currentProfile?.accentColor
                                     ? `linear-gradient(135deg, ${currentProfile.accentColor}DD 0%, ${currentProfile.accentColor}AA 100%)`
-                                    : 'linear-gradient(135deg, #A693A1 0%, #96818A 100%)',
-                                transform: 'translateY(-2px) scale(1.02)',
-                                boxShadow: currentProfile?.accentColor 
+                                    : 'linear-gradient(135deg, #A693A1 0%, #96818A 100%)') : undefined,
+                                transform: !isSkipping && !isMatching ? 'translateY(-2px) scale(1.02)' : undefined,
+                                boxShadow: !isSkipping && !isMatching ? (currentProfile?.accentColor
                                     ? `0 8px 25px ${currentProfile.accentColor}60`
-                                    : '0 8px 25px rgba(191, 169, 190, 0.4)',
+                                    : '0 8px 25px rgba(191, 169, 190, 0.4)') : undefined,
                                 border: '2px solid rgba(255,255,255,0.2)',
                             },
                             '&:disabled': {
-                                background: 'linear-gradient(135deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.3) 100%)',
-                                transform: 'none',
+                                background: isSkipping
+                                    ? 'linear-gradient(135deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.4) 100%)'
+                                    : 'linear-gradient(135deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.3) 100%)',
+                                transform: isSkipping ? 'scale(0.95)' : 'scale(1.05)',
                                 boxShadow: 'none',
+                                opacity: isSkipping ? 0.5 : 1,
                             },
                         }}
                     >
                         {isMatching ? (
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <CircularProgress size={20} sx={{ color: 'white' }} />
+                                <Box
+                                    sx={{
+                                        width: 20,
+                                        height: 20,
+                                        borderRadius: '50%',
+                                        border: '2px solid white',
+                                        borderTopColor: 'transparent',
+                                        animation: 'spin 1s linear infinite',
+                                        '@keyframes spin': {
+                                            '0%': { transform: 'rotate(0deg)' },
+                                            '100%': { transform: 'rotate(360deg)' },
+                                        },
+                                    }}
+                                />
                                 Sende Like...
                             </Box>
+                        ) : isSkipping ? (
+                            'Warte...'
                         ) : (
                             'Gespräch beginnen'
                         )}
