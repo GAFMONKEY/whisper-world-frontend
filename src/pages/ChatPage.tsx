@@ -43,7 +43,9 @@ const ChatPage: React.FC = () => {
     const [recordingDuration, setRecordingDuration] = useState(0);
     const [showNewMessageNotification, setShowNewMessageNotification] = useState(false);
     const intervalRef = useRef<number>(undefined);
-
+    const [isAudioPlayback, setIsAudioPlayback] = useState(false);
+    const audioRef = useRef(new Audio("/voice-message/voice-message.mp3"));
+    
     // Current user aus localStorage - mit Backend-kompatible UUID
     const user = getCurrentUser();    // Chat-Conversation laden
     useEffect(() => {
@@ -247,6 +249,17 @@ const ChatPage: React.FC = () => {
             minute: '2-digit'
         });
     };
+    
+    const handleVoicePlayback = () => {
+        if (isAudioPlayback) {
+            audioRef.current.currentTime = 0;
+            audioRef.current.pause();
+            setIsAudioPlayback(false);
+        } else {
+            audioRef.current.play();
+            setIsAudioPlayback(true);
+        }
+    }
 
     // Loading State
     if (loading) {
@@ -299,7 +312,7 @@ const ChatPage: React.FC = () => {
             </Box>
         );
     }
-
+    
     return (
         <Box
             sx={{
@@ -439,7 +452,7 @@ const ChatPage: React.FC = () => {
                                     )}
                                     {msg.type === 'VOICE' && (
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                            <IconButton size="small" sx={{ color: 'inherit' }}>
+                                            <IconButton size="small" sx={{ color: 'inherit' }} onClick={handleVoicePlayback}>
                                                 <MicIcon />
                                             </IconButton>
                                             <Typography variant="body2">
