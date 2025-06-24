@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     Box,
     Typography,
@@ -42,6 +42,7 @@ const ChatPage: React.FC = () => {
     const [isRecording, setIsRecording] = useState(false);
     const [recordingDuration, setRecordingDuration] = useState(0);
     const [showNewMessageNotification, setShowNewMessageNotification] = useState(false);
+    const intervalRef = useRef<number>(undefined);
 
     // Current user aus localStorage - mit Backend-kompatible UUID
     const user = getCurrentUser();    // Chat-Conversation laden
@@ -191,6 +192,7 @@ const ChatPage: React.FC = () => {
     const handleVoiceRecording = async () => {
         if (isRecording) {
             // Stop recording
+            clearInterval(intervalRef.current);
             setIsRecording(false);
             setRecordingDuration(0);
 
@@ -227,10 +229,9 @@ const ChatPage: React.FC = () => {
             setRecordingDuration(0);
 
             // Mock recording timer
-            const timer = setInterval(() => {
+            intervalRef.current = setInterval(() => {
                 setRecordingDuration(prev => {
                     if (prev >= 30) { // Max 30 seconds
-                        clearInterval(timer);
                         handleVoiceRecording(); // Auto-stop
                         return prev;
                     }
@@ -628,7 +629,7 @@ const ChatPage: React.FC = () => {
             <Box
                 sx={{
                     position: 'fixed',
-                    bottom: 80, // Above bottom navigation
+                    bottom: 56, // Above bottom navigation
                     left: 0,
                     right: 0,
                     backgroundColor: 'background.default',

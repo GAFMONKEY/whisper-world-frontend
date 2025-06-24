@@ -16,9 +16,3 @@ body>div,
   background-color: #F2EEE9 !important;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif !important;
 }
-
-/* Überschreibe alle möglichen MUI Overrides */
-.MuiCssBaseline-root,
-.MuiBox-root {
-  background-color: #F2EEE9 !important;
-}
