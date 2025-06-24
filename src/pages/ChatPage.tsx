@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     Box,
     Typography,
@@ -42,7 +42,10 @@ const ChatPage: React.FC = () => {
     const [isRecording, setIsRecording] = useState(false);
     const [recordingDuration, setRecordingDuration] = useState(0);
     const [showNewMessageNotification, setShowNewMessageNotification] = useState(false);
-
+    const intervalRef = useRef<number>(undefined);
+    const [isAudioPlayback, setIsAudioPlayback] = useState(false);
+    const audioRef = useRef(new Audio("/voice-message/voice-message.mp3"));
+    
     // Current user aus localStorage - mit Backend-kompatible UUID
     const user = getCurrentUser();    // Chat-Conversation laden
     useEffect(() => {
@@ -191,6 +194,7 @@ const ChatPage: React.FC = () => {
     const handleVoiceRecording = async () => {
         if (isRecording) {
             // Stop recording
+            clearInterval(intervalRef.current);
             setIsRecording(false);
             setRecordingDuration(0);
 
@@ -227,10 +231,9 @@ const ChatPage: React.FC = () => {
             setRecordingDuration(0);
 
             // Mock recording timer
-            const timer = setInterval(() => {
+            intervalRef.current = setInterval(() => {
                 setRecordingDuration(prev => {
                     if (prev >= 30) { // Max 30 seconds
-                        clearInterval(timer);
                         handleVoiceRecording(); // Auto-stop
                         return prev;
                     }
@@ -246,6 +249,17 @@ const ChatPage: React.FC = () => {
             minute: '2-digit'
         });
     };
+    
+    const handleVoicePlayback = () => {
+        if (isAudioPlayback) {
+            audioRef.current.currentTime = 0;
+            audioRef.current.pause();
+            setIsAudioPlayback(false);
+        } else {
+            audioRef.current.play();
+            setIsAudioPlayback(true);
+        }
+    }
 
     // Loading State
     if (loading) {
@@ -298,7 +312,7 @@ const ChatPage: React.FC = () => {
             </Box>
         );
     }
-
+    
     return (
         <Box
             sx={{
@@ -438,7 +452,7 @@ const ChatPage: React.FC = () => {
                                     )}
                                     {msg.type === 'VOICE' && (
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                            <IconButton size="small" sx={{ color: 'inherit' }}>
+                                            <IconButton size="small" sx={{ color: 'inherit' }} onClick={handleVoicePlayback}>
                                                 <MicIcon />
                                             </IconButton>
                                             <Typography variant="body2">
@@ -628,7 +642,7 @@ const ChatPage: React.FC = () => {
             <Box
                 sx={{
                     position: 'fixed',
-                    bottom: 80, // Above bottom navigation
+                    bottom: 56, // Above bottom navigation
                     left: 0,
                     right: 0,
                     backgroundColor: 'background.default',
