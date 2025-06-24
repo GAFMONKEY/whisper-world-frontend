@@ -11,6 +11,7 @@ import ChatPage from './pages/ChatPage';
 import ChatListPage from './pages/ChatListPage';
 import MatchesPage from './pages/MatchesPage';
 import MatchSuccessPage from './pages/MatchSuccessPage';
+import NameAgePage from './pages/NameAgePage';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="/chats" element={<ChatListPage />} />
           <Route path="/chat/:matchId" element={<ChatPage />} />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/name-age" element={<NameAgePage />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
