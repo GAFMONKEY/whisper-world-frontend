@@ -44,8 +44,8 @@ const LifestylePage: React.FC = () => {
       lifestyle: lifestyle
     }));
 
-    // Navigiere zum Dashboard
-    navigate('/dashboard');
+    // Navigiere zur Hobby-Seite
+    navigate('/hobbies');
   };
 
   const categories = [
@@ -254,7 +254,7 @@ const LifestylePage: React.FC = () => {
             },
           }}
         >
-          Profil vervollständigen
+          Weiter
         </Button>
       </Box>
     </Box>
