@@ -38,8 +38,8 @@ const LikertScalePage: React.FC = () => {
       personalityRatings: ratings
     }));
 
-    // Navigiere zum Dashboard
-    navigate('/dashboard');
+    // Navigiere zur Lifestyle-Seite
+    navigate('/lifestyle');
   };
 
   const scaleOptions = [
@@ -285,7 +285,7 @@ const LikertScalePage: React.FC = () => {
             },
           }}
         >
-          Profil vervollständigen
+          Weiter
         </Button>
       </Box>
     </Box>
