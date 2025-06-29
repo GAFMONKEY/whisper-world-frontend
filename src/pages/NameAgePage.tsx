@@ -5,57 +5,99 @@ import {
   TextField,
   Button,
   Stack,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from '@mui/material';
+import type { SelectChangeEvent } from '@mui/material/Select';
+import { useNavigate } from 'react-router-dom';
 
 const NameAgePage: React.FC = () => {
-  const [formData, setFormData] = useState({ name: '', age: '' });
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    gender: '',
+    birthDate: ''
+  });
 
-  const handleChange = (field: 'name' | 'age') => (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData(prev => ({ ...prev, [field]: event.target.value }));
+  const handleFirstNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prev => ({ ...prev, firstName: event.target.value }));
+  };
+
+  const handleLastNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prev => ({ ...prev, lastName: event.target.value }));
+  };
+
+  const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prev => ({ ...prev, birthDate: event.target.value }));
+  };
+
+  const handleGenderChange = (event: SelectChangeEvent) => {
+    setFormData(prev => ({ ...prev, gender: event.target.value }));
   };
 
   const handleContinue = () => {
     // Add validation and navigation logic here
     console.log('Submitted:', formData);
+    // Navigate to date preference page
+    navigate('/date-preference');
   };
+
+  // Calculate max date (18 years ago) and min date (100 years ago)
+  const today = new Date();
+  const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate()).toISOString().split('T')[0];
+  const minDate = new Date(today.getFullYear() - 100, today.getMonth(), today.getDate()).toISOString().split('T')[0];
 
   return (
     <Box
       sx={{
         minHeight: '100vh',
-        backgroundColor: '#f5eee8', // Matches beige background
+        width: '100vw',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        px: 2,
+        backgroundColor: 'background.default',
+        margin: 0,
+        padding: 0,
       }}
     >
       <Box
         sx={{
-          maxWidth: 360,
-          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
           textAlign: 'center',
+          px: 3,
+          py: 4,
+          maxWidth: 400,
+          width: '100%',
         }}
       >
         {/* Headline */}
         <Typography
-          variant="h5"
+          variant="h2"
           sx={{
-            fontWeight: 'bold',
+            textAlign: 'center',
             mb: 2,
-            color: '#000',
+            color: 'text.primary',
+            fontWeight: 'bold',
           }}
         >
-          Wie heißt du –<br />und wie alt bist du?
+          Wie heißt du –<br />und wann bist du geboren?
         </Typography>
 
         {/* Subtext */}
         <Typography
           variant="body1"
           sx={{
-            fontStyle: 'italic',
+            textAlign: 'center',
             mb: 4,
-            color: '#000',
+            color: 'text.secondary',
+            fontStyle: 'italic',
+            lineHeight: 1.6,
           }}
         >
           Diese Angaben sind Teil<br />
@@ -65,50 +107,72 @@ const NameAgePage: React.FC = () => {
           mehr ändern.
         </Typography>
 
-        <Stack spacing={2}>
+        <Stack spacing={3} sx={{ width: '100%' }}>
           <TextField
-            label="Name"
+            label="Vorname"
             variant="outlined"
-            value={formData.name}
-            onChange={handleChange('name')}
+            value={formData.firstName}
+            onChange={handleFirstNameChange}
             fullWidth
-            InputLabelProps={{ style: { color: '#c47c65' } }}
             sx={{
               '& .MuiOutlinedInput-root': {
-                borderRadius: 2,
-                '& fieldset': {
-                  borderColor: '#c47c65',
-                },
-                '&:hover fieldset': {
-                  borderColor: '#a95d47',
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: '#a95d47',
-                },
+                borderRadius: 3,
               },
             }}
           />
 
           <TextField
-            label="Alter"
+            label="Nachname"
             variant="outlined"
-            value={formData.age}
-            onChange={handleChange('age')}
-            type="number"
+            value={formData.lastName}
+            onChange={handleLastNameChange}
             fullWidth
-            InputLabelProps={{ style: { color: '#c47c65' } }}
             sx={{
               '& .MuiOutlinedInput-root': {
-                borderRadius: 2,
-                '& fieldset': {
-                  borderColor: '#c47c65',
-                },
-                '&:hover fieldset': {
-                  borderColor: '#a95d47',
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: '#a95d47',
-                },
+                borderRadius: 3,
+              },
+            }}
+          />
+
+          <FormControl
+            fullWidth
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: 3,
+              },
+            }}
+          >
+            <InputLabel>Geschlecht</InputLabel>
+            <Select
+              value={formData.gender}
+              label="Geschlecht"
+              onChange={handleGenderChange}
+            >
+              <MenuItem value="männlich">Männlich</MenuItem>
+              <MenuItem value="weiblich">Weiblich</MenuItem>
+              <MenuItem value="divers">Divers</MenuItem>
+            </Select>
+          </FormControl>
+
+          <TextField
+            label="Geburtsdatum"
+            type="date"
+            variant="outlined"
+            value={formData.birthDate}
+            onChange={handleDateChange}
+            fullWidth
+            slotProps={{
+              inputLabel: {
+                shrink: true,
+              },
+              htmlInput: {
+                max: maxDate,
+                min: minDate,
+              },
+            }}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: 3,
               },
             }}
           />
@@ -116,15 +180,12 @@ const NameAgePage: React.FC = () => {
           <Button
             variant="contained"
             onClick={handleContinue}
+            disabled={!formData.firstName || !formData.lastName || !formData.gender || !formData.birthDate}
             sx={{
-              mt: 2,
-              backgroundColor: '#e2a87d',
-              color: '#000',
-              fontWeight: 'bold',
-              borderRadius: 999,
-              '&:hover': {
-                backgroundColor: '#d4946c',
-              },
+              mt: 3,
+              py: 1.5,
+              fontSize: '1rem',
+              fontWeight: 500,
             }}
           >
             Weiter
