@@ -37,8 +37,8 @@ const DatingIntentionsPage: React.FC = () => {
       intentions: selectedIntentions
     }));
 
-    // Navigiere zum Dashboard
-    navigate('/dashboard');
+    // Navigiere zur Likert-Skalen Seite
+    navigate('/likert-scale');
   };
 
   const intentionOptions = [
