@@ -60,7 +60,7 @@ const NameAgePage: React.FC = () => {
         alignItems: 'center',
         backgroundColor: 'background.default',
         margin: 0,
-        padding: 0,
+        padding: 2,
       }}
     >
       <Box
@@ -72,7 +72,7 @@ const NameAgePage: React.FC = () => {
           textAlign: 'center',
           px: 3,
           py: 4,
-          maxWidth: 400,
+          maxWidth: 800,
           width: '100%',
         }}
       >
@@ -100,97 +100,161 @@ const NameAgePage: React.FC = () => {
             lineHeight: 1.6,
           }}
         >
-          Diese Angaben sind Teil<br />
-          deines Profils und später<br />
-          für andere sichtbar.<br />
-          Du kannst sie später nicht<br />
-          mehr ändern.
+          Diese Angaben sind Teil deines Profils und später für andere sichtbar.<br />
+          Du kannst sie später nicht mehr ändern.
         </Typography>
 
-        <Stack spacing={3} sx={{ width: '100%' }}>
-          <TextField
-            label="Vorname"
-            variant="outlined"
-            value={formData.firstName}
-            onChange={handleFirstNameChange}
-            fullWidth
+        {/* Single card layout */}
+        <Box
+          sx={{
+            backgroundColor: 'background.paper',
+            borderRadius: 4,
+            p: 5,
+            boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
+            border: '1px solid',
+            borderColor: 'grey.200',
+            maxWidth: 500,
+            width: '100%',
+            mb: 4,
+          }}
+        >
+          <Typography
+            variant="h5"
             sx={{
-              '& .MuiOutlinedInput-root': {
-                borderRadius: 3,
-              },
-            }}
-          />
-
-          <TextField
-            label="Nachname"
-            variant="outlined"
-            value={formData.lastName}
-            onChange={handleLastNameChange}
-            fullWidth
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                borderRadius: 3,
-              },
-            }}
-          />
-
-          <FormControl
-            fullWidth
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                borderRadius: 3,
-              },
+              textAlign: 'center',
+              mb: 4,
+              color: 'text.primary',
+              fontWeight: 'bold',
             }}
           >
-            <InputLabel>Geschlecht</InputLabel>
-            <Select
-              value={formData.gender}
-              label="Geschlecht"
-              onChange={handleGenderChange}
+            Ihre Angaben
+          </Typography>
+
+          <Stack spacing={3}>
+            <TextField
+              label="Vorname"
+              variant="outlined"
+              value={formData.firstName}
+              onChange={handleFirstNameChange}
+              fullWidth
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 3,
+                  backgroundColor: 'background.default',
+                  '&:hover': {
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  },
+                  '&.Mui-focused': {
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                  },
+                },
+              }}
+            />
+
+            <TextField
+              label="Nachname"
+              variant="outlined"
+              value={formData.lastName}
+              onChange={handleLastNameChange}
+              fullWidth
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 3,
+                  backgroundColor: 'background.default',
+                  '&:hover': {
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  },
+                  '&.Mui-focused': {
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                  },
+                },
+              }}
+            />
+
+            <FormControl
+              fullWidth
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 3,
+                  backgroundColor: 'background.default',
+                  '&:hover': {
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  },
+                  '&.Mui-focused': {
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                  },
+                },
+              }}
             >
-              <MenuItem value="männlich">Männlich</MenuItem>
-              <MenuItem value="weiblich">Weiblich</MenuItem>
-              <MenuItem value="divers">Divers</MenuItem>
-            </Select>
-          </FormControl>
+              <InputLabel>Geschlecht</InputLabel>
+              <Select
+                value={formData.gender}
+                label="Geschlecht"
+                onChange={handleGenderChange}
+              >
+                <MenuItem value="männlich">Männlich</MenuItem>
+                <MenuItem value="weiblich">Weiblich</MenuItem>
+                <MenuItem value="divers">Divers</MenuItem>
+              </Select>
+            </FormControl>
 
-          <TextField
-            label="Geburtsdatum"
-            type="date"
-            variant="outlined"
-            value={formData.birthDate}
-            onChange={handleDateChange}
-            fullWidth
-            slotProps={{
-              inputLabel: {
-                shrink: true,
-              },
-              htmlInput: {
-                max: maxDate,
-                min: minDate,
-              },
-            }}
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                borderRadius: 3,
-              },
-            }}
-          />
+            <TextField
+              label="Geburtsdatum"
+              type="date"
+              variant="outlined"
+              value={formData.birthDate}
+              onChange={handleDateChange}
+              fullWidth
+              slotProps={{
+                inputLabel: {
+                  shrink: true,
+                },
+                htmlInput: {
+                  max: maxDate,
+                  min: minDate,
+                },
+              }}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 3,
+                  backgroundColor: 'background.default',
+                  '&:hover': {
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  },
+                  '&.Mui-focused': {
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                  },
+                },
+              }}
+            />
+          </Stack>
+        </Box>
 
-          <Button
-            variant="contained"
-            onClick={handleContinue}
-            disabled={!formData.firstName || !formData.lastName || !formData.gender || !formData.birthDate}
-            sx={{
-              mt: 3,
-              py: 1.5,
-              fontSize: '1rem',
-              fontWeight: 500,
-            }}
-          >
-            Weiter
-          </Button>
-        </Stack>
+        <Button
+          variant="contained"
+          onClick={handleContinue}
+          disabled={!formData.firstName || !formData.lastName || !formData.gender || !formData.birthDate}
+          sx={{
+            mt: 2,
+            py: 2,
+            px: 6,
+            fontSize: '1.2rem',
+            fontWeight: 600,
+            borderRadius: 4,
+            boxShadow: '0 6px 18px rgba(0,0,0,0.2)',
+            '&:hover': {
+              boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+              transform: 'translateY(-2px)',
+            },
+            '&:disabled': {
+              backgroundColor: 'grey.400',
+              color: 'grey.600',
+              boxShadow: 'none',
+            },
+          }}
+        >
+          Weiter
+        </Button>
       </Box>
     </Box>
   );
