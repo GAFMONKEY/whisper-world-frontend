@@ -41,8 +41,8 @@ const NameAgePage: React.FC = () => {
   const handleContinue = () => {
     // Add validation and navigation logic here
     console.log('Submitted:', formData);
-    // Navigate to date preference page
-    navigate('/date-preference');
+    // Navigate to gender preference page
+    navigate('/gender-preference');
   };
 
   // Calculate max date (18 years ago) and min date (100 years ago)
