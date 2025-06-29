@@ -6,7 +6,6 @@ import {
   Button,
   Stack,
 } from '@mui/material';
-import MicIcon from '@mui/icons-material/Mic';
 import { useNavigate } from 'react-router-dom';
 
 const RegisterPage: React.FC = () => {
@@ -40,7 +39,7 @@ const RegisterPage: React.FC = () => {
         alignItems: 'center',
         backgroundColor: 'background.default',
         margin: 0,
-        padding: 0,
+        padding: 2,
       }}
     >
       <Box
@@ -52,26 +51,13 @@ const RegisterPage: React.FC = () => {
           textAlign: 'center',
           px: 3,
           py: 4,
-          maxWidth: 400,
+          maxWidth: 500,
           width: '100%',
         }}
       >
-        {/* Willkommen Text */}
+        {/* Headline */}
         <Typography
-          variant="h6"
-          sx={{
-            textAlign: 'center',
-            mb: 2,
-            color: 'text.secondary',
-            fontWeight: 400,
-          }}
-        >
-          Willkommen bei
-        </Typography>
-
-        {/* App Titel */}
-        <Typography
-          variant="h1"
+          variant="h2"
           sx={{
             textAlign: 'center',
             mb: 1,
@@ -79,166 +65,140 @@ const RegisterPage: React.FC = () => {
             fontWeight: 'bold',
           }}
         >
-          Whisper
+          Willkommen bei<br />Whisper World
         </Typography>
 
+        {/* Subtext */}
         <Typography
-          variant="h1"
+          variant="body1"
           sx={{
             textAlign: 'center',
             mb: 4,
-            color: 'text.primary',
-            fontWeight: 'bold',
+            color: 'text.secondary',
+            fontStyle: 'italic',
+            lineHeight: 1.6,
           }}
         >
-          World
+          Erstellen Sie Ihr Konto und beginnen Sie<br />
+          Ihre Dating-Reise mit Sprachnachrichten.
         </Typography>
 
-        {/* Mikrofon Icon */}
+        {/* Registration Card */}
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
+            backgroundColor: 'background.paper',
+            borderRadius: 4,
+            p: 5,
+            boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
+            border: '1px solid',
+            borderColor: 'grey.200',
+            width: '100%',
             mb: 4,
           }}
         >
-          <Box
+          <Typography
+            variant="h5"
             sx={{
-              width: 80,
-              height: 80,
-              borderRadius: '50%',
-              border: '3px solid',
-              borderColor: 'text.primary',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
+              textAlign: 'center',
+              mb: 4,
+              color: 'text.primary',
+              fontWeight: 'bold',
             }}
           >
-            <MicIcon
+            Registrierung
+          </Typography>
+
+          <Stack spacing={3}>
+            <TextField
+              label="E-Mail"
+              type="email"
+              value={formData.email}
+              onChange={handleInputChange('email')}
+              fullWidth
+              variant="outlined"
               sx={{
-                fontSize: 40,
-                color: 'text.primary',
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 3,
+                  backgroundColor: 'background.default',
+                  '&:hover': {
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  },
+                  '&.Mui-focused': {
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                  },
+                },
               }}
             />
-          </Box>
+
+            <TextField
+              label="Passwort"
+              type="password"
+              value={formData.password}
+              onChange={handleInputChange('password')}
+              fullWidth
+              variant="outlined"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 3,
+                  backgroundColor: 'background.default',
+                  '&:hover': {
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  },
+                  '&.Mui-focused': {
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                  },
+                },
+              }}
+            />
+
+            <TextField
+              label="Passwort bestätigen"
+              type="password"
+              value={formData.confirmPassword}
+              onChange={handleInputChange('confirmPassword')}
+              fullWidth
+              variant="outlined"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 3,
+                  backgroundColor: 'background.default',
+                  '&:hover': {
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                  },
+                  '&.Mui-focused': {
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                  },
+                },
+              }}
+            />
+          </Stack>
         </Box>
 
-        {/* Registration Form */}
-        <Stack spacing={3} sx={{ width: '100%', maxWidth: 300 }}>
-          <TextField
-            label="E-Mail"
-            type="email"
-            value={formData.email}
-            onChange={handleInputChange('email')}
-            fullWidth
-            variant="outlined"
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                borderRadius: 3,
-                backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                '& fieldset': {
-                  borderColor: 'secondary.main',
-                  borderWidth: 2,
-                },
-                '&:hover fieldset': {
-                  borderColor: 'secondary.dark',
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: 'secondary.dark',
-                },
-              },
-              '& .MuiInputLabel-root': {
-                color: 'secondary.dark',
-                '&.Mui-focused': {
-                  color: 'secondary.dark',
-                },
-              },
-            }}
-          />
-
-          <TextField
-            label="Passwort"
-            type="password"
-            value={formData.password}
-            onChange={handleInputChange('password')}
-            fullWidth
-            variant="outlined"
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                borderRadius: 3,
-                backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                '& fieldset': {
-                  borderColor: 'secondary.main',
-                  borderWidth: 2,
-                },
-                '&:hover fieldset': {
-                  borderColor: 'secondary.dark',
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: 'secondary.dark',
-                },
-              },
-              '& .MuiInputLabel-root': {
-                color: 'secondary.dark',
-                '&.Mui-focused': {
-                  color: 'secondary.dark',
-                },
-              },
-            }}
-          />
-
-          <TextField
-            label="Passwort bestätigen"
-            type="password"
-            value={formData.confirmPassword}
-            onChange={handleInputChange('confirmPassword')}
-            fullWidth
-            variant="outlined"
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                borderRadius: 3,
-                backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                '& fieldset': {
-                  borderColor: 'secondary.main',
-                  borderWidth: 2,
-                },
-                '&:hover fieldset': {
-                  borderColor: 'secondary.dark',
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: 'secondary.dark',
-                },
-              },
-              '& .MuiInputLabel-root': {
-                color: 'secondary.dark',
-                '&.Mui-focused': {
-                  color: 'secondary.dark',
-                },
-              },
-            }}
-          />
-
-          <Button
-            variant="contained"
-            size="large"
-            fullWidth
-            onClick={handleSubmit}
-            sx={{
-              py: 1.5,
-              fontSize: '1.1rem',
-              backgroundColor: 'secondary.main',
-              color: 'white',
-              fontWeight: 600,
-              borderRadius: 3,
-              '&:hover': {
-                backgroundColor: 'secondary.dark',
-              },
-            }}
-          >
-            Weiter
-          </Button>
-        </Stack>
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          disabled={!formData.email || !formData.password || !formData.confirmPassword}
+          sx={{
+            mt: 2,
+            py: 2,
+            px: 6,
+            fontSize: '1.2rem',
+            fontWeight: 600,
+            borderRadius: 4,
+            boxShadow: '0 6px 18px rgba(0,0,0,0.2)',
+            '&:hover': {
+              boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+              transform: 'translateY(-2px)',
+            },
+            '&:disabled': {
+              backgroundColor: 'grey.400',
+              color: 'grey.600',
+              boxShadow: 'none',
+            },
+          }}
+        >
+          Registrieren
+        </Button>
       </Box>
     </Box>
   );
