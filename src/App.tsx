@@ -16,6 +16,7 @@ import GenderPreferencePage from './pages/GenderPreferencePage';
 import DatingIntentionsPage from './pages/DatingIntentionsPage';
 import LikertScalePage from './pages/LikertScalePage';
 import LifestylePage from './pages/LifestylePage';
+import MusicPage from './pages/MusicPage';
 import HobbyPage from './pages/HobbyPage';
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
           <Route path="/dating-intentions" element={<DatingIntentionsPage />} />
           <Route path="/likert-scale" element={<LikertScalePage />} />
           <Route path="/lifestyle" element={<LifestylePage />} />
+          <Route path="/music" element={<MusicPage />} />
           <Route path="/hobbies" element={<HobbyPage />} />
         </Routes>
       </BrowserRouter>

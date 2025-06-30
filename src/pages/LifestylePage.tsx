@@ -44,8 +44,8 @@ const LifestylePage: React.FC = () => {
       lifestyle: lifestyle
     }));
 
-    // Navigiere zur Hobby-Seite
-    navigate('/hobbies');
+    // Navigiere zur Musik-Seite
+    navigate('/music');
   };
 
   const categories = [
