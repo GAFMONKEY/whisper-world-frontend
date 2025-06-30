@@ -67,7 +67,12 @@ export interface LikeResponse {
     message: string;
 }
 
-function convertUserToDiscoverUser(user: UserProfile): DiscoverUser {
+function capitalize(str: string) {
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
+export function convertUserToDiscoverUser(user: UserProfile): DiscoverUser {
     // Sichere Konvertierung mit Backend-Struktur
     const birthDate = new Date(user.birthDate);
     const age = new Date().getFullYear() - birthDate.getFullYear();
@@ -130,10 +135,10 @@ function convertUserToDiscoverUser(user: UserProfile): DiscoverUser {
                     audioUrl: answer.audioUrl
                 };
 
-                if (!clusterGroups.has(answer.cluster)) {
-                    clusterGroups.set(answer.cluster, []);
+                if (!clusterGroups.has(capitalize(answer.cluster))) {
+                    clusterGroups.set(capitalize(answer.cluster), []);
                 }
-                clusterGroups.get(answer.cluster)!.push(processedAnswer);
+                clusterGroups.get(capitalize(answer.cluster))!.push(processedAnswer);
             }
         });
 

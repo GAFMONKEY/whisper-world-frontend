@@ -44,8 +44,8 @@ const ProfilePage: React.FC = () => {
 
     useEffect(() => {
         const loadProfiles = async () => {
-            if (!user.id) {
-                navigate('/login');
+            if (!user) {
+                navigate('/');
                 return;
             }
 

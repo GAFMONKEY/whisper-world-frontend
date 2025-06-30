@@ -19,6 +19,7 @@ import LifestylePage from './pages/LifestylePage';
 import MusicPage from './pages/MusicPage';
 import HobbyPage from './pages/HobbyPage';
 import ColorPickerPage from './pages/ColorPickerPage';
+import OwnProfilePage from './pages/OwnProfilePage.tsx';
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
           <Route path="/music" element={<MusicPage />} />
           <Route path="/hobbies" element={<HobbyPage />} />
           <Route path="/color-picker" element={<ColorPickerPage />} />
+          <Route path="/own-profile" element={<OwnProfilePage />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

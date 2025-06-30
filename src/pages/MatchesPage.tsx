@@ -53,8 +53,8 @@ const MatchesPage: React.FC = () => {
 
     useEffect(() => {
         const loadUsers = async () => {
-            if (!user.id) {
-                navigate('/login');
+            if (!user) {
+                navigate('/');
                 return;
             }
 
