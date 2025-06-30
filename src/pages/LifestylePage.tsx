@@ -33,16 +33,13 @@ const LifestylePage: React.FC = () => {
     // Lade die gespeicherten Daten
     const savedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
 
-    console.log('Complete profile with lifestyle:', {
+    const updatedProfile = {
       ...savedProfile,
       lifestyle: lifestyle
-    });
+    };
 
-    // Speichere das komplette Profil
-    localStorage.setItem('userProfile', JSON.stringify({
-      ...savedProfile,
-      lifestyle: lifestyle
-    }));
+    console.log('Updated profile with lifestyle:', updatedProfile);
+    localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
 
     // Navigiere zur Musik-Seite
     navigate('/music');

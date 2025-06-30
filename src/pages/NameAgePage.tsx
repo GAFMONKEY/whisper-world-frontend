@@ -39,8 +39,27 @@ const NameAgePage: React.FC = () => {
   };
 
   const handleContinue = () => {
-    // Add validation and navigation logic here
-    console.log('Submitted:', formData);
+    // Lade die gespeicherten Daten
+    const savedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+
+    // Mappe die Geschlechtswerte auf Backend-Format
+    const genderMapping: { [key: string]: string } = {
+      'maennlich': 'male',
+      'weiblich': 'female',
+      'divers': 'non-binary'
+    };
+
+    const updatedProfile = {
+      ...savedProfile,
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      gender: genderMapping[formData.gender],
+      birthDate: formData.birthDate
+    };
+
+    console.log('Updated profile with name/age data:', updatedProfile);
+    localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
+
     // Navigate to gender preference page
     navigate('/gender-preference');
   };
@@ -192,7 +211,7 @@ const NameAgePage: React.FC = () => {
                 label="Geschlecht"
                 onChange={handleGenderChange}
               >
-                <MenuItem value="männlich">Männlich</MenuItem>
+                <MenuItem value="maennlich">Männlich</MenuItem>
                 <MenuItem value="weiblich">Weiblich</MenuItem>
                 <MenuItem value="divers">Divers</MenuItem>
               </Select>

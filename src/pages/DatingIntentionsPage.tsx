@@ -23,20 +23,28 @@ const DatingIntentionsPage: React.FC = () => {
   };
 
   const handleContinue = () => {
-    // Lade die gespeicherten Geschlechtspräferenzen
-    const savedGenders = JSON.parse(localStorage.getItem('selectedGenders') || '[]');
+    // Lade die gespeicherten Daten
+    const savedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
 
-    console.log('Complete dating preferences:', {
-      genders: savedGenders,
-      intentions: selectedIntentions
-    });
+    // Mappe die Absichten auf Backend-Format
+    const intentionMapping: { [key: string]: string } = {
+      'freunde': 'friends',
+      'unverbindlich': 'hookups',
+      'lockeres-dating': 'casual dating',
+      'offen-fuer-alles': 'open to anything',
+      'kurze-beziehung': 'short-term relationship',
+      'lange-beziehung': 'long-term relationship'
+    };
 
-    // Speichere alle Präferenzen zusammen
-    localStorage.setItem('datingPreferences', JSON.stringify({
-      genders: savedGenders,
-      intentions: selectedIntentions
-    }));
+    const mappedIntentions = selectedIntentions.map(intention => intentionMapping[intention]);
 
+    const updatedProfile = {
+      ...savedProfile,
+      intentions: mappedIntentions
+    };
+
+    console.log('Updated profile with intentions:', updatedProfile);
+    localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
     // Navigiere zur Likert-Skalen Seite
     navigate('/likert-scale');
   };
@@ -45,7 +53,7 @@ const DatingIntentionsPage: React.FC = () => {
     { value: 'freunde', label: 'Freunde finden' },
     { value: 'unverbindlich', label: 'Unverbindliche Treffen' },
     { value: 'lockeres-dating', label: 'Lockeres Dating' },
-    { value: 'offen-für-alles', label: 'Offen für alles' },
+    { value: 'offen-fuer-alles', label: 'Offen für alles' },
     { value: 'kurze-beziehung', label: 'Kurze Beziehung' },
     { value: 'lange-beziehung', label: 'Lange Beziehung' },
   ];

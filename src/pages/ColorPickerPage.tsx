@@ -16,16 +16,19 @@ const ColorPickerPage: React.FC = () => {
     // Lade die gespeicherten Daten
     const savedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
 
-    console.log('Complete profile with accent color:', {
+    // Erstelle das finale Profil im Backend-Format
+    const finalProfile = {
       ...savedProfile,
       accentColor: selectedColor
-    });
+    };
+
+    console.log('Complete profile ready for backend:', finalProfile);
 
     // Speichere das komplette Profil
-    localStorage.setItem('userProfile', JSON.stringify({
-      ...savedProfile,
-      accentColor: selectedColor
-    }));
+    localStorage.setItem('userProfile', JSON.stringify(finalProfile));
+
+    // Hier könnte der API-Call zum Backend erfolgen
+    // await userService.createUser(finalProfile);
 
     // Navigiere zum Dashboard
     navigate('/dashboard');

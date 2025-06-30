@@ -24,19 +24,23 @@ const LikertScalePage: React.FC = () => {
   };
 
   const handleContinue = () => {
-    // Lade die gespeicherten Präferenzen
-    const savedPreferences = JSON.parse(localStorage.getItem('datingPreferences') || '{}');
+    // Lade die gespeicherten Daten
+    const savedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
 
-    console.log('Complete profile data:', {
-      ...savedPreferences,
-      personalityRatings: ratings
-    });
+    // Mappe die Bewertungen auf das Backend-Format
+    const likertData = {
+      closeness: parseInt(ratings.intimacy),
+      openness: parseInt(ratings.openness),
+      quietness: parseInt(ratings.silence)
+    };
 
-    // Speichere alle Daten zusammen
-    localStorage.setItem('userProfile', JSON.stringify({
-      ...savedPreferences,
-      personalityRatings: ratings
-    }));
+    const updatedProfile = {
+      ...savedProfile,
+      likert: likertData
+    };
+
+    console.log('Updated profile with likert data:', updatedProfile);
+    localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
 
     // Navigiere zur Lifestyle-Seite
     navigate('/lifestyle');

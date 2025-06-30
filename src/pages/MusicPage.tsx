@@ -30,16 +30,13 @@ const MusicPage: React.FC = () => {
 
     const updatedAnswers = [...existingAnswers, musicAnswer];
 
-    console.log('Complete profile with music answer:', {
+    const updatedProfile = {
       ...savedProfile,
       answers: updatedAnswers
-    });
+    };
 
-    // Speichere das komplette Profil
-    localStorage.setItem('userProfile', JSON.stringify({
-      ...savedProfile,
-      answers: updatedAnswers
-    }));
+    console.log('Updated profile with music answer:', updatedProfile);
+    localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
 
     // Navigiere zur Hobby-Seite
     navigate('/hobbies');

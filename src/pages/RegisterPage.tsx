@@ -25,6 +25,11 @@ const RegisterPage: React.FC = () => {
 
   const handleSubmit = () => {
     console.log('Register:', formData);
+    // Speichere Email und Passwort für das finale Profil
+    localStorage.setItem('userProfile', JSON.stringify({
+      email: formData.email,
+      password: formData.password
+    }));
     // Nach Formularverarbeitung zur NameAgePage weiterleiten
     navigate('/name-age');
   };

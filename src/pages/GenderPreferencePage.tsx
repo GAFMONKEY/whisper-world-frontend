@@ -23,14 +23,31 @@ const GenderPreferencePage: React.FC = () => {
   };
 
   const handleContinue = () => {
-    console.log('Gender preferences:', selectedGenders);
-    // Speichere Geschlechtspräferenzen und navigiere zur Absichten-Seite
-    localStorage.setItem('selectedGenders', JSON.stringify(selectedGenders));
+    // Lade die gespeicherten Daten
+    const savedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+
+    // Mappe die Geschlechtspräferenzen auf Backend-Format
+    const genderMapping: { [key: string]: string } = {
+      'maennlich': 'male',
+      'weiblich': 'female',
+      'divers': 'non-binary'
+    };
+
+    const mappedGenders = selectedGenders.map(gender => genderMapping[gender]);
+
+    const updatedProfile = {
+      ...savedProfile,
+      datingPreferences: mappedGenders
+    };
+
+    console.log('Updated profile with dating preferences:', updatedProfile);
+    localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
+
     navigate('/dating-intentions');
   };
 
   const genderOptions = [
-    { value: 'männlich', label: 'Männlich' },
+    { value: 'maennlich', label: 'Männlich' },
     { value: 'weiblich', label: 'Weiblich' },
     { value: 'divers', label: 'Divers' },
   ];
