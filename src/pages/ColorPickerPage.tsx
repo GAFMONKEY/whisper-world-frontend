@@ -7,6 +7,7 @@ import {
   TextField,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { userService } from '../services';
 
 const ColorPickerPage: React.FC = () => {
   const navigate = useNavigate();
@@ -28,10 +29,10 @@ const ColorPickerPage: React.FC = () => {
     localStorage.setItem('userProfile', JSON.stringify(finalProfile));
 
     // Hier könnte der API-Call zum Backend erfolgen
-    // await userService.createUser(finalProfile);
-
-    // Navigiere zum Dashboard
-    navigate('/dashboard');
+    userService.createUser(finalProfile).then((user) => {
+      //localStorage.setItem('user', JSON.stringify(user));
+      navigate('/dashboard');
+    });
   };
 
   // Vordefinierte beliebte Farben für schnelle Auswahl

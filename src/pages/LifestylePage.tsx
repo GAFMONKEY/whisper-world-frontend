@@ -53,7 +53,7 @@ const LifestylePage: React.FC = () => {
         { value: 'yes', label: 'Ja' },
         { value: 'no', label: 'Nein' },
         { value: 'maybe', label: 'Vielleicht' },
-        { value: 'not_specified', label: 'Keine Angabe' },
+        { value: 'not specified', label: 'Keine Angabe' },
       ]
     },
     {
@@ -62,7 +62,7 @@ const LifestylePage: React.FC = () => {
       options: [
         { value: 'yes', label: 'Ja' },
         { value: 'no', label: 'Nein' },
-        { value: 'not_specified', label: 'Keine Angabe' },
+        { value: 'not specified', label: 'Keine Angabe' },
       ]
     },
     {
@@ -72,7 +72,7 @@ const LifestylePage: React.FC = () => {
         { value: 'yes', label: 'Ja' },
         { value: 'no', label: 'Nein' },
         { value: 'sometimes', label: 'Gelegentlich' },
-        { value: 'not_specified', label: 'Keine Angabe' },
+        { value: 'not specified', label: 'Keine Angabe' },
       ]
     },
     {
@@ -82,7 +82,7 @@ const LifestylePage: React.FC = () => {
         { value: 'yes', label: 'Ja' },
         { value: 'no', label: 'Nein' },
         { value: 'sometimes', label: 'Gelegentlich' },
-        { value: 'not_specified', label: 'Keine Angabe' },
+        { value: 'not specified', label: 'Keine Angabe' },
       ]
     },
     {
@@ -92,7 +92,7 @@ const LifestylePage: React.FC = () => {
         { value: 'yes', label: 'Ja' },
         { value: 'no', label: 'Nein' },
         { value: 'sometimes', label: 'Gelegentlich' },
-        { value: 'not_specified', label: 'Keine Angabe' },
+        { value: 'not specified', label: 'Keine Angabe' },
       ]
     },
     {
@@ -102,8 +102,8 @@ const LifestylePage: React.FC = () => {
         { value: 'left', label: 'Links' },
         { value: 'center', label: 'Mitte' },
         { value: 'right', label: 'Rechts' },
-        { value: 'not_political', label: 'Nicht politisch' },
-        { value: 'not_specified', label: 'Keine Angabe' },
+        { value: 'not political', label: 'Nicht politisch' },
+        { value: 'not specified', label: 'Keine Angabe' },
       ]
     }
   ];
