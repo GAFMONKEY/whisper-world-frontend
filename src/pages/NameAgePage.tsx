@@ -203,6 +203,9 @@ const NameAgePage: React.FC = () => {
                     boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                   },
                 },
+                '& .MuiSelect-select': {
+                  textAlign: 'left',
+                },
               }}
             >
               <InputLabel>Geschlecht</InputLabel>
@@ -210,6 +213,34 @@ const NameAgePage: React.FC = () => {
                 value={formData.gender}
                 label="Geschlecht"
                 onChange={handleGenderChange}
+                MenuProps={{
+                  PaperProps: {
+                    sx: {
+                      maxHeight: 200,
+                      mt: 1,
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                    },
+                  },
+                  disableScrollLock: true,
+                  disablePortal: true,
+                  disableAutoFocus: true,
+                  disableEnforceFocus: true,
+                  disableRestoreFocus: true,
+                  hideBackdrop: true,
+                  anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  },
+                  transformOrigin: {
+                    vertical: 'top',
+                    horizontal: 'left',
+                  },
+                }}
+                sx={{
+                  '& .MuiSelect-select': {
+                    textAlign: 'left',
+                  },
+                }}
               >
                 <MenuItem value="maennlich">Männlich</MenuItem>
                 <MenuItem value="weiblich">Weiblich</MenuItem>

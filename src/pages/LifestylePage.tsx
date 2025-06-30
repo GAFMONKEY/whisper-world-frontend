@@ -196,6 +196,29 @@ const LifestylePage: React.FC = () => {
                     value={lifestyle[category.key as keyof typeof lifestyle]}
                     onChange={handleChange(category.key)}
                     size="small"
+                    MenuProps={{
+                      PaperProps: {
+                        sx: {
+                          maxHeight: 200,
+                          mt: 1,
+                          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                        },
+                      },
+                      disableScrollLock: true,
+                      disablePortal: true,
+                      disableAutoFocus: true,
+                      disableEnforceFocus: true,
+                      disableRestoreFocus: true,
+                      hideBackdrop: true,
+                      anchorOrigin: {
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                      },
+                      transformOrigin: {
+                        vertical: 'top',
+                        horizontal: 'left',
+                      },
+                    }}
                     sx={{
                       '& .MuiOutlinedInput-root': {
                         borderRadius: 2,
@@ -206,6 +229,9 @@ const LifestylePage: React.FC = () => {
                         '&.Mui-focused': {
                           boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
                         },
+                      },
+                      '& .MuiSelect-select': {
+                        textAlign: 'left',
                       },
                     }}
                   >
