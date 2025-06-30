@@ -18,6 +18,7 @@ import LikertScalePage from './pages/LikertScalePage';
 import LifestylePage from './pages/LifestylePage';
 import MusicPage from './pages/MusicPage';
 import HobbyPage from './pages/HobbyPage';
+import ColorPickerPage from './pages/ColorPickerPage';
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
           <Route path="/lifestyle" element={<LifestylePage />} />
           <Route path="/music" element={<MusicPage />} />
           <Route path="/hobbies" element={<HobbyPage />} />
+          <Route path="/color-picker" element={<ColorPickerPage />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>

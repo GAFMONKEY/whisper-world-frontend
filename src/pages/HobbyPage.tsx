@@ -26,8 +26,8 @@ const HobbyPage: React.FC = () => {
       hobbies: selectedHobbies
     }));
 
-    // Navigiere zum Dashboard
-    navigate('/dashboard');
+    // Navigiere zur Farbauswahl-Seite
+    navigate('/color-picker');
   };
 
   const hobbies = [
@@ -228,7 +228,7 @@ const HobbyPage: React.FC = () => {
             },
           }}
         >
-          Profil vervollständigen
+          Weiter
         </Button>
       </Box>
     </Box>
