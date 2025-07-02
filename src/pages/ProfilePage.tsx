@@ -89,31 +89,26 @@ const ProfilePage: React.FC = () => {
         break;
     }
   };
-  
-  function invertHexColor(hex, amount=70) {
-    // Remove "#" if present
-    if(!hex) {
+
+  function invertHexColor(hex, amount = 70) {
+    if (!hex) {
       return '';
     }
     hex = hex.replace(/^#/, '');
-    
-    // Parse r, g, b values
-    let r = parseInt(hex.substring(0, 2), 16);
+
+    const r = parseInt(hex.substring(0, 2), 16);
     let g = parseInt(hex.substring(2, 4), 16);
-    let b = parseInt(hex.substring(4, 6), 16);
-    
-    // Shift each channel up or down based on brightness
+    const b = parseInt(hex.substring(4, 6), 16);
+
     const shift = (val) => {
-      if (val > 127) return Math.max(0, val - amount); // darken bright colors
-      else return Math.min(255, val + amount);         // brighten dark colors
+      if (val > 127) return Math.max(0, val - amount);
+      else return Math.min(255, val + amount);
     };
-    
-    r = shift(r);
+
     g = shift(g);
-    b = shift(b);
-    
+
     const toHex = (value) => value.toString(16).padStart(2, '0');
-    
+
     return '#' + toHex(r) + toHex(g) + toHex(b);
   }
 
@@ -418,7 +413,7 @@ const ProfilePage: React.FC = () => {
                       background: 'white',
                       borderRadius: 4,
                       border: '2px solid',
-                      borderColor: category.color,
+                      borderColor: currentProfile.accentColor || category.color,
                       mb: 2,
                       transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                       cursor: q.hasAudio ? 'pointer' : 'default',
@@ -453,7 +448,7 @@ const ProfilePage: React.FC = () => {
                             : !isSkipping
                               ? '0 6px 15px rgba(0,0,0,0.08)'
                               : '0 4px 12px rgba(0,0,0,0.05)',
-                        borderColor: !isSkipping ? category.color : category.color,
+                        borderColor: currentProfile?.accentColor,
                       },
                     }}
                     onClick={
@@ -479,7 +474,7 @@ const ProfilePage: React.FC = () => {
                             color: 'text.primary',
                             fontStyle: 'italic',
                             background: 'white',
-                            border: `2px solid ${category?.color || '#BFA9BE'}`,
+                            border: '2px solid ' + currentProfile?.accentColor,
                             borderRadius: 3,
                             p: 2,
                             boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
@@ -494,7 +489,7 @@ const ProfilePage: React.FC = () => {
                           <IconButton
                             onClick={() => handlePlayAudio(categoryIndex, questionIndex)}
                             sx={{
-                              background: `linear-gradient(135deg, ${category.color} 0%, ${category.color}CC 100%)`,
+                              background: `linear-gradient(135deg, ${currentProfile.accentColor || category.color} 0%, ${currentProfile.accentColor || category.color}CC 100%)`,
                               color: 'white',
                               width: 60,
                               height: 60,
@@ -519,7 +514,7 @@ const ProfilePage: React.FC = () => {
                                 },
                               },
                               '&:hover': {
-                                background: `linear-gradient(135deg, ${category.color}DD 0%, ${category.color}AA 100%)`,
+                                background: `linear-gradient(135deg, ${currentProfile.accentColor || category.color}DD 0%, ${currentProfile.accentColor || category.color}AA 100%)`,
                                 transform: 'scale(1.08)',
                                 boxShadow: '0 6px 20px rgba(0,0,0,0.2)',
                               },
@@ -546,7 +541,7 @@ const ProfilePage: React.FC = () => {
               backgroundColor: 'rgba(255, 255, 255, 0.9)',
               borderRadius: 3,
               border: '2px solid',
-              borderColor: 'secondary.main',
+              borderColor: currentProfile?.accentColor,
               mb: 3,
             }}
           >
@@ -591,7 +586,7 @@ const ProfilePage: React.FC = () => {
                     sx={{
                       background: 'white',
                       borderRadius: 4,
-                      border: '2px solid #FF9800',
+                      border: '2px solid ' + currentProfile?.accentColor,
                       mb: 2,
                       boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
                       transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -637,7 +632,7 @@ const ProfilePage: React.FC = () => {
                           color: 'text.primary',
                           fontStyle: 'italic',
                           background: 'white',
-                          border: '2px solid #FF9800',
+                          border: '2px solid ' + currentProfile?.accentColor,
                           borderRadius: 3,
                           p: 2,
                           boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
@@ -662,7 +657,7 @@ const ProfilePage: React.FC = () => {
                     sx={{
                       background: 'white',
                       borderRadius: 4,
-                      border: '2px solid #FF9800',
+                      border: '2px solid ' + currentProfile?.accentColor,
                       mb: 2,
                       boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
                       transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -708,7 +703,7 @@ const ProfilePage: React.FC = () => {
                           color: 'text.primary',
                           fontStyle: 'italic',
                           background: 'white',
-                          border: '2px solid #FF9800',
+                          border: '2px solid ' + currentProfile?.accentColor,
                           borderRadius: 3,
                           p: 2,
                           boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
@@ -731,7 +726,7 @@ const ProfilePage: React.FC = () => {
                     sx={{
                       background: 'white',
                       borderRadius: 4,
-                      border: '2px solid #FF9800',
+                      border: '2px solid ' + currentProfile?.accentColor,
                       mb: 2,
                       boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
                       transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -777,7 +772,7 @@ const ProfilePage: React.FC = () => {
                           color: 'text.primary',
                           fontStyle: 'italic',
                           background: 'white',
-                          border: '2px solid #FF9800',
+                          border: '2px solid ' + currentProfile?.accentColor,
                           borderRadius: 3,
                           p: 2,
                           boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
@@ -825,7 +820,7 @@ const ProfilePage: React.FC = () => {
                     sx={{
                       background: 'white',
                       borderRadius: 4,
-                      border: '2px solid #4CAF50',
+                      border: '2px solid ' + currentProfile?.accentColor,
                       mb: 2,
                       boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
                       transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -871,7 +866,7 @@ const ProfilePage: React.FC = () => {
                           color: 'text.primary',
                           fontStyle: 'italic',
                           background: 'white',
-                          border: '2px solid #4CAF50',
+                          border: '2px solid ' + currentProfile?.accentColor,
                           borderRadius: 3,
                           p: 2,
                           boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
@@ -896,7 +891,7 @@ const ProfilePage: React.FC = () => {
                     sx={{
                       background: 'white',
                       borderRadius: 4,
-                      border: '2px solid #4CAF50',
+                      border: '2px solid ' + currentProfile?.accentColor,
                       mb: 2,
                       boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
                       transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -942,7 +937,7 @@ const ProfilePage: React.FC = () => {
                           color: 'text.primary',
                           fontStyle: 'italic',
                           background: 'white',
-                          border: '2px solid #4CAF50',
+                          border: '2px solid ' + currentProfile?.accentColor,
                           borderRadius: 3,
                           p: 2,
                           boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
@@ -967,7 +962,7 @@ const ProfilePage: React.FC = () => {
                     sx={{
                       background: 'white',
                       borderRadius: 4,
-                      border: '2px solid #4CAF50',
+                      border: '2px solid ' + currentProfile?.accentColor,
                       mb: 2,
                       boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
                       transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -1013,7 +1008,7 @@ const ProfilePage: React.FC = () => {
                           color: 'text.primary',
                           fontStyle: 'italic',
                           background: 'white',
-                          border: '2px solid #4CAF50',
+                          border: '2px solid ' + currentProfile?.accentColor,
                           borderRadius: 3,
                           p: 2,
                           boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
@@ -1268,9 +1263,13 @@ const ProfilePage: React.FC = () => {
                 Sende Like...
               </Box>
             ) : isSkipping ? (
-              <FavoriteBorderIcon sx={{ fontSize: 30, color: invertHexColor(currentProfile.accentColor)}} />
+              <FavoriteBorderIcon
+                sx={{ fontSize: 30, color: invertHexColor(currentProfile.accentColor) }}
+              />
             ) : (
-              <FavoriteIcon sx={{ fontSize: 30, color: invertHexColor(currentProfile.accentColor) }} />
+              <FavoriteIcon
+                sx={{ fontSize: 30, color: invertHexColor(currentProfile.accentColor) }}
+              />
             )}
           </Button>
         </Box>
