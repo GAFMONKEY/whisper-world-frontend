@@ -90,7 +90,7 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  function invertHexColor(hex, amount = 70) {
+  function invertHexColor(hex: any, amount = 100) {
     if (!hex) {
       return '';
     }
@@ -100,14 +100,14 @@ const ProfilePage: React.FC = () => {
     let g = parseInt(hex.substring(2, 4), 16);
     const b = parseInt(hex.substring(4, 6), 16);
 
-    const shift = (val) => {
+    const shift = (val: any) => {
       if (val > 127) return Math.max(0, val - amount);
       else return Math.min(255, val + amount);
     };
 
     g = shift(g);
 
-    const toHex = (value) => value.toString(16).padStart(2, '0');
+    const toHex = (value: any) => value.toString(16).padStart(2, '0');
 
     return '#' + toHex(r) + toHex(g) + toHex(b);
   }
@@ -298,9 +298,7 @@ const ProfilePage: React.FC = () => {
     <Box
       sx={{
         minHeight: '100vh',
-        background: currentProfile?.accentColor
-          ? `linear-gradient(135deg, ${currentProfile.accentColor}15 0%, ${currentProfile.accentColor}08 100%)`
-          : 'linear-gradient(135deg, #BFA9BE15 0%, #BFA9BE08 100%)',
+        background: 'linear-gradient(135deg, #BFA9BE15 0%, #BFA9BE08 100%)',
         pb: 20,
         animation: !isSkipping
           ? 'slideInFromRight 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)'
@@ -1292,7 +1290,7 @@ const ProfilePage: React.FC = () => {
           '& .MuiBottomNavigationAction-root': {
             color: 'text.secondary',
             '&.Mui-selected': {
-              color: currentProfile?.accentColor || 'secondary.main',
+              color: 'secondary.main',
             },
           },
         }}

@@ -127,7 +127,7 @@ const GenderPreferencePage: React.FC = () => {
               fontWeight: 'bold',
             }}
           >
-            Geschlechtspräferenzen
+            Datingpräferenzen
           </Typography>
 
           <FormControl component="fieldset" sx={{ width: '100%' }}>

@@ -24,7 +24,7 @@ import { convertUserToDiscoverUser, type DiscoverUser } from '../services/matchS
 
 const OwnProfilePage: React.FC = () => {
   const navigate = useNavigate();
-  const [navValue, setNavValue] = useState(3); // Hearts tab aktiv
+  const [navValue, setNavValue] = useState(3);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [playingAudio, setPlayingAudio] = useState<{
@@ -187,9 +187,7 @@ const OwnProfilePage: React.FC = () => {
     <Box
       sx={{
         minHeight: '100vh',
-        background: currentProfile?.accentColor
-          ? `linear-gradient(135deg, ${currentProfile.accentColor}15 0%, ${currentProfile.accentColor}08 100%)`
-          : 'linear-gradient(135deg, #BFA9BE15 0%, #BFA9BE08 100%)',
+        background: 'linear-gradient(135deg, #BFA9BE15 0%, #BFA9BE08 100%)',
         pb: 20,
         animation: !isSkipping
           ? 'slideInFromRight 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)'
@@ -299,10 +297,9 @@ const OwnProfilePage: React.FC = () => {
                   <Card
                     key={questionIndex}
                     sx={{
-                      background: 'white',
                       borderRadius: 4,
                       border: '2px solid',
-                      borderColor: category.color,
+                      borderColor: currentProfile?.accentColor,
                       mb: 2,
                       transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                       cursor: q.hasAudio ? 'pointer' : 'default',
@@ -337,7 +334,7 @@ const OwnProfilePage: React.FC = () => {
                             : !isSkipping
                               ? '0 6px 15px rgba(0,0,0,0.08)'
                               : '0 4px 12px rgba(0,0,0,0.05)',
-                        borderColor: !isSkipping ? category.color : category.color,
+                        borderColor: currentProfile?.accentColor,
                       },
                     }}
                     onClick={
@@ -363,8 +360,8 @@ const OwnProfilePage: React.FC = () => {
                             color: 'text.primary',
                             fontStyle: 'italic',
                             background: 'white',
-                            border: `2px solid ${category?.color || '#BFA9BE'}`,
-                            borderRadius: 3,
+                            border: '2px solid',
+                            borderColor: currentProfile?.accentColor,                            borderRadius: 3,
                             p: 2,
                             boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
                           }}
@@ -430,7 +427,7 @@ const OwnProfilePage: React.FC = () => {
               backgroundColor: 'rgba(255, 255, 255, 0.9)',
               borderRadius: 3,
               border: '2px solid',
-              borderColor: 'secondary.main',
+              borderColor: currentProfile?.accentColor,
               mb: 3,
             }}
           >
@@ -475,7 +472,8 @@ const OwnProfilePage: React.FC = () => {
                     sx={{
                       background: 'white',
                       borderRadius: 4,
-                      border: '2px solid #FF9800',
+                      border: '2px solid',
+                      borderColor: currentProfile?.accentColor,
                       mb: 2,
                       boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
                       transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -521,8 +519,8 @@ const OwnProfilePage: React.FC = () => {
                           color: 'text.primary',
                           fontStyle: 'italic',
                           background: 'white',
-                          border: '2px solid #FF9800',
-                          borderRadius: 3,
+                          border: '2px solid',
+                          borderColor: currentProfile?.accentColor,                          borderRadius: 3,
                           p: 2,
                           boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
                         }}
@@ -546,7 +544,8 @@ const OwnProfilePage: React.FC = () => {
                     sx={{
                       background: 'white',
                       borderRadius: 4,
-                      border: '2px solid #FF9800',
+                      border: '2px solid',
+                      borderColor: currentProfile?.accentColor,
                       mb: 2,
                       boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
                       transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -592,8 +591,8 @@ const OwnProfilePage: React.FC = () => {
                           color: 'text.primary',
                           fontStyle: 'italic',
                           background: 'white',
-                          border: '2px solid #FF9800',
-                          borderRadius: 3,
+                          border: '2px solid',
+                          borderColor: currentProfile?.accentColor,                          borderRadius: 3,
                           p: 2,
                           boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
                         }}
@@ -615,7 +614,8 @@ const OwnProfilePage: React.FC = () => {
                     sx={{
                       background: 'white',
                       borderRadius: 4,
-                      border: '2px solid #FF9800',
+                      border: '2px solid',
+                      borderColor: currentProfile?.accentColor,
                       mb: 2,
                       boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
                       transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -661,8 +661,8 @@ const OwnProfilePage: React.FC = () => {
                           color: 'text.primary',
                           fontStyle: 'italic',
                           background: 'white',
-                          border: '2px solid #FF9800',
-                          borderRadius: 3,
+                          border: '2px solid',
+                          borderColor: currentProfile?.accentColor,                          borderRadius: 3,
                           p: 2,
                           boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
                         }}
@@ -709,7 +709,8 @@ const OwnProfilePage: React.FC = () => {
                     sx={{
                       background: 'white',
                       borderRadius: 4,
-                      border: '2px solid #4CAF50',
+                      border: '2px solid',
+                      borderColor: currentProfile?.accentColor,
                       mb: 2,
                       boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
                       transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -755,8 +756,8 @@ const OwnProfilePage: React.FC = () => {
                           color: 'text.primary',
                           fontStyle: 'italic',
                           background: 'white',
-                          border: '2px solid #4CAF50',
-                          borderRadius: 3,
+                          border: '2px solid',
+                          borderColor: currentProfile?.accentColor,                          borderRadius: 3,
                           p: 2,
                           boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
                         }}
@@ -780,7 +781,8 @@ const OwnProfilePage: React.FC = () => {
                     sx={{
                       background: 'white',
                       borderRadius: 4,
-                      border: '2px solid #4CAF50',
+                      border: '2px solid',
+                      borderColor: currentProfile?.accentColor,
                       mb: 2,
                       boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
                       transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -826,8 +828,8 @@ const OwnProfilePage: React.FC = () => {
                           color: 'text.primary',
                           fontStyle: 'italic',
                           background: 'white',
-                          border: '2px solid #4CAF50',
-                          borderRadius: 3,
+                          border: '2px solid',
+                          borderColor: currentProfile?.accentColor,                          borderRadius: 3,
                           p: 2,
                           boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
                         }}
@@ -851,7 +853,8 @@ const OwnProfilePage: React.FC = () => {
                     sx={{
                       background: 'white',
                       borderRadius: 4,
-                      border: '2px solid #4CAF50',
+                      border: '2px solid',
+                      borderColor: currentProfile?.accentColor,
                       mb: 2,
                       boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
                       transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -897,8 +900,8 @@ const OwnProfilePage: React.FC = () => {
                           color: 'text.primary',
                           fontStyle: 'italic',
                           background: 'white',
-                          border: '2px solid #4CAF50',
-                          borderRadius: 3,
+                          border: '2px solid',
+                          borderColor: currentProfile?.accentColor,                          borderRadius: 3,
                           p: 2,
                           boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
                         }}
@@ -922,7 +925,7 @@ const OwnProfilePage: React.FC = () => {
               background: 'white',
               borderRadius: 4,
               border: '2px solid',
-              borderColor: 'secondary.main',
+              borderColor: currentProfile?.accentColor,
               mb: 3,
               boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
             }}
@@ -953,12 +956,12 @@ const OwnProfilePage: React.FC = () => {
           backgroundColor: 'rgba(255, 255, 255, 0.98)',
           backdropFilter: 'blur(8px)',
           borderTop: '1px solid rgba(0,0,0,0.05)',
-          zIndex: 1001, // Higher than sticky buttons
+          zIndex: 1001,
           boxShadow: '0 -2px 15px rgba(0,0,0,0.04)',
           '& .MuiBottomNavigationAction-root': {
             color: 'text.secondary',
             '&.Mui-selected': {
-              color: currentProfile?.accentColor || 'secondary.main',
+              color: 'secondary.main',
             },
           },
         }}
