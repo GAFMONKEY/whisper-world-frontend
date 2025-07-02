@@ -64,8 +64,12 @@ const chatService = {
                 senderId: msg.senderId,
                 content: msg.message,
                 type: 'TEXT' as const,
-                timestamp: new Date(msg.sentAt),
-                isRead: false, // Backend hat kein read-status, daher default false
+                timestamp: (() => {
+                    const date = new Date(msg.sentAt);
+                    date.setHours(date.getHours() + 2);
+                    return date;
+                })(),
+                isRead: false,
                 createdAt: new Date(msg.sentAt),
                 updatedAt: new Date(msg.sentAt)
             }));
@@ -137,7 +141,7 @@ const chatService = {
                 senderId: messageData.senderId,
                 content: messageData.content,
                 type: 'TEXT',
-                timestamp: new Date(backendMessage.sentAt),
+                timestamp: new Date(),
                 isRead: false,
                 createdAt: new Date(backendMessage.sentAt),
                 updatedAt: new Date(backendMessage.sentAt)

@@ -164,7 +164,7 @@ const ChatPage: React.FC = () => {
         matchId: matchId!,
         senderId: user.id,
         content: message.trim(),
-        type: 'TEXT'
+        type: 'TEXT',
       });
       
       // Update conversation with new message
