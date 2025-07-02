@@ -10,6 +10,7 @@ import {
   CircularProgress,
 } from '@mui/material';
 import MicIcon from '@mui/icons-material/Mic';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/authService';
 
@@ -85,8 +86,29 @@ const LoginPage: React.FC = () => {
         backgroundColor: 'background.default',
         margin: 0,
         padding: 0,
+        position: 'relative',
       }}
     >
+      {/* Back Button */}
+      <Button
+        startIcon={<ArrowBackIcon />}
+        onClick={() => navigate('/')}
+        sx={{
+          position: 'absolute',
+          top: 24,
+          left: 24,
+          minWidth: 0,
+          padding: 1,
+          borderRadius: '50%',
+          backgroundColor: 'transparent',
+          color: 'text.primary',
+          '&:hover': {
+            backgroundColor: 'rgba(0,0,0,0.04)',
+          },
+        }}
+        aria-label="Zurück"
+      />
+
       <Box
         sx={{
           display: 'flex',

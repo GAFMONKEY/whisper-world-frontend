@@ -7,6 +7,7 @@ import {
   Stack,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
@@ -39,6 +40,7 @@ const RegisterPage: React.FC = () => {
       sx={{
         minHeight: '100vh',
         width: '100vw',
+        position: 'relative',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -47,6 +49,26 @@ const RegisterPage: React.FC = () => {
         padding: 2,
       }}
     >
+      {/* Back Button */}
+      <Button
+        startIcon={<ArrowBackIcon />}
+        onClick={() => navigate(-1)}
+        sx={{
+          position: 'absolute',
+          top: 24,
+          left: 24,
+          minWidth: 0,
+          padding: 1,
+          borderRadius: '50%',
+          backgroundColor: 'transparent',
+          color: 'text.primary',
+          '&:hover': {
+            backgroundColor: 'rgba(0,0,0,0.04)',
+          },
+        }}
+        aria-label="Zurück"
+      />
+
       <Box
         sx={{
           display: 'flex',
