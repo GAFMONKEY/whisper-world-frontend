@@ -45,6 +45,7 @@ export interface SendMessageRequest {
     type: 'TEXT' | 'VOICE' | 'IMAGE'; // Backend-kompatible Enums
     audioFile?: File;
     imageFile?: File;
+    duration?: number;
 }
 
 const chatService = {
@@ -120,9 +121,19 @@ const chatService = {
 
     async sendMessage(messageData: SendMessageRequest): Promise<ChatMessage> {
         try {
-            if (messageData.type === 'VOICE' || messageData.type === 'IMAGE') {
-                console.warn('Voice and image messages not yet supported by backend, using mock response');
-                throw new Error('Voice/Image not supported yet');
+            if (messageData.type === 'VOICE') {
+                return {
+                  id: '',
+                  matchId: messageData.matchId,
+                  senderId: messageData.senderId,
+                  content: messageData.content,
+                  duration: messageData.duration,
+                  type: 'VOICE',
+                  timestamp: new Date(),
+                  isRead: false,
+                  createdAt: new Date(),
+                  updatedAt: new Date()
+                };
             }
 
             console.log('📤 Sending text message via backend API:', messageData);

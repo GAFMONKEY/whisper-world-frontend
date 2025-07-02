@@ -201,6 +201,7 @@ const ChatPage: React.FC = () => {
           matchId: matchId!,
           senderId: user.id,
           content: 'Sprachnachricht',
+          duration: recordingDuration,
           type: 'VOICE'
         });
         
