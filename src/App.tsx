@@ -9,7 +9,6 @@ import SettingsPage from './pages/SettingsPage';
 import ProfilePage from './pages/ProfilePage';
 import ChatPage from './pages/ChatPage';
 import ChatListPage from './pages/ChatListPage';
-import MatchesPage from './pages/MatchesPage';
 import MatchSuccessPage from './pages/MatchSuccessPage';
 import NameAgePage from './pages/NameAgePage';
 import GenderPreferencePage from './pages/GenderPreferencePage';
@@ -31,7 +30,6 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/matches" element={<MatchesPage />} />
           <Route path="/match-success" element={<MatchSuccessPage />} />
           <Route path="/chats" element={<ChatListPage />} />
           <Route path="/chat/:matchId" element={<ChatPage />} />

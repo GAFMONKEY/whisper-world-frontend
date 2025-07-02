@@ -11,8 +11,6 @@ import {
   Card,
   CardContent,
   CircularProgress,
-  Alert,
-  Button,
 } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -22,7 +20,7 @@ import SendIcon from '@mui/icons-material/Send';
 import MicIcon from '@mui/icons-material/Mic';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { chatService } from '../services';
+import { chatService, userService } from '../services';
 import type { ChatConversation } from '../services';
 import { getCurrentUser } from '../utils/setupUser';
 
@@ -35,7 +33,6 @@ const ChatPage: React.FC = () => {
   const [message, setMessage] = useState('');
   const [conversation, setConversation] = useState<ChatConversation | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
@@ -44,31 +41,32 @@ const ChatPage: React.FC = () => {
   const intervalRef = useRef<number>(undefined);
   const [isAudioPlayback, setIsAudioPlayback] = useState(false);
   const audioRef = useRef(new Audio("/voice-message/voice-message.mp3"));
+  const [chatPartnerUser, setChatPartnerUser] = useState<any>(null);
   
   // Current user aus localStorage - mit Backend-kompatible UUID
   const user = getCurrentUser();    // Chat-Conversation laden
   useEffect(() => {
     const loadConversation = async () => {
       if (!matchId || !user) {
-        setError('Fehler: Match-ID oder User-ID fehlt');
         setLoading(false);
         return;
       }
       
       try {
         setLoading(true);
-        setError(null);
         
         console.log('🔍 Loading conversation for matchId:', matchId);
         console.log('📱 Current user:', user.id);
         console.log('🎯 Start with:', startWith);
         
         const conv = await chatService.getChatConversation(matchId, user.id);
+        const otherUser = await userService.getUserProfile(conv.otherUser.id);
+        setChatPartnerUser(otherUser);
+        console.log(otherUser);
         setConversation(conv);
         console.log('✅ Conversation loaded:', conv);
       } catch (err) {
         console.error('❌ Error loading conversation:', err);
-        setError('Fehler beim Laden des Chats. Versuche es später nochmal.');
       } finally {
         setLoading(false);
       }
@@ -184,7 +182,6 @@ const ChatPage: React.FC = () => {
       
     } catch (err) {
       console.error('❌ Error sending message:', err);
-      setError('Fehler beim Senden der Nachricht.');
     } finally {
       setSending(false);
     }
@@ -220,7 +217,6 @@ const ChatPage: React.FC = () => {
         console.log('✅ Voice message sent successfully');
       } catch (err) {
         console.error('❌ Error sending voice message:', err);
-        setError('Fehler beim Senden der Sprachnachricht.');
       } finally {
         setSending(false);
       }
@@ -278,36 +274,6 @@ const ChatPage: React.FC = () => {
         <Typography variant="body1" sx={{color: 'text.secondary'}}>
           Chat wird geladen...
         </Typography>
-      </Box>
-    );
-  }
-  
-  // Error State
-  if (error || !conversation) {
-    return (
-      <Box
-        sx={{
-          minHeight: '100vh',
-          backgroundColor: 'background.default',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          p: 3,
-        }}
-      >
-        <Alert severity="error" sx={{maxWidth: 400}}>
-          <Typography variant="body1" sx={{mb: 2}}>
-            {error || 'Chat konnte nicht geladen werden'}
-          </Typography>
-          <Box sx={{display: 'flex', gap: 2}}>
-            <Button onClick={() => navigate('/matches')}>
-              Zu Matches
-            </Button>
-            <Button onClick={() => navigate('/dashboard')}>
-              Zum Dashboard
-            </Button>
-          </Box>
-        </Alert>
       </Box>
     );
   }
@@ -383,7 +349,7 @@ const ChatPage: React.FC = () => {
       <AppBar
         position="static"
         sx={{
-          backgroundColor: 'secondary.main',
+          backgroundColor: chatPartnerUser.accentColor??'secondary.main',
           boxShadow: 'none',
         }}
       >
@@ -397,9 +363,9 @@ const ChatPage: React.FC = () => {
             <ArrowBackIcon/>
           </IconButton>
           <Typography variant="h6" sx={{flexGrow: 1, fontWeight: 600}}>
-            {conversation.otherUser.name}, {conversation.otherUser.age}
+            {conversation?.otherUser.name}, {conversation?.otherUser.age}
           </Typography>
-          {conversation.otherUser.isOnline && (
+          {conversation?.otherUser.isOnline && (
             <Box
               sx={{
                 width: 12,
@@ -422,8 +388,8 @@ const ChatPage: React.FC = () => {
           pb: 10, // Space for input and bottom nav
         }}
       >
-        {conversation.messages && conversation.messages.length > 0 ? (
-          conversation.messages.map((msg) => (
+        {conversation?.messages && conversation?.messages.length > 0 ? (
+          conversation?.messages.map((msg) => (
             <Box
               key={msg.id}
               sx={{
@@ -494,7 +460,7 @@ const ChatPage: React.FC = () => {
               🎉 Es ist ein Match!
             </Typography>
             <Typography variant="body2" sx={{color: 'text.secondary'}}>
-              Startet die Unterhaltung mit {conversation.otherUser.name}!
+              Startet die Unterhaltung mit {conversation?.otherUser.name}!
             </Typography>
           </Box>
         )}
@@ -520,7 +486,7 @@ const ChatPage: React.FC = () => {
             >
               <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
                 <Typography variant="body2" sx={{color: 'text.secondary'}}>
-                  {conversation.otherUser.name} schreibt
+                  {conversation?.otherUser.name} schreibt
                 </Typography>
                 <Box sx={{display: 'flex', gap: 0.5}}>
                   <Box
@@ -578,7 +544,7 @@ const ChatPage: React.FC = () => {
           <TextField
             id="message-input"
             fullWidth
-            placeholder={`Nachricht an ${conversation.otherUser.name}...`}
+            placeholder={`Nachricht an ${conversation?.otherUser.name}...`}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyPress={(e) => {
@@ -634,10 +600,10 @@ const ChatPage: React.FC = () => {
             onClick={handleSendMessage}
             disabled={!message.trim() || sending}
             sx={{
-              backgroundColor: 'secondary.main',
+              backgroundColor: chatPartnerUser.accentColor??'secondary.main',
               color: 'white',
               '&:hover': {
-                backgroundColor: 'secondary.dark',
+                backgroundColor: chatPartnerUser.accentColor??'secondary.dark',
               },
               '&:disabled': {
                 backgroundColor: 'rgba(0,0,0,0.1)',
