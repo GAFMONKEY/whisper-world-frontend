@@ -29,7 +29,7 @@ const ColorPickerPage: React.FC = () => {
     localStorage.setItem('userProfile', JSON.stringify(finalProfile));
 
     // Hier könnte der API-Call zum Backend erfolgen
-    userService.createUser(finalProfile).then((user) => {
+    userService.createUser(finalProfile).then(() => {
       //localStorage.setItem('user', JSON.stringify(user));
       navigate('/dashboard');
     });

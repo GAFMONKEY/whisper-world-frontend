@@ -162,7 +162,7 @@ const ProfilePage: React.FC = () => {
           setShowMatchMessage(false);
           console.log('Navigating to match success page with matchId:', response.matchId);
           navigate(
-            `/match-success?matchId=${response.matchId || currentProfile.id}&partnerName=${encodeURIComponent(currentProfile.name)}`
+            `/match-success?matchId=${response.matchId || currentProfile.id}&partnerId=${encodeURIComponent(currentProfile.id)}`
           );
         }, 3000);
       } else {

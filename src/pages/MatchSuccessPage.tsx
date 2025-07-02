@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Box,
     Typography,
@@ -7,13 +7,27 @@ import {
 } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { type UserProfile, userService } from '../services';
+import { getCurrentUser } from '../utils/setupUser.ts';
 
 const MatchSuccessPage: React.FC = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
+    const [partnerUser, setPartnerUser] = useState<UserProfile | null>(null);
 
     const matchId = searchParams.get('matchId');
-    const partnerName = searchParams.get('partnerName') || 'deinem Match';
+    const partnerMatchId = searchParams.get('partnerId');
+    const currentUser = getCurrentUser();
+  
+    useEffect(() => {
+        const fetchPartner = async () => {
+            if (partnerMatchId) {
+                const partner = await userService.getUserProfile(partnerMatchId);
+                setPartnerUser(partner);
+            }
+        };
+        fetchPartner();
+    }, [partnerMatchId]);
 
     const handleVoiceMessage = () => {
         navigate(`/chat/${matchId}?startWith=voice`);
@@ -118,7 +132,7 @@ const MatchSuccessPage: React.FC = () => {
                         }
                     }}
                 >
-                    Du und {partnerName}
+                    Du und {partnerUser?.firstName}
                 </Typography>
 
                 {/* Overlapping Circles with Heart */}
@@ -148,7 +162,7 @@ const MatchSuccessPage: React.FC = () => {
                             width: 100,
                             height: 100,
                             borderRadius: '50%',
-                            backgroundColor: '#D4A574', // Beige/Brown
+                            backgroundColor: currentUser.accentColor,
                             left: 0,
                             top: 10,
                             animation: 'slideInLeft 1s ease-out 0.7s both',
@@ -172,7 +186,7 @@ const MatchSuccessPage: React.FC = () => {
                             width: 100,
                             height: 100,
                             borderRadius: '50%',
-                            backgroundColor: '#C8A8D8', // Light Purple
+                            backgroundColor: partnerUser?.accentColor, // Light Purple
                             right: 0,
                             top: 10,
                             // Right circle slides in from right
