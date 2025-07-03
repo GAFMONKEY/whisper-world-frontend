@@ -1,4 +1,13 @@
-# Whisper World 
+# Whisper World
+## Gruppenmitglieder
+Anna Buhrmann (buan1027)
+
+Tom Sander (sato1014)
+
+Dennis Ginter (gide1011)
+
+Botan Coban (cobo1011)
+
 ## 🚀 Installation
 
 ### Voraussetzungen
@@ -16,3 +25,5 @@
 6. Ggf. sample_user_data.sql zum befüllen der Tabellen nutzen
 7. Das Projekt ist unter http://localhost:5173/ zu erreichen
 7. Viel Spaß!
+
+
