@@ -422,7 +422,7 @@ const ChatPage: React.FC = () => {
                         <MicIcon/>
                       </IconButton>
                       <Typography variant="body2">
-                        Sprachnachricht ({msg.duration || 0}s)
+                        Sprachnachricht ({msg.audioDuration || 0}s)
                       </Typography>
                     </Box>
                   )}
