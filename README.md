@@ -18,6 +18,7 @@ Botan Coban (cobo1011)
 ### Installationsschritte
 
 1. whisper-world-frontend und whisper-world-backend in einen Ordner ablegen
+2. Node_modules im Backend und Frontend mit `npm i` installieren
 2. Frontend mit `npm run dev starten`
 3. Im Backend in der powershell in ".extras/db" navigieren
 4. `docker compose up` ausführen
