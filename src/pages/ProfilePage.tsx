@@ -26,7 +26,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 
 const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
-  const [navValue, setNavValue] = useState(1); // Hearts tab aktiv
+  const [navValue, setNavValue] = useState(1);
   const [profileIndex, setProfileIndex] = useState(0);
   const [profiles, setProfiles] = useState<DiscoverUser[]>([]);
   const [loading, setLoading] = useState(true);
@@ -79,7 +79,6 @@ const ProfilePage: React.FC = () => {
         navigate('/dashboard');
         break;
       case 1:
-        // Already on profile page
         break;
       case 2:
         navigate('/chats');
@@ -117,7 +116,6 @@ const ProfilePage: React.FC = () => {
 
     setIsSkipping(true);
 
-    // Warte kurz, damit die Animation startet
     setTimeout(async () => {
       try {
         await matchService.passUser(user.id, currentProfile.id);
@@ -126,7 +124,6 @@ const ProfilePage: React.FC = () => {
         console.error('Error passing user:', error);
       }
 
-      // Nach der Animation zum nächsten Profil
       setTimeout(() => {
         if (profileIndex < totalProfiles - 1) {
           setProfileIndex(profileIndex + 1);
@@ -136,7 +133,7 @@ const ProfilePage: React.FC = () => {
         } else {
           navigate('/dashboard');
         }
-      }, 800); // Animation dauert 800ms für mehr Flüssigkeit
+      }, 800);
     }, 150);
   };
 
@@ -220,7 +217,6 @@ const ProfilePage: React.FC = () => {
     );
   }
 
-  // Error State
   if (error) {
     return (
       <Box
@@ -367,7 +363,7 @@ const ProfilePage: React.FC = () => {
         sx={{
           px: 3,
           pb: 3,
-          pt: 2, // Additional top padding for better separation
+          pt: 2,
           transition: 'all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
           opacity: isSkipping ? 0 : playingAudio ? 0.9 : 1,
           transform: isSkipping ? 'translateX(-120vw) rotate(-15deg) scale(0.8)' : 'scale(1)',
@@ -562,7 +558,7 @@ const ProfilePage: React.FC = () => {
               <Chip
                 label="💫 Lifestyle & Dating"
                 sx={{
-                  backgroundColor: '#FF9800', // Orange color
+                  backgroundColor: '#FF9800',
                   color: 'white',
                   fontWeight: 600,
                   mb: 2,
@@ -796,7 +792,7 @@ const ProfilePage: React.FC = () => {
               <Chip
                 label="🏃‍♀️ Gesundheit & Substanzen"
                 sx={{
-                  backgroundColor: '#4CAF50', // Green color
+                  backgroundColor: '#4CAF50',
                   color: 'white',
                   fontWeight: 600,
                   mb: 2,
@@ -1085,8 +1081,8 @@ const ProfilePage: React.FC = () => {
                     index === profileIndex
                       ? 'secondary.main'
                       : index < profileIndex
-                        ? 'rgba(191, 169, 190, 0.6)' // Viewed profiles
-                        : 'rgba(0,0,0,0.2)', // Unviewed profiles
+                        ? 'rgba(191, 169, 190, 0.6)'
+                        : 'rgba(0,0,0,0.2)',
                   transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                   transform: isSkipping
                     ? 'scale(0.8)'
@@ -1129,7 +1125,7 @@ const ProfilePage: React.FC = () => {
           backdropFilter: 'blur(8px)',
           borderTop: '1px solid rgba(0,0,0,0.05)',
           zIndex: 1000,
-          pb: 7, // Space for bottom navigation
+          pb: 7,
           pt: 2,
           px: 3,
           boxShadow: '0 -2px 20px rgba(0,0,0,0.05)',
@@ -1285,7 +1281,7 @@ const ProfilePage: React.FC = () => {
           backgroundColor: 'rgba(255, 255, 255, 0.98)',
           backdropFilter: 'blur(8px)',
           borderTop: '1px solid rgba(0,0,0,0.05)',
-          zIndex: 1001, // Higher than sticky buttons
+          zIndex: 1001,
           boxShadow: '0 -2px 15px rgba(0,0,0,0.04)',
           '& .MuiBottomNavigationAction-root': {
             color: 'text.secondary',

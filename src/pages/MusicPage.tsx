@@ -16,10 +16,8 @@ const MusicPage: React.FC = () => {
   };
 
   const handleContinue = () => {
-    // Lade die gespeicherten Daten
     const savedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
 
-    // Erstelle das answers Array oder erweitere es
     const existingAnswers = savedProfile.answers || [];
     const musicAnswer = {
       cluster: 'Musik',
@@ -38,7 +36,6 @@ const MusicPage: React.FC = () => {
     console.log('Updated profile with music answer:', updatedProfile);
     localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
 
-    // Navigiere zur Hobby-Seite
     navigate('/hobbies');
   };
 

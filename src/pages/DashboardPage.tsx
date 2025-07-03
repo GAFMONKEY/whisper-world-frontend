@@ -38,12 +38,10 @@ const DashboardPage: React.FC = () => {
   const [navValue, setNavValue] = useState(0);
 
   useEffect(() => {
-    // Lade Benutzerdaten aus localStorage
     const userData = localStorage.getItem('user');
     if (userData) {
       setUser(JSON.parse(userData));
     } else {
-      // Fallback: Zurück zum Login wenn keine Daten vorhanden
       navigate('/login');
     }
   }, [navigate]);
@@ -52,7 +50,6 @@ const DashboardPage: React.FC = () => {
     setNavValue(newValue);
     switch (newValue) {
       case 0:
-        // Already on dashboard
         break;
       case 1:
         navigate('/profile');
@@ -81,7 +78,7 @@ const DashboardPage: React.FC = () => {
       sx={{
         minHeight: '100vh',
         backgroundColor: '#F2EEE9',
-        pb: 8, // Platz für Bottom Navigation
+        pb: 8,
         background: '#F2EEE9',
       }}
     >

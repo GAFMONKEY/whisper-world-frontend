@@ -39,10 +39,8 @@ const NameAgePage: React.FC = () => {
   };
 
   const handleContinue = () => {
-    // Lade die gespeicherten Daten
     const savedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
 
-    // Mappe die Geschlechtswerte auf Backend-Format
     const genderMapping: { [key: string]: string } = {
       'maennlich': 'male',
       'weiblich': 'female',
@@ -60,11 +58,9 @@ const NameAgePage: React.FC = () => {
     console.log('Updated profile with name/age data:', updatedProfile);
     localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
 
-    // Navigate to gender preference page
     navigate('/gender-preference');
   };
 
-  // Calculate max date (18 years ago) and min date (100 years ago)
   const today = new Date();
   const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate()).toISOString().split('T')[0];
   const minDate = new Date(today.getFullYear() - 100, today.getMonth(), today.getDate()).toISOString().split('T')[0];

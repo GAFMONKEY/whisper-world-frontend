@@ -23,10 +23,8 @@ const GenderPreferencePage: React.FC = () => {
   };
 
   const handleContinue = () => {
-    // Lade die gespeicherten Daten
     const savedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
 
-    // Mappe die Geschlechtspräferenzen auf Backend-Format
     const genderMapping: { [key: string]: string } = {
       'maennlich': 'male',
       'weiblich': 'female',

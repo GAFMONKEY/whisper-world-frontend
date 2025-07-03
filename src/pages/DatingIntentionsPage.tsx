@@ -23,10 +23,8 @@ const DatingIntentionsPage: React.FC = () => {
   };
 
   const handleContinue = () => {
-    // Lade die gespeicherten Daten
     const savedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
 
-    // Mappe die Absichten auf Backend-Format
     const intentionMapping: { [key: string]: string } = {
       'freunde': 'friends',
       'unverbindlich': 'hookups',
@@ -45,7 +43,6 @@ const DatingIntentionsPage: React.FC = () => {
 
     console.log('Updated profile with intentions:', updatedProfile);
     localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
-    // Navigiere zur Likert-Skalen Seite
     navigate('/likert-scale');
   };
 

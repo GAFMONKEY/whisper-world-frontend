@@ -1,6 +1,5 @@
 import { createTheme } from '@mui/material/styles';
 
-// Deine Custom Farben
 const colors = {
     beige: '#F2EEE9',
     lila: '#BFA9BE',

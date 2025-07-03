@@ -9,7 +9,6 @@ const api = axios.create({
   },
 });
 
-// Backend-kompatible Union Types (wegen erasableSyntaxOnly)
 export type Gender = 'MALE' | 'FEMALE' | 'NON_BINARY';
 export type Intentions =
   | 'FRIENDS'
@@ -38,7 +37,6 @@ export interface Lifestyle {
   politics: Politics;
 }
 
-// Backend-kompatible Answer-Struktur
 export interface Answer {
   id: string;
   cluster: string;
@@ -49,14 +47,13 @@ export interface Answer {
   updatedAt: Date;
 }
 
-// Frontend-kompatible User-Struktur basierend auf Backend-Entity
 export interface UserProfile {
-  id: string; // UUID
+  id: string;
   firstName: string;
   lastName: string;
   gender: Gender;
   email: string;
-  birthDate: Date; // Date-Objekt statt String
+  birthDate: Date;
   interests: string[];
   intentions: Intentions[];
   answers: Answer[];
@@ -64,8 +61,8 @@ export interface UserProfile {
   lifestyle: Lifestyle;
   likert: LikertQuestions;
   accentColor: string;
-  likedUsers: string[]; // User-IDs
-  passedUsers: string[]; // User-IDs
+  likedUsers: string[];
+  passedUsers: string[];
   profilePictureUrl?: string;
   isVerified: boolean;
   lastActive: Date;
@@ -86,7 +83,6 @@ export interface UpdateProfileData {
   profilePictureUrl?: string;
 }
 
-// Utility-Funktionen für Type-Konvertierung
 export const convertGenderToBackend = (gender: string): Gender => {
   switch (gender.toLowerCase()) {
     case 'male':
@@ -157,7 +153,6 @@ const userService = {
       const response = await api.get(`/users/${userId}`);
       const userData = response.data;
 
-      // Konvertiere Date-Strings zu Date-Objekten
       return {
         ...userData,
         birthDate: new Date(userData.birthDate),
@@ -179,7 +174,6 @@ const userService = {
 
   async updateUserProfile(userId: string, profileData: UpdateProfileData): Promise<UserProfile> {
     try {
-      // Konvertiere Date-Objekte zu ISO-Strings für das Backend
       const backendData = {
         ...profileData,
         answers: profileData.answers?.map((answer) => ({
@@ -192,7 +186,6 @@ const userService = {
       const response = await api.put(`/users/${userId}`, backendData);
       const userData = response.data;
 
-      // Konvertiere Response zurück zu Frontend-Format
       return {
         ...userData,
         birthDate: new Date(userData.birthDate),

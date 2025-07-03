@@ -12,7 +12,6 @@ const HobbyPage: React.FC = () => {
   const [selectedHobbies, setSelectedHobbies] = useState<string[]>([]);
 
   const handleContinue = () => {
-    // Lade die gespeicherten Daten
     const savedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
 
     const updatedProfile = {
@@ -23,7 +22,6 @@ const HobbyPage: React.FC = () => {
     console.log('Updated profile with interests:', updatedProfile);
     localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
 
-    // Navigiere zur Farbauswahl-Seite
     navigate('/color-picker');
   };
 

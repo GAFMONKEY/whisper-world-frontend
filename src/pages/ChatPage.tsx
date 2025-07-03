@@ -26,10 +26,10 @@ import { getCurrentUser } from '../utils/setupUser';
 
 const ChatPage: React.FC = () => {
   const navigate = useNavigate();
-  const {matchId} = useParams(); // Verwende matchId statt userId
+  const {matchId} = useParams();
   const [searchParams] = useSearchParams();
-  const startWith = searchParams.get('startWith'); // 'voice' oder 'text'
-  const [navValue, setNavValue] = useState(2); // Chat tab aktiv
+  const startWith = searchParams.get('startWith');
+  const [navValue, setNavValue] = useState(2);
   const [message, setMessage] = useState('');
   const [conversation, setConversation] = useState<ChatConversation | null>(null);
   const [loading, setLoading] = useState(true);
@@ -43,8 +43,7 @@ const ChatPage: React.FC = () => {
   const audioRef = useRef(new Audio("/voice-message/voice-message.mp3"));
   const [chatPartnerUser, setChatPartnerUser] = useState<any>(null);
   
-  // Current user aus localStorage - mit Backend-kompatible UUID
-  const user = getCurrentUser();    // Chat-Conversation laden
+  const user = getCurrentUser();
   useEffect(() => {
     const loadConversation = async () => {
       if (!matchId || !user) {
@@ -55,18 +54,12 @@ const ChatPage: React.FC = () => {
       try {
         setLoading(true);
         
-        console.log('🔍 Loading conversation for matchId:', matchId);
-        console.log('📱 Current user:', user.id);
-        console.log('🎯 Start with:', startWith);
-        
         const conv = await chatService.getChatConversation(matchId, user.id);
         const otherUser = await userService.getUserProfile(conv.otherUser.id);
         setChatPartnerUser(otherUser);
-        console.log(otherUser);
         setConversation(conv);
-        console.log('✅ Conversation loaded:', conv);
       } catch (err) {
-        console.error('❌ Error loading conversation:', err);
+        console.error('Error loading conversation:', err);
       } finally {
         setLoading(false);
       }
@@ -75,18 +68,13 @@ const ChatPage: React.FC = () => {
     loadConversation();
   }, [matchId, user.id, startWith]);
   
-  // Handle startWith intent after conversation is loaded
   useEffect(() => {
     if (conversation && startWith) {
       if (startWith === 'voice') {
-        console.log('🎤 Auto-starting voice message recording...');
-        // Auto-start voice recording after a short delay
         setTimeout(() => {
           handleVoiceRecording();
         }, 1000);
       } else if (startWith === 'text') {
-        console.log('📝 Auto-focusing text input...');
-        // Focus the text input and show welcome message
         setTimeout(() => {
           const textInput = document.querySelector('#message-input') as HTMLInputElement;
           if (textInput) {
@@ -98,17 +86,12 @@ const ChatPage: React.FC = () => {
     }
   }, [conversation, startWith]);
   
-  // Listen for mock responses in real-time
   useEffect(() => {
     const handleMockMessage = (event: CustomEvent) => {
       const {matchId: eventMatchId, message} = event.detail;
       if (eventMatchId === matchId) {
-        console.log('📨 Received mock message:', message);
-        
-        // Show typing indicator
         setIsTyping(true);
         
-        // Simulate typing delay
         setTimeout(() => {
           setIsTyping(false);
           setConversation(prev => {
@@ -121,10 +104,9 @@ const ChatPage: React.FC = () => {
             };
           });
           
-          // Show new message notification
           setShowNewMessageNotification(true);
           setTimeout(() => setShowNewMessageNotification(false), 3000);
-        }, 1500); // 1.5 second typing simulation
+        }, 1500);
       }
     };
     
@@ -167,7 +149,6 @@ const ChatPage: React.FC = () => {
         type: 'TEXT',
       });
       
-      // Update conversation with new message
       setConversation(prev => {
         if (!prev) return prev;
         return {
@@ -178,10 +159,9 @@ const ChatPage: React.FC = () => {
       });
       
       setMessage('');
-      console.log('✅ Message sent successfully');
       
     } catch (err) {
-      console.error('❌ Error sending message:', err);
+      console.error('Error sending message:', err);
     } finally {
       setSending(false);
     }
@@ -189,14 +169,12 @@ const ChatPage: React.FC = () => {
   
   const handleVoiceRecording = async () => {
     if (isRecording) {
-      // Stop recording
       clearInterval(intervalRef.current);
       setIsRecording(false);
       setRecordingDuration(0);
       
       try {
         setSending(true);
-        // Mock voice message
         const voiceMessage = await chatService.sendMessage({
           matchId: matchId!,
           senderId: user.id,
@@ -205,7 +183,6 @@ const ChatPage: React.FC = () => {
           type: 'VOICE'
         });
         
-        // Update conversation
         setConversation(prev => {
           if (!prev) return prev;
           return {
@@ -215,22 +192,19 @@ const ChatPage: React.FC = () => {
           };
         });
         
-        console.log('✅ Voice message sent successfully');
       } catch (err) {
-        console.error('❌ Error sending voice message:', err);
+        console.error('Error sending voice message:', err);
       } finally {
         setSending(false);
       }
     } else {
-      // Start recording
       setIsRecording(true);
       setRecordingDuration(0);
       
-      // Mock recording timer
       intervalRef.current = setInterval(() => {
         setRecordingDuration(prev => {
-          if (prev >= 30) { // Max 30 seconds
-            handleVoiceRecording(); // Auto-stop
+          if (prev >= 30) {
+            handleVoiceRecording();
             return prev;
           }
           return prev + 1;
@@ -257,7 +231,6 @@ const ChatPage: React.FC = () => {
     }
   }
   
-  // Loading State
   if (loading) {
     return (
       <Box
@@ -386,7 +359,7 @@ const ChatPage: React.FC = () => {
           flex: 1,
           p: 2,
           overflowY: 'auto',
-          pb: 10, // Space for input and bottom nav
+          pb: 10,
         }}
       >
         {conversation?.messages && conversation?.messages.length > 0 ? (
@@ -533,7 +506,7 @@ const ChatPage: React.FC = () => {
       <Box
         sx={{
           position: 'fixed',
-          bottom: 56, // Above bottom navigation
+          bottom: 56,
           left: 0,
           right: 0,
           backgroundColor: 'background.default',

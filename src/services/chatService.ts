@@ -10,16 +10,16 @@ const api = axios.create({
 });
 
 export interface ChatMessage {
-  id: string; // UUID
+  id: string;
   matchId: string;
   senderId: string;
   content: string;
-  type: 'TEXT' | 'VOICE' | 'IMAGE'; // Backend-Enums
-  timestamp: Date; // Date-Objekt statt String
+  type: 'TEXT' | 'VOICE' | 'IMAGE';
+  timestamp: Date;
   isRead: boolean;
   audioUrl?: string;
   imageUrl?: string;
-  audioDuration?: number; // For voice messages in seconds
+  audioDuration?: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -30,7 +30,7 @@ export interface ChatConversation {
     id: string;
     name: string;
     age: number;
-    lastSeen?: Date; // Date-Objekt
+    lastSeen?: Date;
     isOnline?: boolean;
   };
   messages: ChatMessage[];
@@ -42,7 +42,7 @@ export interface SendMessageRequest {
   matchId: string;
   senderId: string;
   content: string;
-  type: 'TEXT' | 'VOICE' | 'IMAGE'; // Backend-kompatible Enums
+  type: 'TEXT' | 'VOICE' | 'IMAGE';
   audioFile?: File;
   imageFile?: File;
   duration?: number;
@@ -51,14 +51,12 @@ export interface SendMessageRequest {
 const chatService = {
   async getChatConversation(matchId: string, currentUserId: string): Promise<ChatConversation> {
     try {
-      // Lade Match-Details inkl. Chat-Nachrichten direkt vom Backend
-      console.log('📡 Loading match with chat messages from backend:', matchId);
+      console.log('Loading match with chat messages from backend:', matchId);
       const response = await api.get(`/matches/${matchId}`);
       const matchData = response.data;
 
-      console.log('✅ Loaded match data from backend:', matchData);
+      console.log('Loaded match data from backend:', matchData);
 
-      // Konvertiere Backend-Nachrichten zu Frontend-Format
       const messages: ChatMessage[] = matchData.chatMessages.map((msg: any) => ({
         id: msg.id,
         matchId: matchId,
@@ -76,11 +74,9 @@ const chatService = {
         updatedAt: new Date(msg.sentAt),
       }));
 
-      // Finde den anderen User aus dem Match
       const otherUserId =
         matchData.user1Id === currentUserId ? matchData.user2Id : matchData.user1Id;
 
-      // Lade User-Details für den anderen User
       let otherUser = {
         id: otherUserId,
         name: 'Match Partner',
@@ -99,9 +95,9 @@ const chatService = {
           id: otherUserId,
           name: `${userData.firstName} ${userData.lastName}`,
           age: age,
-          isOnline: Math.random() > 0.5, // Placeholder für Online-Status
+          isOnline: Math.random() > 0.5,
         };
-        console.log('✅ Loaded user details for:', otherUser.name);
+        console.log('Loaded user details for:', otherUser.name);
       } catch (userErr) {
         console.warn('Could not load user details:', userErr);
       }

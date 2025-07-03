@@ -186,10 +186,9 @@ const MatchSuccessPage: React.FC = () => {
                             width: 100,
                             height: 100,
                             borderRadius: '50%',
-                            backgroundColor: partnerUser?.accentColor, // Light Purple
+                            backgroundColor: partnerUser?.accentColor,
                             right: 0,
                             top: 10,
-                            // Right circle slides in from right
                             animation: 'slideInRight 1s ease-out 0.9s both',
                             '@keyframes slideInRight': {
                                 '0%': {
@@ -247,7 +246,7 @@ const MatchSuccessPage: React.FC = () => {
                         <FavoriteIcon
                             sx={{
                                 fontSize: 32,
-                                color: '#E91E63' // Pink heart color
+                                color: '#E91E63'
                             }}
                         />
                     </Box>

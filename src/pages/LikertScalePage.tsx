@@ -24,10 +24,8 @@ const LikertScalePage: React.FC = () => {
   };
 
   const handleContinue = () => {
-    // Lade die gespeicherten Daten
     const savedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
 
-    // Mappe die Bewertungen auf das Backend-Format
     const likertData = {
       closeness: parseInt(ratings.intimacy),
       openness: parseInt(ratings.openness),
@@ -42,7 +40,6 @@ const LikertScalePage: React.FC = () => {
     console.log('Updated profile with likert data:', updatedProfile);
     localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
 
-    // Navigiere zur Lifestyle-Seite
     navigate('/lifestyle');
   };
 

@@ -38,10 +38,8 @@ const LoginPage: React.FC = () => {
       const userData = await authService.login(formData.email, formData.password);
       console.log('Login successful:', userData);
 
-      // Speichere Benutzerdaten im localStorage
       localStorage.setItem('user', JSON.stringify(userData));
 
-      // Navigiere zum Dashboard
       navigate('/dashboard');
     } catch (error: unknown) {
       console.error('Login error:', error);
@@ -71,7 +69,6 @@ const LoginPage: React.FC = () => {
   };
 
   const handleForgotPassword = () => {
-    // TODO: Navigate to forgot password page
     console.log('Forgot password clicked');
   };
 

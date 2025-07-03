@@ -30,7 +30,7 @@ interface Match {
         lastName: string;
         age: number;
         interests: string[];
-        accentColor?: string; // Akzentfarbe hinzufügen
+        accentColor?: string;
     };
 }
 
@@ -69,7 +69,7 @@ const ChatListPage: React.FC = () => {
                         lastName: match.user.name.split(' ')[1] || '',
                         age: match.user.age,
                         interests: [],
-                        accentColor: match.user.accentColor || '#BFA9BE' // Akzentfarbe aus Backend
+                        accentColor: match.user.accentColor || '#BFA9BE'
                     }
                 }));
                 console.log('✅ Loaded matches from backend:', userMatches.length);
@@ -102,8 +102,7 @@ const ChatListPage: React.FC = () => {
                 navigate('/profile');
                 break;
             case 2:
-                // Already on chats
-                break;
+               break;
             case 3:
                 navigate('/settings');
                 break;

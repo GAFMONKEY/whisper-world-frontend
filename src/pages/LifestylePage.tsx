@@ -30,7 +30,6 @@ const LifestylePage: React.FC = () => {
   };
 
   const handleContinue = () => {
-    // Lade die gespeicherten Daten
     const savedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
 
     const updatedProfile = {
@@ -41,7 +40,6 @@ const LifestylePage: React.FC = () => {
     console.log('Updated profile with lifestyle:', updatedProfile);
     localStorage.setItem('userProfile', JSON.stringify(updatedProfile));
 
-    // Navigiere zur Musik-Seite
     navigate('/music');
   };
 

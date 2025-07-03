@@ -109,7 +109,6 @@ const OwnProfilePage: React.FC = () => {
     );
   }
 
-  // Error State
   if (error) {
     return (
       <Box
@@ -256,7 +255,7 @@ const OwnProfilePage: React.FC = () => {
         sx={{
           px: 3,
           pb: 3,
-          pt: 2, // Additional top padding for better separation
+          pt: 2,
           transition: 'all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
           opacity: isSkipping ? 0 : playingAudio ? 0.9 : 1,
           transform: isSkipping ? 'translateX(-120vw) rotate(-15deg) scale(0.8)' : 'scale(1)',
@@ -450,7 +449,7 @@ const OwnProfilePage: React.FC = () => {
               <Chip
                 label="💫 Lifestyle & Dating"
                 sx={{
-                  backgroundColor: '#FF9800', // Orange color
+                  backgroundColor: '#FF9800',
                   color: 'white',
                   fontWeight: 600,
                   mb: 2,
@@ -687,7 +686,7 @@ const OwnProfilePage: React.FC = () => {
               <Chip
                 label="🏃‍♀️ Gesundheit & Substanzen"
                 sx={{
-                  backgroundColor: '#4CAF50', // Green color
+                  backgroundColor: '#4CAF50',
                   color: 'white',
                   fontWeight: 600,
                   mb: 2,

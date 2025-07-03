@@ -10,9 +10,8 @@ const api = axios.create({
     }
 });
 
-// Backend-kompatible Match-Interface
 export interface Match {
-    id: string; // UUID
+    id: string;
     user1Id: string;
     user2Id: string;
     createdAt: Date;
@@ -52,12 +51,12 @@ export interface DisplayMatch {
         id: string;
         name: string;
         age: number;
-        accentColor?: string; // Akzentfarbe hinzufügen
+        accentColor?: string;
     };
-    matchedAt: Date; // Änderung zu Date-Objekt
+    matchedAt: Date;
     lastMessage?: {
         content: string;
-        timestamp: Date; // Änderung zu Date-Objekt
+        timestamp: Date;
     };
 }
 
@@ -73,14 +72,11 @@ function capitalize(str: string) {
 }
 
 export function convertUserToDiscoverUser(user: UserProfile): DiscoverUser {
-    // Sichere Konvertierung mit Backend-Struktur
     const birthDate = new Date(user.birthDate);
     const age = new Date().getFullYear() - birthDate.getFullYear();
 
-    // Erstelle dynamische Kategorien basierend auf den verfügbaren Daten
     const categories = [];
 
-    // Interessen Kategorie
     if (user.interests && Array.isArray(user.interests) && user.interests.length > 0) {
         categories.push({
             name: 'Interessen',
@@ -94,7 +90,6 @@ export function convertUserToDiscoverUser(user: UserProfile): DiscoverUser {
         });
     }
 
-    // Persönlichkeit Kategorie
     if (user.likert && typeof user.likert === 'object') {
         categories.push({
             name: 'Persönlichkeit',
@@ -108,7 +103,6 @@ export function convertUserToDiscoverUser(user: UserProfile): DiscoverUser {
         });
     }
 
-    // Absichten Kategorie
     if (user.intentions && Array.isArray(user.intentions) && user.intentions.length > 0) {
         categories.push({
             name: 'Absichten',
@@ -122,7 +116,6 @@ export function convertUserToDiscoverUser(user: UserProfile): DiscoverUser {
         });
     }
 
-    // Antworten Kategorien - gruppiert nach Cluster
     if (user.answers && Array.isArray(user.answers) && user.answers.length > 0) {
         const clusterGroups = new Map<string, any[]>();
 
@@ -142,7 +135,6 @@ export function convertUserToDiscoverUser(user: UserProfile): DiscoverUser {
             }
         });
 
-        // Erstelle Kategorien für jeden Cluster
         clusterGroups.forEach((questions, clusterName) => {
             categories.push({
                 name: clusterName,
@@ -152,7 +144,6 @@ export function convertUserToDiscoverUser(user: UserProfile): DiscoverUser {
         });
     }
 
-    // Normalisiere lifestyle object für Frontend-Display
     const normalizedLifestyle = user.lifestyle ? {
         childrenWish: user.lifestyle.childrenWish || 'not specified',
         children: user.lifestyle.children || 'not specified',
@@ -217,36 +208,28 @@ const matchService = {
 
     async getMatches(userId: string): Promise<DisplayMatch[]> {
         try {
-            console.log(`🚀 Loading matches for user: ${userId}`);
             const response = await api.get(`/matches/user/${userId}`);
             const matches: any[] = response.data;
-
-            console.log(`✅ Loaded ${matches.length} matches from backend`);
-
-            // Das Backend gibt uns bereits ein vereinfachtes Format zurück
-            // Für jeden Match laden wir die User-Details separat
+            
             const displayMatches: DisplayMatch[] = [];
 
             for (const match of matches) {
                 try {
-                    // Finde den anderen User im Match
                     const otherUserId = match.user1Id === userId ? match.user2Id : match.user1Id;
 
-                    // Lade User-Details für den anderen User
                     const userResponse = await api.get(`/users/${otherUserId}`);
                     const userData = userResponse.data;
 
                     const birthDate = new Date(userData.birthDate);
                     const age = new Date().getFullYear() - birthDate.getFullYear();
 
-                    // Erstelle DisplayMatch
                     const displayMatch: DisplayMatch = {
                         id: match.id,
                         user: {
                             id: otherUserId,
                             name: `${userData.firstName} ${userData.lastName}`,
                             age: age,
-                            accentColor: userData.accentColor || '#BFA9BE' // Akzentfarbe hinzufügen
+                            accentColor: userData.accentColor || '#BFA9BE'
                         },
                         matchedAt: new Date(match.matchedAt),
                         lastMessage: match.chatMessages && match.chatMessages.length > 0
@@ -263,7 +246,6 @@ const matchService = {
                     displayMatches.push(displayMatch);
                 } catch (userErr) {
                     console.warn(`Could not load user details for match ${match.id}:`, userErr);
-                    // Fallback für unvollständige User-Daten
                     const otherUserId = match.user1Id === userId ? match.user2Id : match.user1Id;
                     displayMatches.push({
                         id: match.id,
@@ -283,7 +265,7 @@ const matchService = {
 
             return displayMatches;
         } catch (error) {
-            console.error('❌ Backend error for matches:', error);
+            console.error('Backend error for matches:', error);
             throw new Error('Backend not available for matches');
         }
     },
@@ -320,7 +302,6 @@ const matchService = {
             const response = await api.get(`/matches/${matchId}/details`);
             const matchData = response.data;
 
-            // Konvertiere Date-Strings zu Date-Objekten
             return {
                 ...matchData,
                 createdAt: new Date(matchData.createdAt),

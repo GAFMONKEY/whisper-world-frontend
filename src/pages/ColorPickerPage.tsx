@@ -14,10 +14,8 @@ const ColorPickerPage: React.FC = () => {
   const [selectedColor, setSelectedColor] = useState('#2196F3');
 
   const handleContinue = () => {
-    // Lade die gespeicherten Daten
     const savedProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
 
-    // Erstelle das finale Profil im Backend-Format
     const finalProfile = {
       ...savedProfile,
       accentColor: selectedColor
@@ -25,17 +23,13 @@ const ColorPickerPage: React.FC = () => {
 
     console.log('Complete profile ready for backend:', finalProfile);
 
-    // Speichere das komplette Profil
     localStorage.setItem('userProfile', JSON.stringify(finalProfile));
 
-    // Hier könnte der API-Call zum Backend erfolgen
     userService.createUser(finalProfile).then(() => {
-      //localStorage.setItem('user', JSON.stringify(user));
       navigate('/dashboard');
     });
   };
 
-  // Vordefinierte beliebte Farben für schnelle Auswahl
   const presetColors = [
     '#2196F3', '#4CAF50', '#9C27B0', '#FF9800',
     '#E91E63', '#F44336', '#00BCD4', '#3F51B5',
